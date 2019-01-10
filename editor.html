@@ -17,6 +17,32 @@
 		left: 0;
 		right: 400px;
 	}
+	
+	#control-panel {
+		position:absolute;
+		width: 400px;
+		height: 200px;
+		right: 0;
+		top: 0;
+		border: 1px solid black;
+	}
+	
+	.btn {
+		display: inline-block;
+		border: 1px solid black;
+		padding: 5px 10px;
+		cursor: pointer;
+		margin: 5px;
+	}
+	
+	.btn:hover {
+		background: rgb(200,200,200);
+	}
+	
+	.disabled {
+		background: rgb(220,220,220);
+		color: gray;
+	}
 	</style>
 </head>
 <body>
@@ -37,6 +63,7 @@ let b {$b+1}
 jump b
 
 #end
+sleep 1000
 let c 1
 if $c l1 l2
 
@@ -53,6 +80,12 @@ let d {$d+1}
 if {$d<5} loop
 
 </pre>
+
+<div id="control-panel">
+	<button class="btn" id="run-btn">Run</button>
+	<button class="btn" id="step-btn">Step</button>
+	<button class="btn" id="restart-btn">Restart</button>
+</div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.2/ace.js"></script>
 <script src="main.js"></script>

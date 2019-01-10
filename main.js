@@ -1,41 +1,113 @@
 var editor = ace.edit("editor");
-editor.setTheme("ace/theme/twilight");
+editor.setTheme("ace/theme/chrome");
 editor.session.setMode("ace/mode/forth");
+editor.setFontSize(15);
 
 
 let env = {};
 let lbl = {};
 let program = [];
 let pc = 0;
+let sleep = 0;
 
-let src = editor.session.getValue()
-let lines = src.split('\n');
+let parsed = false;
+let finished = false;
 
-/* parse source code */
-for (let ln in lines) {
-	let l = lines[ln].trim();
-	if (l === '') {
-		program.push([]);
-		continue;
-	}
 
-	// label
-	if (l[0] === '#') {
-		lbl[l.slice(1).trim()] = ln;
-	}
+/* listener */
+document.getElementById("run-btn").addEventListener("click", executeAll);
+document.getElementById("step-btn").addEventListener("click", executeStep);
+document.getElementById("restart-btn").addEventListener("click", initEnv);
+
+
+function initEnv() {
+	env = {};
+	lbl = {};
+	program = [];
+	pc = 0;
+	sleep = 0;
+
+	parsed = false;
+	finished = false;
 	
-	let lineTokens = tokenizeLine(l);
-	program.push(lineTokens);
+	document.getElementById("step-btn").classList.remove("disabled");
+
+	editor.gotoLine(0, 0);
 }
 
-console.log(lbl)
-console.log(program)
+function finishedExecution() {
+	finished = true;
+	document.getElementById("step-btn").classList.add("disabled");
+}
+
+/* parse source code */
+function parseProgram() {
+	initEnv();
+	let src = editor.session.getValue()
+	let lines = src.split('\n');
+	for (let ln in lines) {
+		let l = lines[ln].trim();
+		if (l === '') {
+			program.push([]);
+			continue;
+		}
+	
+		// label
+		if (l[0] === '#') {
+			lbl[l.slice(1).trim()] = ln;
+		}
+		
+		let lineTokens = tokenizeLine(l);
+		program.push(lineTokens);
+	}
+	
+	parsed = true;
+	// console.log(lbl)
+	// console.log(program)
+}
 
 /* execute program */
-while (pc < program.length) {
+function loop() {
 	evaluate(program[pc]);
 	//console.log(pc+1, env)
 	pc++;
+	//if (sleep > 0) {
+	setTimeout(function () {
+		sleep = 0;
+		editor.gotoLine(pc+1, 0);
+		if (pc < program.length) {
+			loop();
+		}
+	}, sleep);
+	//}
+	
+}
+
+function executeAll() {
+	if (!parsed) {
+		parseProgram();
+	}
+	if (!finished) {
+		if (pc < program.length) {
+			loop();
+		}
+		finishedExecution();
+	}
+}
+
+function executeStep() {
+	if (!parsed) {
+		parseProgram();
+	}
+	if (!finished) {
+		editor.gotoLine(pc+1, 0);
+		if (pc < program.length) {
+			evaluate(program[pc]);
+			pc++;
+		} else {
+			finishedExecution();
+		}
+	}
 }
 
 function tokenizeLine(line) {
@@ -92,6 +164,8 @@ function evaluate(ts) {
 				pc = lbl[ts[3]] - 1;
 			}
 		}
+	} else if (cmd === 'sleep') {
+		sleep = expression(ts[1]);
 	} else {
 		console.log('ignore', cmd)
 	}
