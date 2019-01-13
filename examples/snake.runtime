@@ -1,3 +1,7 @@
+/ Snake
+/ by Siwei
+/ Jan 2019
+
 let width 24
 let height 24
 
@@ -32,22 +36,22 @@ if {$key==37 && $direction!=2} press_left
 if {$key==38 && $direction!=3} press_up
 if {$key==39 && $direction!=0} press_right
 if {$key==40 && $direction!=1} press_down
-jump next
+jump move
 
 #press_left
 let direction 0
-jump next
+jump move
 #press_up
 let direction 1
-jump next
+jump move
 #press_right
 let direction 2
-jump next
+jump move
 #press_down
 let direction 3
-jump next
+jump move
 
-#next
+#move
 if {$direction==0} move_left
 if {$direction==1} move_up
 if {$direction==2} move_right
@@ -55,26 +59,26 @@ if {$direction==3} move_down
 
 #move_left
 let x {$x-1}
-if {$x<0} _ draw
+if {$x<0} _ move_snake
 let x {$width-1}
-jump draw
+jump move_snake
 #move_right
 let x {$x+1}
-if {$x==$width} _ draw
+if {$x==$width} _ move_snake
 let x 0
-jump draw
+jump move_snake
 #move_up
 let y {$y-1}
-if {$y<0} _ draw
+if {$y<0} _ move_snake
 let y {$height-1}
-jump draw
+jump move_snake
 #move_down
 let y {$y+1}
-if {$y==$height} _ draw
+if {$y==$height} _ move_snake
 let y 0
-jump draw
+jump move_snake
 
-#draw
+#move_snake
 push snake {[$x, $y]}
 if {$x==$apple_x&&$y==$apple_y} _ miss_apple
 let len {$len+1}

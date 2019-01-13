@@ -70,7 +70,7 @@ function parseProgram() {
 	let lines = src.split('\n');
 	for (let ln in lines) {
 		let l = lines[ln].trim();
-		if (l === '') {
+		if (l === '' || l.startsWith('/')) {
 			program.push([]);
 			continue;
 		}
@@ -118,7 +118,7 @@ function loop() {
 function executeAll() {
 	$(document).on("keydown", function (e) {
 		keys.push(e.which);
-		console.log(keys)
+		//console.log(keys)
 	});
 
 	if (!parsed) {
