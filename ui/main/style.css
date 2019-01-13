@@ -1,0 +1,59 @@
+body {
+	overflow: hidden;
+}
+
+#editor {
+	margin: 0;
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 400px;
+}
+
+.btn {
+	display: inline-block;
+	border: 1px solid black;
+	padding: 5px 10px;
+	cursor: pointer;
+	margin: 5px;
+}
+
+.btn:hover {
+	background: rgb(200,200,200);
+}
+
+.disabled {
+	background: rgb(220,220,220);
+	color: gray;
+}
+
+#control-panel {
+	position:absolute;
+	width: 400px;
+	height: 100px;
+	right: 0;
+	top: 0;
+	border: 1px solid black;
+}
+
+#console-panel {
+	position:absolute;
+	width: 400px;
+	height: 300px;
+	top: 360px;
+	right: 0;
+	background-color: #111;
+}
+
+#canves-panel {
+	position:absolute;
+	width: 400px;
+	overflow: hidden;
+	top: 100px;
+	right: 0;
+}
+
+.canvas {
+	border: 1px solid black;
+}

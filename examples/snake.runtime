@@ -1,0 +1,97 @@
+let width 24
+let height 24
+
+let snake []
+
+push snake {[10, 12]}
+draw 10 12 1
+push snake {[11, 12]}
+draw 11 12 1
+push snake {[12, 12]}
+draw 12 12 1
+
+let direction 2
+let len 3
+
+let x 12
+let y 12
+
+#apple
+random apple_x 0 $width
+random apple_y 0 $height
+pixel color $apple_x $apple_y
+if {$color==1} apple
+draw $apple_x $apple_y 1
+
+#begin
+
+sleep 200
+
+let key {$lastkey}
+if {$key==37 && $direction!=2} press_left
+if {$key==38 && $direction!=3} press_up
+if {$key==39 && $direction!=0} press_right
+if {$key==40 && $direction!=1} press_down
+jump next
+
+#press_left
+let direction 0
+jump next
+#press_up
+let direction 1
+jump next
+#press_right
+let direction 2
+jump next
+#press_down
+let direction 3
+jump next
+
+#next
+if {$direction==0} move_left
+if {$direction==1} move_up
+if {$direction==2} move_right
+if {$direction==3} move_down
+
+#move_left
+let x {$x-1}
+if {$x<0} _ draw
+let x {$width-1}
+jump draw
+#move_right
+let x {$x+1}
+if {$x==$width} _ draw
+let x 0
+jump draw
+#move_up
+let y {$y-1}
+if {$y<0} _ draw
+let y {$height-1}
+jump draw
+#move_down
+let y {$y+1}
+if {$y==$height} _ draw
+let y 0
+jump draw
+
+#draw
+push snake {[$x, $y]}
+if {$x==$apple_x&&$y==$apple_y} _ miss_apple
+let len {$len+1}
+print $len
+jump apple
+
+#miss_apple
+pixel color $x $y
+if {$color==1} game_over
+
+draw $x $y 1
+
+poll snake tail
+draw $tail[0] $tail[1] 0
+
+jump begin
+
+#game_over
+print {'Game Over'}
+print {'SCORE: '+$len}

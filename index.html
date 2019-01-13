@@ -4,87 +4,39 @@
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 	<title>Runtime Script</title>
-	<style type="text/css" media="screen">
-	body {
-		overflow: hidden;
-	}
+	
+	<script src="ui/main/jquery-1.12.4.js"></script>
+	
+	<!-- console -->
+	<link rel="stylesheet" href="ui/console/jqconsole.css">
+	<script src="ui/console/jqconsole.js"></script>
 
-	#editor {
-		margin: 0;
-		position: absolute;
-		top: 0;
-		bottom: 0;
-		left: 0;
-		right: 400px;
-	}
-	
-	#control-panel {
-		position:absolute;
-		width: 400px;
-		height: 200px;
-		right: 0;
-		top: 0;
-		border: 1px solid black;
-	}
-	
-	.btn {
-		display: inline-block;
-		border: 1px solid black;
-		padding: 5px 10px;
-		cursor: pointer;
-		margin: 5px;
-	}
-	
-	.btn:hover {
-		background: rgb(200,200,200);
-	}
-	
-	.disabled {
-		background: rgb(220,220,220);
-		color: gray;
-	}
-	</style>
+	<link rel="stylesheet" href="ui/main/style.css"/>
 </head>
 <body>
 
 <pre id="editor">
-let a 10
-let b {($a+$a)/5+2}
-print $b
-jump a
-
-#b
-print {$b*2}
-jump end
-
-#a
-print {$b+1}
-let b {$b+1}
-jump b
-
-#end
+let x 0
+#begin
+draw $x 0 1
+let x {$x+1}
 sleep 1000
-let c 1
-if $c l1 l2
-
-#l1
-print "l1"
-
-#l2
-print "l2"
-
-let d 0
-#loop
-print $d
-let d {$d+1}
-if {$d<5} loop
-
+print {$lastkey}
+jump begin
 </pre>
 
 <div id="control-panel">
 	<button class="btn" id="run-btn">Run</button>
 	<button class="btn" id="step-btn">Step</button>
 	<button class="btn" id="restart-btn">Restart</button>
+</div>
+
+<div id="canves-panel">
+	<canvas id="canvas" width="240" height="240"></canvas>
+</div>
+
+<div id="console-panel">
+	<div id="console"></div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.2/ace.js"></script>
