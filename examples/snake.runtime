@@ -14,7 +14,7 @@ let snake_seg []
 push snake_seg $snake_x
 push snake_seg 12
 push snake $snake_seg
-let snake_x {$snake_x+1}
+add snake_x $snake_x 1
 if {$snake_x==13} _ init_snake
 
 let direction 2
@@ -64,22 +64,22 @@ if {$direction==2} move_right
 if {$direction==3} move_down
 
 #move_left
-let x {$x-1}
+sub x $x 1
 if {$x<0} _ move_snake
 let x {$width-1}
 jump move_snake
 #move_right
-let x {$x+1}
+add x $x 1
 if {$x==$width} _ move_snake
 let x 0
 jump move_snake
 #move_up
-let y {$y-1}
+sub y $y 1
 if {$y<0} _ move_snake
 let y {$height-1}
 jump move_snake
 #move_down
-let y {$y+1}
+add y $y 1
 if {$y==$height} _ move_snake
 let y 0
 jump move_snake
@@ -87,7 +87,7 @@ jump move_snake
 #move_snake
 push snake {[$x, $y]}
 if {$x==$apple_x&&$y==$apple_y} _ miss_apple
-let len {$len+1}
+add len $len 1
 print {'+1'}
 jump apple
 

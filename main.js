@@ -221,6 +221,10 @@ function evaluate(ts) {
 				pc = lbl[ts[3]] - 1;
 			}
 		}
+	} else if (cmd === 'add') {
+		env[ts[1]] = expression(ts[2]) + expression(ts[3]);
+	} else if (cmd === 'sub') {
+		env[ts[1]] = expression(ts[2]) - expression(ts[3]);
 	} else if (cmd === 'sleep') {
 		sleep = expression(ts[1]);
 	} else if (cmd === 'draw') {
