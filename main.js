@@ -104,13 +104,13 @@ function loop() {
 	//console.log(pc+1, env)
 	pc++;
 	if (sleep > 0) {
-		setTimeout(function () {
+		return setTimeout(function () {
 			sleep = 0;
 			loopStep();
 		}, sleep);
 	} else {
 		window.clearTimeout();
-		loopStep();
+		return loopStep();
 	}
 	//console.log(env)
 }

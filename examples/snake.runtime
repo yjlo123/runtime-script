@@ -2,23 +2,29 @@
 / by Siwei
 / Jan 2019
 
+/ -- initialize --
 let width 24
 let height 24
 
 let snake []
 
-push snake {[10, 12]}
-draw 10 12 1
-push snake {[11, 12]}
-draw 11 12 1
-push snake {[12, 12]}
-draw 12 12 1
+let snake_x 10
+#init_snake
+let snake_seg []
+push snake_seg $snake_x
+push snake_seg 12
+push snake $snake_seg
+let snake_x {$snake_x+1}
+if {$snake_x==13} _ init_snake
 
 let direction 2
 let len 3
 
 let x 12
 let y 12
+
+/ -- print info --
+print {'Press arrow keys to control.'}
 
 #apple
 random apple_x 0 $width
@@ -82,7 +88,7 @@ jump move_snake
 push snake {[$x, $y]}
 if {$x==$apple_x&&$y==$apple_y} _ miss_apple
 let len {$len+1}
-print $len
+print {'+1'}
 jump apple
 
 #miss_apple
