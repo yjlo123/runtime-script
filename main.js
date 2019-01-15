@@ -174,12 +174,6 @@ function tokenizeLine(line) {
 	return tokens;
 }
 
-function arrayIndexingToEvalString(variable, arrayIdx, value) {
-	let varName = variable.slice(0, arrayIdx);
-	let varIndexing = variable.slice(arrayIdx);
-	return 'env["' + varName + '"]' + varIndexing + (value ? ('=' + value) : '');
-}
-
 function evaluate(ts) {
 	if (ts.length === 0) {
 		return;
@@ -190,15 +184,7 @@ function evaluate(ts) {
 	
 	let cmd = ts[0];
 	if (cmd === 'let') {
-		let variable = ts[1]
-		let arrayIdx = variable.indexOf('[');
-		if ( arrayIdx > -1) {
-			evalString = arrayIndexingToEvalString(variable, arrayIdx, expression(ts[2]));
-			// TODO eval
-			eval(evalString);
-		} else {
-			env[variable] = expression(ts[2]);
-		}
+		env[ts[1]] = expression(ts[2]);
 
 	} else if (cmd === 'print') {
 		let resultExp = expression(ts[1]);
@@ -267,15 +253,7 @@ function expression(exp) {
 		if (varName === 'lastkey') {
 			varValue = keys.length > 0 ? keys.shift() : -1;
 		} else {
-			let arrayIdx = varName.indexOf('[');
-			if ( arrayIdx > -1) {
-				evalString = arrayIndexingToEvalString(varName, arrayIdx);
-				// TODO eval
-				varValue = eval(evalString);
-			} else {
-				varValue = env[varName]
-			}
-
+			varValue = env[varName]
 			if (varValue instanceof Array) {
 				varValue = JSON.stringify(varValue);
 			}

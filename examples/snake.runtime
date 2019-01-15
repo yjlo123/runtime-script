@@ -34,7 +34,6 @@ if {$color==1} apple
 draw $apple_x $apple_y 1
 
 #begin
-
 sleep 200
 
 let key {$lastkey}
@@ -66,7 +65,7 @@ if {$direction==3} move_down
 #move_left
 sub x $x 1
 if {$x<0} _ move_snake
-let x {$width-1}
+sub x $width 1
 jump move_snake
 #move_right
 add x $x 1
@@ -76,7 +75,7 @@ jump move_snake
 #move_up
 sub y $y 1
 if {$y<0} _ move_snake
-let y {$height-1}
+sub y $height 1
 jump move_snake
 #move_down
 add y $y 1
@@ -85,7 +84,10 @@ let y 0
 jump move_snake
 
 #move_snake
-push snake {[$x, $y]}
+let new_head []
+push new_head $x
+push new_head $y
+push snake $new_head
 if {$x==$apple_x&&$y==$apple_y} _ miss_apple
 add len $len 1
 print {'+1'}
@@ -98,7 +100,9 @@ if {$color==1} game_over
 draw $x $y 1
 
 poll snake tail
-draw $tail[0] $tail[1] 0
+pop tail tail_y
+pop tail tail_x
+draw $tail_x $tail_y 0
 
 jump begin
 
