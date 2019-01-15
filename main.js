@@ -186,7 +186,7 @@ function evaluate(ts) {
 	if (cmd === 'let') {
 		env[ts[1]] = expression(ts[2]);
 
-	} else if (cmd === 'print') {
+	} else if (cmd === 'prt') {
 		let resultExp = expression(ts[1]);
 		if (resultExp instanceof Array) {
 			resultExp = JSON.stringify(resultExp);
@@ -194,7 +194,7 @@ function evaluate(ts) {
 			resultExp += '';
 		}
 		jqconsole.Write(resultExp + '\n', 'console-default');
-	} else if (cmd === 'jump') {
+	} else if (cmd === 'jmp') {
 		// console.log('jump', ts[1], lbl[ts[1]])
 		pc = lbl[ts[1]] - 1;
 	} else if (cmd === 'if') {
@@ -211,22 +211,22 @@ function evaluate(ts) {
 		env[ts[1]] = expression(ts[2]) + expression(ts[3]);
 	} else if (cmd === 'sub') {
 		env[ts[1]] = expression(ts[2]) - expression(ts[3]);
-	} else if (cmd === 'sleep') {
+	} else if (cmd === 'slp') {
 		sleep = expression(ts[1]);
-	} else if (cmd === 'draw') {
+	} else if (cmd === 'drw') {
 		let x = expression(ts[1]);
 		let y = expression(ts[2]);
 		let c = expression(ts[3]);
 		drawPixel(x, y, c);
-	} else if (cmd === 'pixel') {
+	} else if (cmd === 'pxl') {
 		env[ts[1]] = getPixel(expression(ts[2]), expression(ts[3]))
-	} else if (cmd === 'push') {
+	} else if (cmd === 'psh') {
 		env[ts[1]].push(expression(ts[2]))
 	} else if (cmd === 'pop') {
 		env[ts[2]] = env[ts[1]].pop();
-	} else if (cmd === 'poll') {
+	} else if (cmd === 'pol') {
 		env[ts[2]] = env[ts[1]].shift();
-	} else if (cmd === 'random') {
+	} else if (cmd === 'rnd') {
 		env[ts[1]] = getRndInteger(expression(ts[2]), expression(ts[3]))
 	} else {
 		console.log('ignore', cmd)
