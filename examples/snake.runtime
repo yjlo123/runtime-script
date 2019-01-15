@@ -15,7 +15,7 @@ psh snake_seg $snake_x
 psh snake_seg 12
 psh snake $snake_seg
 add snake_x $snake_x 1
-if {$snake_x==13} _ init_snake
+jne $snake_x 13 init_snake
 
 let direction 2
 let len 3
@@ -29,18 +29,30 @@ prt {'Press arrow keys to control.'}
 #apple
 rnd apple_x 0 $width
 rnd apple_y 0 $height
-pixel color $apple_x $apple_y
-if {$color==1} apple
+pxl color $apple_x $apple_y
+jeq $color 1 apple
 drw $apple_x $apple_y 1
 
 #begin
 slp 200
 
 let key {$lastkey}
-if {$key==37 && $direction!=2} press_left
-if {$key==38 && $direction!=3} press_up
-if {$key==39 && $direction!=0} press_right
-if {$key==40 && $direction!=1} press_down
+jne $key 37 check_up
+jeq $direction 2 check_up
+jmp press_left
+#check_up
+jne $key 38 check_right
+jeq $direction 3 check_right
+jmp press_up
+#check_right
+jne $key 39 check_down
+jeq $direction 0 check_down
+jmp press_right
+#check_down
+jne $key 40 move
+jeq $direction 1 move
+jmp press_down
+
 jmp move
 
 #press_left
@@ -57,10 +69,10 @@ let direction 3
 jmp move
 
 #move
-if {$direction==0} move_left
-if {$direction==1} move_up
-if {$direction==2} move_right
-if {$direction==3} move_down
+jeq $direction 0 move_left
+jeq $direction 1 move_up
+jeq $direction 2 move_right
+jeq $direction 3 move_down
 
 #move_left
 sub x $x 1
@@ -69,7 +81,7 @@ sub x $width 1
 jmp move_snake
 #move_right
 add x $x 1
-if {$x==$width} _ move_snake
+jne $x $width move_snake
 let x 0
 jmp move_snake
 #move_up
@@ -79,7 +91,7 @@ sub y $height 1
 jmp move_snake
 #move_down
 add y $y 1
-if {$y==$height} _ move_snake
+jne $y $height move_snake
 let y 0
 jmp move_snake
 
@@ -88,14 +100,15 @@ let new_head []
 psh new_head $x
 psh new_head $y
 psh snake $new_head
-if {$x==$apple_x&&$y==$apple_y} _ miss_apple
+jne $x $apple_x miss_apple
+jne $y $apple_y miss_apple
 add len $len 1
 prt {'+1'}
 jmp apple
 
 #miss_apple
 pxl color $x $y
-if {$color==1} game_over
+jeq $color 1 game_over
 
 drw $x $y 1
 
