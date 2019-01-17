@@ -47,12 +47,11 @@ function initEnv() {
 	keys = [];
 	
 	document.getElementById("step-btn").classList.remove("disabled");
-
-	editor.gotoLine(0, 0);
 }
 
 function restart() {
 	initEnv();
+	window.clearTimeout();
 	$(document).off("keydown");
 }
 
@@ -90,15 +89,6 @@ function parseProgram() {
 }
 
 /* execute program */
-function loopStep() {
-	editor.gotoLine(pc+1, 0);
-	if (pc < program.length) {
-		loop();
-	} else {
-		finishedExecution();
-	}
-}
-
 function loop() {
 	evaluate(program[pc]);
 	//console.log(pc+1, env)
@@ -106,12 +96,17 @@ function loop() {
 	if (sleep > 0) {
 		return setTimeout(function () {
 			sleep = 0;
-			loopStep();
+			if (pc < program.length) {
+				return loop();
+			}
 		}, sleep);
 	} else {
 		window.clearTimeout();
-		return loopStep();
+		if (pc < program.length) {
+			return loop();
+		}
 	}
+	finishedExecution();
 	//console.log(env)
 }
 
@@ -184,10 +179,10 @@ function evaluate(ts) {
 	
 	let cmd = ts[0];
 	if (cmd === 'let') {
-		env[ts[1]] = expression(ts[2]);
+		env[ts[1]] = expr(ts[2]);
 
 	} else if (cmd === 'prt') {
-		let resultExp = expression(ts[1]);
+		let resultExp = expr(ts[1]);
 		if (resultExp instanceof Array) {
 			resultExp = JSON.stringify(resultExp);
 		} else {
@@ -197,59 +192,48 @@ function evaluate(ts) {
 	} else if (cmd === 'jmp') {
 		// console.log('jump', ts[1], lbl[ts[1]])
 		pc = lbl[ts[1]] - 1;
-	} else if (cmd === 'if') {
-		if (expression(ts[1]) !== 0) {
-			if (ts[2] !== '_') {
-				pc = lbl[ts[2]] - 1;
-			}
-		} else {
-			if (ts[3]) {
-				pc = lbl[ts[3]] - 1;
-			}
-		}
 	} else if (cmd === 'jeq') {
-		if (expression(ts[1]) === expression(ts[2])) {
+		if (expr(ts[1]) === expr(ts[2])) {
 			pc = lbl[ts[3]] - 1;
 		}
 	} else if (cmd === 'jne') {
-		if (expression(ts[1]) !== expression(ts[2])) {
+		if (expr(ts[1]) !== expr(ts[2])) {
 			pc = lbl[ts[3]] - 1;
 		}
 	} else if (cmd === 'add') {
-		env[ts[1]] = expression(ts[2]) + expression(ts[3]);
+		env[ts[1]] = expr(ts[2]) + expr(ts[3]);
 	} else if (cmd === 'sub') {
-		env[ts[1]] = expression(ts[2]) - expression(ts[3]);
+		env[ts[1]] = expr(ts[2]) - expr(ts[3]);
 	} else if (cmd === 'slp') {
-		sleep = expression(ts[1]);
+		sleep = expr(ts[1]);
 	} else if (cmd === 'drw') {
-		let x = expression(ts[1]);
-		let y = expression(ts[2]);
-		let c = expression(ts[3]);
+		let x = expr(ts[1]);
+		let y = expr(ts[2]);
+		let c = expr(ts[3]);
 		drawPixel(x, y, c);
 	} else if (cmd === 'pxl') {
-		env[ts[1]] = getPixel(expression(ts[2]), expression(ts[3]))
+		env[ts[1]] = getPixel(expr(ts[2]), expr(ts[3]))
 	} else if (cmd === 'psh') {
-		env[ts[1]].push(expression(ts[2]))
+		env[ts[1]].push(expr(ts[2]))
 	} else if (cmd === 'pop') {
 		env[ts[2]] = env[ts[1]].pop();
 	} else if (cmd === 'pol') {
 		env[ts[2]] = env[ts[1]].shift();
 	} else if (cmd === 'rnd') {
-		env[ts[1]] = getRndInteger(expression(ts[2]), expression(ts[3]))
+		env[ts[1]] = getRndInteger(expr(ts[2]), expr(ts[3]))
 	} else {
 		console.log('ignore', cmd)
 	}
 }
 
-function expression(exp) {
+function expr(exp) {
 	//console.log('in', exp)
 	let varIdx = exp.indexOf('$');
 	let varName = '';
 	while (varIdx > -1) {
 		varIdx++;
 		while (varIdx < exp.length) {
-			let endingChars = '+-*/%&|!<>=),' + (varName.indexOf('[')>-1?'':']');
-			if (endingChars.indexOf(exp[varIdx]) === -1) {
+			if ('+-*/%&|!<>=),'.indexOf(exp[varIdx]) === -1) {
 				varName += exp[varIdx];
 				varIdx++;
 			} else {

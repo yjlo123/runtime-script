@@ -76,7 +76,7 @@ jeq $direction 3 move_down
 
 #move_left
 sub x $x 1
-if {$x<0} _ move_snake
+jne $x -1 move_snake
 sub x $width 1
 jmp move_snake
 #move_right
@@ -86,7 +86,7 @@ let x 0
 jmp move_snake
 #move_up
 sub y $y 1
-if {$y<0} _ move_snake
+jne $y -1 move_snake
 sub y $height 1
 jmp move_snake
 #move_down
