@@ -55,6 +55,7 @@ body {
 	background-color: #111;
 	flex: auto;
 	height: 100%;
+	overflow: hidden;
 }
 
 #canves-panel {
