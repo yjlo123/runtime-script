@@ -18,25 +18,65 @@ add snake_x $snake_x 1
 jne $snake_x 13 init_snake
 
 let direction 2
-let len 3
+let score 0
 
 let x 12
 let y 12
 
 / -- print info --
-prt {'Press arrow keys to control.'}
+prt 'SNAKE v1.0'
+prt '- Press arrow keys to control.'
+prt '- Yellow: food   Gray: wall'
+prt '- Snake can teleport through map borders'
+
+/ -- clear canvas
+let clear_y -1
+#clear_next_line
+let clear_x 0
+add clear_y $clear_y 1
+jeq $clear_y $height wall_horizontal
+#clear_line
+drw $clear_x $clear_y 0
+add clear_x $clear_x 1
+jeq $clear_x $width clear_next_line
+jmp clear_line
+
+/ -- random wall --
+#wall_horizontal
+rnd wall_x 0 $width
+rnd wall_y 0 $height
+#wall_h
+jeq $wall_x $width wall_vertical
+drw $wall_x $wall_y 22
+add wall_x $wall_x 1
+jmp wall_h
+
+#wall_vertical
+rnd wall_x 0 $width
+rnd wall_y 0 $height
+#wall_v
+jeq $wall_y $height apple
+drw $wall_x $wall_y 22
+add wall_y $wall_y 1
+jmp wall_v
 
 #apple
 rnd apple_x 0 $width
 rnd apple_y 0 $height
 pxl color $apple_x $apple_y
-jeq $color 1 apple
-drw $apple_x $apple_y 1
+jne $color 0 apple
+drw $apple_x $apple_y 25
 
 #begin
-slp 200
+mul timed $score 5
+sub interval 300 $timed
+jlt 100 $interval sleep
+let interval 100
 
-let key {$lastkey}
+#sleep
+slp $interval
+
+let key $lastkey
 jne $key 37 check_up
 jeq $direction 2 check_up
 jmp press_left
@@ -102,13 +142,14 @@ psh new_head $y
 psh snake $new_head
 jne $x $apple_x miss_apple
 jne $y $apple_y miss_apple
-add len $len 1
-prt {'+1'}
+drw $x $y 1
+add score $score 1
+prt $score
 jmp apple
 
 #miss_apple
 pxl color $x $y
-jeq $color 1 game_over
+jne $color 0 game_over
 
 drw $x $y 1
 
@@ -120,5 +161,4 @@ drw $tail_x $tail_y 0
 jmp begin
 
 #game_over
-prt {'Game Over'}
-prt {'SCORE: '+$len}
+prt 'Game Over'
