@@ -11,6 +11,7 @@ let pc = 0;
 let sleep = 0;
 
 let parsed = false;
+let running = false;
 let finished = false;
 
 let keys = [];
@@ -32,7 +33,7 @@ startPrompt();
 document.getElementById("run-btn").addEventListener("click", executeAll);
 document.getElementById("step-btn").addEventListener("click", executeStep);
 document.getElementById("restart-btn").addEventListener("click", restart);
-
+document.getElementById("clear-canvas-btn").addEventListener("click", clearCanvas);
 
 function initEnv() {
 	env = {};
@@ -42,6 +43,7 @@ function initEnv() {
 	sleep = 0;
 
 	parsed = false;
+	running = false;
 	finished = false;
 	
 	keys = [];
@@ -53,13 +55,16 @@ function restart() {
 	initEnv();
 	window.clearTimeout();
 	$(document).off("keydown");
+	document.getElementById("run-btn").classList.remove("disabled");
 }
 
 function finishedExecution() {
 	//console.log('finished')
 	$(document).off("keydown");
+	running = false;
 	finished = true;
 	document.getElementById("step-btn").classList.add("disabled");
+	document.getElementById("run-btn").classList.remove("disabled");
 }
 
 /* parse source code */
@@ -111,6 +116,10 @@ function loop() {
 }
 
 function executeAll() {
+	if (running) {
+		return;
+	}
+	document.getElementById("run-btn").classList.add("disabled");
 	$(document).on("keydown", function (e) {
 		keys.push(e.which);
 		//console.log(keys)
@@ -119,6 +128,7 @@ function executeAll() {
 	parseProgram();
 
 	if (!finished) {
+		running = true;
 		if (pc < program.length) {
 			loop();
 		}
@@ -129,14 +139,15 @@ function executeStep() {
 	if (!parsed) {
 		parseProgram();
 	}
-	if (!finished) {
-		editor.gotoLine(pc+1, 0);
-		if (pc <= program.length) {
-			evaluate(program[pc]);
-			pc++;
-		} else {
-			finishedExecution();
-		}
+	if (finished) {
+		return;
+	}
+	editor.gotoLine(pc+1, 0);
+	if (pc <= program.length) {
+		evaluate(program[pc]);
+		pc++;
+	} else {
+		finishedExecution();
 	}
 }
 
@@ -315,4 +326,12 @@ function drawPixel(x, y, value) {
 
 function getPixel(x, y) {
 	return pixels[widthInBlocks*x+y] | 0;
+}
+
+function clearCanvas() {
+	for (let i = 0 ; i < widthInBlocks; i++) {
+		for (let j = 0; j < heightInBlocks; j++) {
+			drawPixel(i, j, 0);
+		}
+	}
 }

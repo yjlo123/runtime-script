@@ -27,7 +27,7 @@ let y 12
 prt 'SNAKE v1.0'
 prt '- Press arrow keys to control.'
 prt '- Yellow: food   Gray: wall'
-prt '- Snake can teleport through map borders'
+prt '- Snake can teleport through borders'
 
 / -- clear canvas
 let clear_y -1
