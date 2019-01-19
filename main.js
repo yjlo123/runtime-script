@@ -116,9 +116,8 @@ function executeAll() {
 		//console.log(keys)
 	});
 
-	if (!parsed) {
-		parseProgram();
-	}
+	parseProgram();
+
 	if (!finished) {
 		if (pc < program.length) {
 			loop();
@@ -146,16 +145,18 @@ function tokenizeLine(line) {
 	let current = '';
 	for (let i = 0; i < line.length; i++) {
 		let c = line[i];
-		if (c === '{') {
+		if (c === '\'') {
 			if (current !== '') {
 				tokens.push(current);
 				current = '';
 			}
+			current += line[i];
 			i++;
-			while (i < line.length && line[i] !== '}') {
+			while (i < line.length && line[i] !== '\'') {
 				current += line[i];
 				i++;
 			}
+			current += line[i];
 		} else if (c != ' ') {
 			current += c;
 		} else {
@@ -193,17 +194,26 @@ function evaluate(ts) {
 		// console.log('jump', ts[1], lbl[ts[1]])
 		pc = lbl[ts[1]] - 1;
 	} else if (cmd === 'jeq') {
+		// equal
 		if (expr(ts[1]) === expr(ts[2])) {
 			pc = lbl[ts[3]] - 1;
 		}
 	} else if (cmd === 'jne') {
+		// not equal
 		if (expr(ts[1]) !== expr(ts[2])) {
+			pc = lbl[ts[3]] - 1;
+		}
+	} else if (cmd === 'jlt') {
+		// less than
+		if (expr(ts[1]) < expr(ts[2])) {
 			pc = lbl[ts[3]] - 1;
 		}
 	} else if (cmd === 'add') {
 		env[ts[1]] = expr(ts[2]) + expr(ts[3]);
 	} else if (cmd === 'sub') {
 		env[ts[1]] = expr(ts[2]) - expr(ts[3]);
+	} else if (cmd === 'mul') {
+		env[ts[1]] = expr(ts[2]) * expr(ts[3]);
 	} else if (cmd === 'slp') {
 		sleep = expr(ts[1]);
 	} else if (cmd === 'drw') {
@@ -259,7 +269,14 @@ function expr(exp) {
 	//console.log(exp)
 	
 	// TODO eval
-	let result = eval(exp);
+	let result = null;
+	try {
+		result = eval(exp);
+	} catch (e){
+		console.log(exp)
+		return;
+	}
+	
 	if (typeof result === "boolean") {
 		return result|0;
 	}
@@ -270,6 +287,8 @@ function getRndInteger(min, max) {
 	return Math.floor(Math.random() * (max - min) ) + min;
 }
 
+
+let colors = ['#000000', '#ffffff', '#d6a090', '#fe3b1e', '#a12c32', '#fa2f7a', '#fb9fda', '#e61cf7', '#992f7c', '#47011f', '#051155', '#4f02ec', '#2d69cb', '#00a6ee', '#6febff', '#08a29a', '#2a666a', '#063619', '#4a4957', '#8e7ba4', '#b7c0ff', '#acbe9c', '#827c70', '#5a3b1c', '#ae6507', '#f7aa30', '#f4ea5c', '#9b9500', '#566204', '#11963b', '#51e113', '#08fdcc']
 
 var canvas = document.getElementById('canvas');
 var ctx = canvas.getContext('2d');
@@ -288,7 +307,7 @@ function drawPixel(x, y, value) {
 	//var x = offset % widthInBlocks;
 	//var y = Math.floor(offset / widthInBlocks);
 	pixels[widthInBlocks*x+y] = value;
-	var color = value ? 'white' : 'black';
+	var color = colors[parseInt(value)];
 	ctx.fillStyle = color;
 
 	ctx.fillRect(x * blockSize, y * blockSize, blockSize, blockSize);
