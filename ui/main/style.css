@@ -53,13 +53,12 @@ body {
 #console-panel {
 	width: 100%;
 	background-color: #111;
-	flex-grow: 1;
+	flex: auto;
+	height: 100%;
 }
 
 #canves-panel {
 	width: 100%;
-	overflow: hidden;
-	display: flex;
 	background: #616161;
 }
 
