@@ -219,7 +219,12 @@ function evaluate(ts) {
 		if (expr(ts[1]) < expr(ts[2])) {
 			pc = lbl[ts[3]] - 1;
 		}
-	} else if (cmd === 'add') {
+	} else if (cmd === 'jgt') {
+		// greater than
+		if (expr(ts[1]) > expr(ts[2])) {
+			pc = lbl[ts[3]] - 1;
+		}
+	}else if (cmd === 'add') {
 		env[ts[1]] = expr(ts[2]) + expr(ts[3]);
 	} else if (cmd === 'sub') {
 		env[ts[1]] = expr(ts[2]) - expr(ts[3]);
