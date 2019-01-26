@@ -9,8 +9,6 @@ let height 24
 let pole_1 24
 let pole_2 36
 
-let pole_x 24
-
 let bird_y 12
 
 let up_speed 0
@@ -19,6 +17,8 @@ rnd hole_1 5 19
 rnd hole_2 5 19
 
 let score 0
+
+let started 0
 
 / -- print info --
 prt 'FLAPPY BIRD v1.0'
@@ -43,13 +43,17 @@ let key $lastkey
 jne $key 32 draw_pole
 
 let up_speed 2
+let started 1
 
 / -- pole --
 #draw_pole
 let pole_idx 0
+
+jeq $started 0 draw_pole_continue
 sub pole_1 $pole_1 1
 sub pole_2 $pole_2 1
 
+#draw_pole_continue
 let cur_pole $pole_1
 let hole $hole_1
 
@@ -86,8 +90,10 @@ rnd hole_2 5 19
 
 / -- bird --
 #draw_bird
+jeq $started 0 draw_bird_continue
 sub bird_y $bird_y $up_speed
 
+#draw_bird_continue
 pxl color 12 $bird_y
 jeq $color 1 game_over
 drw 12 $bird_y 3
