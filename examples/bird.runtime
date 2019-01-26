@@ -1,0 +1,125 @@
+/ FLappy Bird
+/ by Siwei
+/ Jan 2019
+
+/ -- initialize --
+let width 24
+let height 24
+
+let pole_1 24
+let pole_2 36
+
+let pole_x 24
+
+let bird_y 12
+
+let up_speed 0
+
+rnd hole_1 5 19
+rnd hole_2 5 19
+
+let score 0
+
+/ -- print info --
+prt 'FLAPPY BIRD v1.0'
+prt '- Press `space` to fly'
+
+#begin
+
+/ -- clear canvas
+let clear_y -1
+#clear_next_line
+let clear_x 0
+add clear_y $clear_y 1
+jeq $clear_y $height check_key
+#clear_line
+drw $clear_x $clear_y 0
+add clear_x $clear_x 1
+jeq $clear_x $width clear_next_line
+jmp clear_line
+
+#check_key
+let key $lastkey
+jne $key 32 draw_pole
+
+let up_speed 2
+
+/ -- pole --
+#draw_pole
+let pole_idx 0
+sub pole_1 $pole_1 1
+sub pole_2 $pole_2 1
+
+let cur_pole $pole_1
+let hole $hole_1
+
+#next_pole
+sub pole_y_u $hole 4
+add pole_y_l $hole 4
+
+#draw_pole_y_upper
+sub pole_y_u $pole_y_u 1
+sub x_l $cur_pole 1
+drw $cur_pole $pole_y_u 1
+drw $x_l $pole_y_u 1
+jne $pole_y_u 0 draw_pole_y_upper
+
+#draw_pole_y_lower
+add pole_y_l $pole_y_l 1
+sub x_l $cur_pole 1
+drw $cur_pole $pole_y_l 1
+drw $x_l $pole_y_l 1
+jne $pole_y_l $height draw_pole_y_lower
+
+jeq $pole_idx 1 new_pole
+let pole_idx 1
+let cur_pole $pole_2
+let hole $hole_2
+jmp next_pole
+
+#new_pole
+jne $pole_1 0 draw_bird
+let pole_1 $pole_2
+let pole_2 24
+let hole_1 $hole_2
+rnd hole_2 5 19
+
+/ -- bird --
+#draw_bird
+sub bird_y $bird_y $up_speed
+
+pxl color 12 $bird_y
+jeq $color 1 game_over
+drw 12 $bird_y 3
+pxl color 11 $bird_y
+jeq $color 1 game_over
+drw 11 $bird_y 3
+sub b_h $bird_y 1
+pxl color 12 $b_h
+jeq $color 1 game_over
+drw 12 $b_h 3
+
+
+/ -- check collasion --
+jgt $bird_y $height game_over
+jlt $bird_y 1 game_over
+
+/ -- score --
+jne $pole_1 10 sleep
+add score $score 1
+prt $score
+
+#sleep
+slp 80
+
+sub up_speed $up_speed 1
+jmp begin
+
+#game_over
+/ finish drawing the bird
+drw 12 $bird_y 3
+drw 11 $bird_y 3
+sub b_h $bird_y 1
+drw 12 $b_h 3
+
+prt 'Game Over'
