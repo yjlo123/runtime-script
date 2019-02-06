@@ -100,10 +100,10 @@ drw 12 $bird_y 3
 pxl color 11 $bird_y
 jeq $color 1 game_over
 drw 11 $bird_y 3
-sub b_h $bird_y 1
-pxl color 12 $b_h
+sub bird_h $bird_y 1
+pxl color 12 $bird_h
 jeq $color 1 game_over
-drw 12 $b_h 3
+drw 12 $bird_h 3
 
 
 / -- check collasion --
@@ -125,7 +125,7 @@ jmp begin
 / finish drawing the bird
 drw 12 $bird_y 3
 drw 11 $bird_y 3
-sub b_h $bird_y 1
-drw 12 $b_h 3
+sub bird_h $bird_y 1
+drw 12 $bird_h 3
 
 prt 'Game Over'
