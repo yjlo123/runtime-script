@@ -1,0 +1,47 @@
+let x1 0
+let y1 0
+
+/ 6x6 digit matrix
+let num0 '001100010010010010010010010010001100'
+let num1 '001000001000001000001000001000001000'
+let num2 '011110000100001000010000010010001100'
+let num3 '001100010010010000001000010000001110'
+let num4 '001000001000011110001010001010001000'
+let num5 '001100010010010000001110000010011110'
+let num6 '001100010010010010001110000010001100'
+let num7 '001000001000001000010000010000011110'
+let num8 '001100010010010010001100010010001100'
+let num9 '001100010000011100010010010010001100'
+
+let nums []
+psh $nums $num9
+psh $nums $num8
+psh $nums $num7
+
+let idx 0
+
+#next_num
+pop $nums num
+
+add x2 $x1 5
+add y2 $y1 6
+
+sub i $y1 1
+let j $x1
+
+#draw_num_row
+let j $x1
+add i $i 1
+#draw_num_col
+mod c $num 10
+div num $num 10
+drw $j $i $c
+jeq $j $x2 draw_num_row
+slp 10
+add j $j 1
+jne $i $y2 draw_num_col
+
+add x1 $x1 7
+
+add idx $idx 1
+jne $idx 3 next_num

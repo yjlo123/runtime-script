@@ -251,12 +251,12 @@ function evaluate(ts) {
 		pc = lbl[ts[1]] - 1;
 	} else if (cmd === 'jeq') {
 		// equal
-		if (expr(ts[1]) === expr(ts[2])) {
+		if (expr(ts[1]) == expr(ts[2])) {
 			pc = lbl[ts[3]] - 1;
 		}
 	} else if (cmd === 'jne') {
 		// not equal
-		if (expr(ts[1]) !== expr(ts[2])) {
+		if (expr(ts[1]) != expr(ts[2])) {
 			pc = lbl[ts[3]] - 1;
 		}
 	} else if (cmd === 'jlt') {
@@ -270,11 +270,15 @@ function evaluate(ts) {
 			pc = lbl[ts[3]] - 1;
 		}
 	}else if (cmd === 'add') {
-		env[ts[1]] = expr(ts[2]) + expr(ts[3]);
+		env[ts[1]] = BigInt(expr(ts[2])) + BigInt(expr(ts[3])) + '';
 	} else if (cmd === 'sub') {
-		env[ts[1]] = expr(ts[2]) - expr(ts[3]);
+		env[ts[1]] = BigInt(expr(ts[2])) - BigInt(expr(ts[3])) + '';
 	} else if (cmd === 'mul') {
-		env[ts[1]] = expr(ts[2]) * expr(ts[3]);
+		env[ts[1]] = BigInt(expr(ts[2])) * BigInt(expr(ts[3])) + '';
+	} else if (cmd === 'mod') {
+		env[ts[1]] = BigInt(expr(ts[2])) % BigInt(expr(ts[3])) + '';
+	} else if (cmd === 'div') {
+		env[ts[1]] = BigInt(expr(ts[2])) / BigInt(expr(ts[3])) + '';
 	} else if (cmd === 'slp') {
 		sleep = expr(ts[1]);
 	} else if (cmd === 'drw') {
@@ -285,11 +289,14 @@ function evaluate(ts) {
 	} else if (cmd === 'pxl') {
 		env[ts[1]] = getPixel(expr(ts[2]), expr(ts[3]))
 	} else if (cmd === 'psh') {
-		env[ts[1]].push(expr(ts[2]))
+		let lstVar = ts[1];
+		env[lstVar.slice(1)].push(expr(ts[2]))
 	} else if (cmd === 'pop') {
-		env[ts[2]] = env[ts[1]].pop();
+		let lstVar = ts[1];
+		env[ts[2]] = env[lstVar.slice(1)].pop();
 	} else if (cmd === 'pol') {
-		env[ts[2]] = env[ts[1]].shift();
+		let lstVar = ts[1];
+		env[ts[2]] = env[lstVar.slice(1)].shift();
 	} else if (cmd === 'rnd') {
 		env[ts[1]] = getRndInteger(expr(ts[2]), expr(ts[3]))
 	} else {
@@ -298,46 +305,36 @@ function evaluate(ts) {
 }
 
 function expr(exp) {
-	//console.log('in', exp)
-	let varIdx = exp.indexOf('$');
-	let varName = '';
-	while (varIdx > -1) {
-		varIdx++;
-		while (varIdx < exp.length) {
-			if ('+-*/%&|!<>=),'.indexOf(exp[varIdx]) === -1) {
-				varName += exp[varIdx];
-				varIdx++;
-			} else {
-				break;
-			}
-		}
-		// console.log(varName)
-		let varValue = null;
+	if (exp[0] === '$') {
+		// var
+		let varName = exp.slice(1)
 		if (varName === 'lastkey') {
-			varValue = keys.length > 0 ? keys.shift() : -1;
+			result = keys.length > 0 ? keys.shift() : -1;
 		} else {
-			varValue = env[varName]
-			if (varValue instanceof Array) {
-				varValue = JSON.stringify(varValue);
+			value = env[varName];
+			if (value[0] === '\'' && value[value.length-1] === '\'') {
+				result = value.slice(1, -1);
+			} else {
+				result = value
 			}
 		}
-		exp = exp.replace('$'+varName, varValue);
+	} else if (exp === '[]') {
+		// array
+		result = [];
+	} else {
+		if (exp[0] === '\'' && exp[exp.length-1] === '\'') {
+			// string
+			result = exp.slice(1, -1);
+		} else {
+			result = exp
+		}
+	}
 
-		varName = '';
-		varIdx = exp.indexOf('$');
-		//console.log(exp);
+	if (!isNaN(parseInt(result)) && result <= Number.MAX_SAFE_INTEGER) {
+		// number
+		result = parseInt(result)
 	}
-	//console.log(exp)
-	
-	// TODO eval
-	let result = null;
-	try {
-		result = eval(exp);
-	} catch (e){
-		console.log(exp)
-		return;
-	}
-	
+
 	if (typeof result === "boolean") {
 		return result|0;
 	}
@@ -365,6 +362,8 @@ ctx.fillRect(0, 0, width, height);
 let pixels = [];
 
 function drawPixel(x, y, value) {
+	x = parseInt(x)
+	y = parseInt(y)
 	//var x = offset % widthInBlocks;
 	//var y = Math.floor(offset / widthInBlocks);
 	pixels[widthInBlocks*x+y] = value;
@@ -375,6 +374,8 @@ function drawPixel(x, y, value) {
 }
 
 function getPixel(x, y) {
+	x = parseInt(x)
+	y = parseInt(y)
 	return pixels[widthInBlocks*x+y] | 0;
 }
 

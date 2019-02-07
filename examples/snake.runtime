@@ -11,9 +11,9 @@ let snake []
 let snake_x 10
 #init_snake
 let snake_seg []
-psh snake_seg $snake_x
-psh snake_seg 12
-psh snake $snake_seg
+psh $snake_seg $snake_x
+psh $snake_seg 12
+psh $snake $snake_seg
 add snake_x $snake_x 1
 jne $snake_x 13 init_snake
 
@@ -137,9 +137,9 @@ jmp move_snake
 
 #move_snake
 let new_head []
-psh new_head $x
-psh new_head $y
-psh snake $new_head
+psh $new_head $x
+psh $new_head $y
+psh $snake $new_head
 jne $x $apple_x miss_apple
 jne $y $apple_y miss_apple
 drw $x $y 1
@@ -153,9 +153,9 @@ jne $color 0 game_over
 
 drw $x $y 1
 
-pol snake tail
-pop tail tail_y
-pop tail tail_x
+pol $snake tail
+pop $tail tail_y
+pop $tail tail_x
 drw $tail_x $tail_y 0
 
 jmp begin
