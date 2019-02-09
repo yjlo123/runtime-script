@@ -270,15 +270,15 @@ function evaluate(ts) {
 			pc = lbl[ts[3]] - 1;
 		}
 	}else if (cmd === 'add') {
-		env[ts[1]] = BigInt(expr(ts[2])) + BigInt(expr(ts[3])) + '';
+		env[ts[1]] = expr(ts[2]) + expr(ts[3]);
 	} else if (cmd === 'sub') {
-		env[ts[1]] = BigInt(expr(ts[2])) - BigInt(expr(ts[3])) + '';
+		env[ts[1]] = expr(ts[2]) - expr(ts[3]);
 	} else if (cmd === 'mul') {
-		env[ts[1]] = BigInt(expr(ts[2])) * BigInt(expr(ts[3])) + '';
+		env[ts[1]] = expr(ts[2]) * expr(ts[3]);
 	} else if (cmd === 'mod') {
-		env[ts[1]] = BigInt(expr(ts[2])) % BigInt(expr(ts[3])) + '';
+		env[ts[1]] = expr(ts[2]) % expr(ts[3]);
 	} else if (cmd === 'div') {
-		env[ts[1]] = BigInt(expr(ts[2])) / BigInt(expr(ts[3])) + '';
+		env[ts[1]] = Math.floor(expr(ts[2]) / expr(ts[3]));
 	} else if (cmd === 'slp') {
 		sleep = expr(ts[1]);
 	} else if (cmd === 'drw') {
@@ -291,14 +291,37 @@ function evaluate(ts) {
 	} else if (cmd === 'clr') {
 		clearCanvas();
 	} else if (cmd === 'psh') {
-		let lstVar = ts[1];
-		env[lstVar.slice(1)].push(expr(ts[2]))
+		let lstVar = ts[1].slice(1);
+		let lstVal = env[lstVar];
+		if (typeof lstVal === 'string') {
+			// string
+			env[lstVar] = lstVal + expr(ts[2]);
+		} else {
+			// array
+			lstVal.push(expr(ts[2]));
+		}
 	} else if (cmd === 'pop') {
-		let lstVar = ts[1];
-		env[ts[2]] = env[lstVar.slice(1)].pop();
+		let lstVar = ts[1].slice(1);
+		let lstVal = env[lstVar];
+		if (typeof lstVal === 'string') {
+			// string
+			env[ts[2]] = lstVal.slice(-1);
+			env[lstVar] = lstVal.substring(0, lstVal.length-1);
+		} else {
+			// array
+			env[ts[2]] = lstVal.pop();
+		}
 	} else if (cmd === 'pol') {
-		let lstVar = ts[1];
-		env[ts[2]] = env[lstVar.slice(1)].shift();
+		let lstVar = ts[1].slice(1);
+		let lstVal = env[lstVar];
+		if (typeof lstVal === 'string') {
+			// string
+			env[ts[2]] = lstVal.slice(-1);
+			env[lstVar] = lstVal.substring(1, lstVal.length);
+		} else {
+			// array
+			env[ts[2]] = lstVal.shift();
+		}
 	} else if (cmd === 'put') {
 		let lstVar = ts[1];
 		env[lstVar.slice(1)][expr(ts[2])] = expr(ts[3]);
@@ -337,14 +360,16 @@ function expr(exp) {
 			// string
 			result = exp.slice(1, -1);
 		} else {
-			result = exp
+			if (!isNaN(parseInt(exp)) && exp <= Number.MAX_SAFE_INTEGER) {
+				// integer
+				result = parseInt(exp)
+			} else {
+				result = exp;
+			}
 		}
 	}
 
-	if (!isNaN(parseInt(result)) && result <= Number.MAX_SAFE_INTEGER) {
-		// number
-		result = parseInt(result)
-	}
+	
 
 	if (typeof result === "boolean") {
 		return result|0;
