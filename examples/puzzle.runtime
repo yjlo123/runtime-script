@@ -1,0 +1,212 @@
+/ Slide Puzzle
+/ by Siwei
+/ Feb 2019
+
+/ 6x6 pixel digits
+let num0 001100010010010010010010010010001100
+let num1 001000001000001000001000001000001000
+let num2 011110000100001000010000010010001100
+let num3 001100010010010000001000010000001110
+let num4 001000001000011110001010001010001000
+let num5 001100010010010000001110000010011110
+let num6 001100010010010010001110000010001100
+let num7 001000001000001000010000010000011110
+let num8 001100010010010010001100010010001100
+let num9 001100010000011100010010010010001100
+
+let empty 000000000000000000000000000000000000
+
+let map {}
+put $map 1 $num1
+put $map 2 $num2
+put $map 3 $num3
+put $map 4 $num4
+put $map 5 $num5
+put $map 6 $num6
+put $map 7 $num7
+put $map 8 $num8
+put $map 9 $empty
+
+let cur 9
+
+/ -- print info --
+prt 'SLIDE PUZZLE v1.0'
+prt '- Press arrow keys to slide'
+
+/ -- shuffle numbers--
+let move_count 0
+let prev_dir -1
+
+#shuffle
+rnd dir 0 4
+
+/ -- prevent slide back and forth
+sub opp $dir 2
+jeq $opp $prev_dir next_shuffle
+add opp $dir 2
+jeq $opp $prev_dir next_shuffle
+
+jne $dir 0 try_down
+/ try right
+jeq $cur 3 next_shuffle
+jeq $cur 6 next_shuffle
+jeq $cur 9 next_shuffle
+jmp swap_right
+#try_down
+jne $dir 1 try_left
+jeq $cur 7 next_shuffle
+jeq $cur 8 next_shuffle
+jeq $cur 9 next_shuffle
+jmp swap_down
+#try_left
+jne $dir 2 try_up
+jeq $cur 1 next_shuffle
+jeq $cur 4 next_shuffle
+jeq $cur 7 next_shuffle
+jmp swap_left
+#try_up
+jne $dir 3 next_shuffle
+jeq $cur 1 next_shuffle
+jeq $cur 2 next_shuffle
+jeq $cur 3 next_shuffle
+jmp swap_up
+
+#swap_right
+add target $cur 1
+jmp swap
+#swap_left
+sub target $cur 1
+jmp swap
+#swap_down
+add target $cur 3
+jmp swap
+#swap_up
+sub target $cur 3
+jmp swap
+
+#swap
+get $map $target ln
+put $map $cur $ln
+put $map $target $empty
+let cur $target
+add move_count $move_count 1
+let prev_dir $dir
+
+#next_shuffle
+jlt $move_count 20 shuffle
+
+jmp draw_number
+
+#begin
+
+/ -- check key --
+let key $lastkey
+jne $key 37 check_up
+jeq $cur 3 next
+jeq $cur 6 next
+jeq $cur 9 next
+jmp press_left
+#check_up
+jne $key 38 check_right
+jeq $cur 7 next
+jeq $cur 8 next
+jeq $cur 9 next
+jmp press_up
+#check_right
+jne $key 39 check_down
+jeq $cur 1 next
+jeq $cur 4 next
+jeq $cur 7 next
+jmp press_right
+#check_down
+jne $key 40 next
+jeq $cur 1 next
+jeq $cur 2 next
+jeq $cur 3 next
+jmp press_down
+
+jmp draw_number
+
+#press_left
+add target $cur 1
+jmp update_index
+#press_right
+sub target $cur 1
+jmp update_index
+#press_up
+add target $cur 3
+jmp update_index
+#press_down
+sub target $cur 3
+jmp update_index
+
+#update_index
+get $map $target ln
+put $map $cur $ln
+put $map $target $empty
+let cur $target
+
+/ -- draw numbers --
+#draw_number
+clr
+let x1 1
+let y1 2
+
+let idx_c 0
+let idx_r 0
+
+let idx 1
+#next_num
+get $map $idx num
+
+add x2 $x1 5
+add y2 $y1 6
+
+sub i $y1 1
+let j $x1
+
+#draw_num_row
+let j $x1
+add i $i 1
+#draw_num_col
+mod c $num 10
+div num $num 10
+drw $j $i $c
+jeq $j $x2 draw_num_row
+add j $j 1
+jne $i $y2 draw_num_col
+add x1 $x1 8
+add idx_c $idx_c 1
+add idx $idx 1
+jne $idx_c 3 next_num
+
+let x1 1
+add y1 $y1 7
+let idx_c 0
+add idx_r $idx_r 1
+jne $idx_r 3 next_num
+
+/ -- check win --
+get $map 1 pos_num
+jne $pos_num $num1 next
+get $map 2 pos_num
+jne $pos_num $num2 next
+get $map 3 pos_num
+jne $pos_num $num3 next
+get $map 4 pos_num
+jne $pos_num $num4 next
+get $map 5 pos_num
+jne $pos_num $num5 next
+get $map 6 pos_num
+jne $pos_num $num6 next
+get $map 7 pos_num
+jne $pos_num $num7 next
+get $map 8 pos_num
+jeq $pos_num $num8 win
+
+#next
+slp 10
+jmp begin
+
+#win
+prt 'You Win!'
