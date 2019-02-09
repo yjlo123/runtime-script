@@ -288,6 +288,8 @@ function evaluate(ts) {
 		drawPixel(x, y, c);
 	} else if (cmd === 'pxl') {
 		env[ts[1]] = getPixel(expr(ts[2]), expr(ts[3]))
+	} else if (cmd === 'clr') {
+		clearCanvas();
 	} else if (cmd === 'psh') {
 		let lstVar = ts[1];
 		env[lstVar.slice(1)].push(expr(ts[2]))
@@ -297,6 +299,12 @@ function evaluate(ts) {
 	} else if (cmd === 'pol') {
 		let lstVar = ts[1];
 		env[ts[2]] = env[lstVar.slice(1)].shift();
+	} else if (cmd === 'put') {
+		let lstVar = ts[1];
+		env[lstVar.slice(1)][expr(ts[2])] = expr(ts[3]);
+	} else if (cmd === 'get') {
+		let lstVar = ts[1];
+		env[ts[3]] = env[lstVar.slice(1)][expr(ts[2])];
 	} else if (cmd === 'rnd') {
 		env[ts[1]] = getRndInteger(expr(ts[2]), expr(ts[3]))
 	} else {
@@ -321,6 +329,9 @@ function expr(exp) {
 	} else if (exp === '[]') {
 		// array
 		result = [];
+	} else if (exp === '{}') {
+		// hash table
+		result = {};
 	} else {
 		if (exp[0] === '\'' && exp[exp.length-1] === '\'') {
 			// string
