@@ -25,18 +25,7 @@ prt 'FLAPPY BIRD v1.0'
 prt '- Press `space` to fly'
 
 #begin
-
-/ -- clear canvas
-let clear_y -1
-#clear_next_line
-let clear_x 0
-add clear_y $clear_y 1
-jeq $clear_y $height check_key
-#clear_line
-drw $clear_x $clear_y 0
-add clear_x $clear_x 1
-jeq $clear_x $width clear_next_line
-jmp clear_line
+clr
 
 #check_key
 let key $lastkey
