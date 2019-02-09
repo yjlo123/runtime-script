@@ -1,4 +1,4 @@
-/ Slide Puzzle
+/ Sliding Puzzle
 / by Siwei
 / Feb 2019
 
@@ -30,7 +30,7 @@ put $map 9 $empty
 let cur 9
 
 / -- print info --
-prt 'SLIDE PUZZLE v1.0'
+prt 'SLIDING PUZZLE v1.0'
 prt '- Press arrow keys to slide'
 
 / -- shuffle numbers--
