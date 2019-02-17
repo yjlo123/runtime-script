@@ -282,10 +282,19 @@ function evaluate(ts) {
 	} else if (cmd === 'slp') {
 		sleep = expr(ts[1]);
 	} else if (cmd === 'drw') {
+		// draw pixel
 		let x = expr(ts[1]);
 		let y = expr(ts[2]);
 		let c = expr(ts[3]);
 		drawPixel(x, y, c);
+	} else if (cmd === 'drt') {
+		// draw text
+		let x = expr(ts[1]);
+		let y = expr(ts[2]);
+		let t = expr(ts[3]);
+		let s = expr(ts[4]);
+		let c = expr(ts[5]);
+		drawText(x, y, t, s, c);
 	} else if (cmd === 'pxl') {
 		env[ts[1]] = getPixel(expr(ts[2]), expr(ts[3]))
 	} else if (cmd === 'clr') {
@@ -400,13 +409,20 @@ let pixels = [];
 function drawPixel(x, y, value) {
 	x = parseInt(x)
 	y = parseInt(y)
-	//var x = offset % widthInBlocks;
-	//var y = Math.floor(offset / widthInBlocks);
 	pixels[widthInBlocks*x+y] = value;
-	var color = colors[parseInt(value)];
-	ctx.fillStyle = color;
+	ctx.fillStyle = colors[parseInt(value)];
 
 	ctx.fillRect(x * blockSize, y * blockSize, blockSize, blockSize);
+}
+
+function drawText(x, y, text, size, color) {
+	let fontSize = 10 * size;
+	x = parseInt(x) * blockSize;
+	y = parseInt(y) * blockSize + (fontSize-(2*(fontSize/10)));
+	ctx.fillStyle = colors[parseInt(color)];
+	
+	ctx.font = fontSize + "px monospace";
+	ctx.fillText(text, x, y);
 }
 
 function getPixel(x, y) {
