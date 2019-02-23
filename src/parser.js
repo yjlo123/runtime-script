@@ -1,6 +1,7 @@
 let runtimeParser = (function() {
 	function parseProgram(src) {
 		let program = [];
+		let labels = {}
 
 		let lines = src.split('\n');
 		for (let ln in lines) {
@@ -12,16 +13,17 @@ let runtimeParser = (function() {
 
 			// label
 			if (l[0] === '#') {
-				lbl[l.slice(1).trim()] = ln;
+				labels[l.slice(1).trim()] = ln;
 			}
 			
 			let lineTokens = tokenizeLine(l);
 			program.push(lineTokens);
 		}
 
-		// console.log(lbl)
-		// console.log(program)
-		return program;
+		return {
+			program,
+			labels
+		};
 	}
 
 	function tokenizeLine(line) {

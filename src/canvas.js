@@ -48,9 +48,9 @@ let runtimeCanvas = (function() {
 	}
 
 	return {
-		drawPixel: drawPixel,
-		getPixel: getPixel,
-		drawText: drawText,
-		clearCanvas: clearCanvas
+		drawPixel,
+		getPixel,
+		drawText,
+		clearCanvas
 	};
 })();
