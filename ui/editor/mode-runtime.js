@@ -31,7 +31,7 @@ var runtimeHighlightRules = function() {
     this.normalizeRules();
 };
 
-runtimeHighlightRules.metaData = { fileTypes: [ 'frt', 'fs', 'ldr', 'fth', '4th' ],
+runtimeHighlightRules.metaData = { fileTypes: [ 'runtime', 'rt' ],
       keyEquivalent: '^~F',
       name: 'runtime',
       scopeName: 'source.runtime' };
@@ -56,7 +56,7 @@ var Mode = function() {
 oop.inherits(Mode, TextMode);
 
 (function() {
-    this.lineCommentStart = "--";
+    this.lineCommentStart = "/";
     this.blockComment = null;
     this.$id = "ace/mode/runtime";
 }).call(Mode.prototype);
