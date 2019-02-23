@@ -6,11 +6,9 @@ editor.setFontSize(15);
 
 let env = {};
 let lbl = {};
-let program = [];
+let program = null;
 let pc = 0;
-let sleep = 0;
 
-let parsed = false;
 let running = false;
 let finished = false;
 
@@ -78,16 +76,16 @@ if (codeId) {
 document.getElementById("run-btn").addEventListener("click", executeAll);
 document.getElementById("step-btn").addEventListener("click", executeStep);
 document.getElementById("restart-btn").addEventListener("click", restart);
-document.getElementById("clear-canvas-btn").addEventListener("click", clearCanvas);
+document.getElementById("clear-canvas-btn").addEventListener("click", runtimeCanvas.clearCanvas);
 
 function initEnv() {
-	env = {};
+	env = {
+		_sleep: 0
+	};
 	lbl = {};
-	program = [];
+	program = null;
 	pc = 0;
-	sleep = 0;
 
-	parsed = false;
 	running = false;
 	finished = false;
 	
@@ -112,44 +110,18 @@ function finishedExecution() {
 	document.getElementById("run-btn").classList.remove("disabled");
 }
 
-/* parse source code */
-function parseProgram() {
-	initEnv();
-	let src = editor.session.getValue()
-	let lines = src.split('\n');
-	for (let ln in lines) {
-		let l = lines[ln].trim();
-		if (l === '' || l.startsWith('/')) {
-			program.push([]);
-			continue;
-		}
-	
-		// label
-		if (l[0] === '#') {
-			lbl[l.slice(1).trim()] = ln;
-		}
-		
-		let lineTokens = tokenizeLine(l);
-		program.push(lineTokens);
-	}
-	
-	parsed = true;
-	// console.log(lbl)
-	// console.log(program)
-}
-
 /* execute program */
 function loop() {
 	evaluate(program[pc]);
 	//console.log(pc+1, env)
 	pc++;
-	if (sleep > 0) {
+	if (env._sleep > 0) {
 		return setTimeout(function () {
-			sleep = 0;
+			env._sleep = 0;
 			if (pc < program.length) {
 				return loop();
 			}
-		}, sleep);
+		}, env._sleep);
 	} else {
 		window.clearTimeout();
 		if (pc < program.length) {
@@ -170,7 +142,9 @@ function executeAll() {
 		//console.log(keys)
 	});
 
-	parseProgram();
+	initEnv();
+	let src = editor.session.getValue()
+	program = runtimeParser.parse(src);
 
 	if (!finished) {
 		running = true;
@@ -181,8 +155,10 @@ function executeAll() {
 }
 
 function executeStep() {
-	if (!parsed) {
-		parseProgram();
+	if (program === null) {
+		initEnv();
+		let src = editor.session.getValue()
+		program = runtimeParser.parse(src);
 	}
 	if (finished) {
 		return;
@@ -194,36 +170,6 @@ function executeStep() {
 	} else {
 		finishedExecution();
 	}
-}
-
-function tokenizeLine(line) {
-	let tokens = [];
-	let current = '';
-	for (let i = 0; i < line.length; i++) {
-		let c = line[i];
-		if (c === '\'') {
-			if (current !== '') {
-				tokens.push(current);
-				current = '';
-			}
-			current += line[i];
-			i++;
-			while (i < line.length && line[i] !== '\'') {
-				current += line[i];
-				i++;
-			}
-			current += line[i];
-		} else if (c != ' ') {
-			current += c;
-		} else {
-			tokens.push(current);
-			current = ''
-		}
-	}
-	if (current !== '') {
-		tokens.push(current);
-	}
-	return tokens;
 }
 
 function evaluate(ts) {
@@ -280,13 +226,13 @@ function evaluate(ts) {
 	} else if (cmd === 'div') {
 		env[ts[1]] = Math.floor(expr(ts[2]) / expr(ts[3]));
 	} else if (cmd === 'slp') {
-		sleep = expr(ts[1]);
+		env._sleep = expr(ts[1]);
 	} else if (cmd === 'drw') {
 		// draw pixel
 		let x = expr(ts[1]);
 		let y = expr(ts[2]);
 		let c = expr(ts[3]);
-		drawPixel(x, y, c);
+		runtimeCanvas.drawPixel(x, y, c);
 	} else if (cmd === 'drt') {
 		// draw text
 		let x = expr(ts[1]);
@@ -294,11 +240,11 @@ function evaluate(ts) {
 		let t = expr(ts[3]);
 		let s = expr(ts[4]);
 		let c = expr(ts[5]);
-		drawText(x, y, t, s, c);
+		runtimeCanvas.drawText(x, y, t, s, c);
 	} else if (cmd === 'pxl') {
-		env[ts[1]] = getPixel(expr(ts[2]), expr(ts[3]))
+		env[ts[1]] = runtimeCanvas.getPixel(expr(ts[2]), expr(ts[3]))
 	} else if (cmd === 'clr') {
-		clearCanvas();
+		runtimeCanvas.clearCanvas();
 	} else if (cmd === 'psh') {
 		let lstVar = ts[1].slice(1);
 		let lstVal = env[lstVar];
@@ -378,8 +324,6 @@ function expr(exp) {
 		}
 	}
 
-	
-
 	if (typeof result === "boolean") {
 		return result|0;
 	}
@@ -388,53 +332,4 @@ function expr(exp) {
 
 function getRndInteger(min, max) {
 	return Math.floor(Math.random() * (max - min) ) + min;
-}
-
-
-let colors = ['#000000', '#ffffff', '#d6a090', '#fe3b1e', '#a12c32', '#fa2f7a', '#fb9fda', '#e61cf7', '#992f7c', '#47011f', '#051155', '#4f02ec', '#2d69cb', '#00a6ee', '#6febff', '#08a29a', '#2a666a', '#063619', '#4a4957', '#8e7ba4', '#b7c0ff', '#acbe9c', '#827c70', '#5a3b1c', '#ae6507', '#f7aa30', '#f4ea5c', '#9b9500', '#566204', '#11963b', '#51e113', '#08fdcc']
-
-var canvas = document.getElementById('canvas');
-var ctx = canvas.getContext('2d');
-var width = canvas.width;
-var height = canvas.height;
-var widthInBlocks = 24;
-var heightInBlocks = 24;
-var blockSize = width / widthInBlocks;
-
-ctx.fillStyle = "#000";
-ctx.fillRect(0, 0, width, height);
-
-let pixels = [];
-
-function drawPixel(x, y, value) {
-	x = parseInt(x)
-	y = parseInt(y)
-	pixels[widthInBlocks*x+y] = value;
-	ctx.fillStyle = colors[parseInt(value)];
-
-	ctx.fillRect(x * blockSize, y * blockSize, blockSize, blockSize);
-}
-
-function drawText(x, y, text, size, color) {
-	let fontSize = 10 * size;
-	x = parseInt(x) * blockSize;
-	y = parseInt(y) * blockSize + (fontSize-(2*(fontSize/10)));
-	ctx.fillStyle = colors[parseInt(color)];
-	
-	ctx.font = fontSize + "px monospace";
-	ctx.fillText(text, x, y);
-}
-
-function getPixel(x, y) {
-	x = parseInt(x)
-	y = parseInt(y)
-	return pixels[widthInBlocks*x+y] | 0;
-}
-
-function clearCanvas() {
-	for (let i = 0 ; i < widthInBlocks; i++) {
-		for (let j = 0; j < heightInBlocks; j++) {
-			drawPixel(i, j, 0);
-		}
-	}
 }
