@@ -24,26 +24,26 @@ let runtimeEvaluator = (function() {
 			env._console.Write(resultExp + '\n', 'console-default');
 		} else if (cmd === 'jmp') {
 			// console.log('jump', ts[1], lbl[ts[1]])
-			pc = lbl[ts[1]] - 1;
+			env._pc = lbl[ts[1]] - 1;
 		} else if (cmd === 'jeq') {
 			// equal
 			if (expr(ts[1]) == expr(ts[2])) {
-				pc = lbl[ts[3]] - 1;
+				env._pc = lbl[ts[3]] - 1;
 			}
 		} else if (cmd === 'jne') {
 			// not equal
 			if (expr(ts[1]) != expr(ts[2])) {
-				pc = lbl[ts[3]] - 1;
+				env._pc = lbl[ts[3]] - 1;
 			}
 		} else if (cmd === 'jlt') {
 			// less than
 			if (expr(ts[1]) < expr(ts[2])) {
-				pc = lbl[ts[3]] - 1;
+				env._pc = lbl[ts[3]] - 1;
 			}
 		} else if (cmd === 'jgt') {
 			// greater than
 			if (expr(ts[1]) > expr(ts[2])) {
-				pc = lbl[ts[3]] - 1;
+				env._pc = lbl[ts[3]] - 1;
 			}
 		}else if (cmd === 'add') {
 			env[ts[1]] = expr(ts[2]) + expr(ts[3]);
@@ -62,7 +62,7 @@ let runtimeEvaluator = (function() {
 			let x = expr(ts[1]);
 			let y = expr(ts[2]);
 			let c = expr(ts[3]);
-			runtimeCanvas.drawPixel(x, y, c);
+			env._canvas.drawPixel(x, y, c);
 		} else if (cmd === 'drt') {
 			// draw text
 			let x = expr(ts[1]);
@@ -70,11 +70,11 @@ let runtimeEvaluator = (function() {
 			let t = expr(ts[3]);
 			let s = expr(ts[4]);
 			let c = expr(ts[5]);
-			runtimeCanvas.drawText(x, y, t, s, c);
+			env._canvas.drawText(x, y, t, s, c);
 		} else if (cmd === 'pxl') {
-			env[ts[1]] = runtimeCanvas.getPixel(expr(ts[2]), expr(ts[3]))
+			env[ts[1]] = env._canvas.getPixel(expr(ts[2]), expr(ts[3]))
 		} else if (cmd === 'clr') {
-			runtimeCanvas.clearCanvas();
+			env._canvas.clearCanvas();
 		} else if (cmd === 'psh') {
 			let lstVar = ts[1].slice(1);
 			let lstVal = env[lstVar];
@@ -125,7 +125,7 @@ let runtimeEvaluator = (function() {
 			// var
 			let varName = exp.slice(1)
 			if (varName === 'lastkey') {
-				result = keys.length > 0 ? keys.shift() : -1;
+				result = _env._keys.length > 0 ? _env._keys.shift() : -1;
 			} else {
 				value = _env[varName];
 				if (value[0] === '\'' && value[value.length-1] === '\'') {

@@ -27,6 +27,8 @@ let y1 2
 let idx_c 0
 let idx_r 0
 
+clr
+
 #next_num
 pop $nums num
 

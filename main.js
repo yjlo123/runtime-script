@@ -4,24 +4,13 @@ editor.session.setMode("ace/mode/runtime");
 editor.setFontSize(15);
 
 
-let env = {};
-let lbl = {};
-
-let program = null;
-let pc = 0;
-
-let running = false;
-let finished = false;
-
-let keys = [];
-
-let evaluate = runtimeEvaluator.evaluate;
-
 /* Console */
-
 let jqconsole = $('#console').jqconsole();
 jqconsole.Write('Runtime Script\n', 'console-gray');
 jqconsole.SetPromptLabel('  ');
+
+let runtime = runtimeExecuter;
+runtime.config(runtimeParser, runtimeEvaluator, jqconsole, runtimeCanvas)
 
 let startPrompt = function () {
 	// Start the prompt with history enabled.
@@ -75,107 +64,7 @@ if (codeId) {
 
 
 /* listener */
-document.getElementById("run-btn").addEventListener("click", executeAll);
-document.getElementById("step-btn").addEventListener("click", executeStep);
-document.getElementById("restart-btn").addEventListener("click", restart);
+document.getElementById("run-btn").addEventListener("click", runtime.executeAll);
+document.getElementById("step-btn").addEventListener("click", runtime.executeStep);
+document.getElementById("restart-btn").addEventListener("click", runtime.restart);
 document.getElementById("clear-canvas-btn").addEventListener("click", runtimeCanvas.clearCanvas);
-
-function initEnv() {
-	env = {
-		_sleep: 0,
-		_console: jqconsole,
-		_random: getRandomInteger
-	};
-	lbl = {};
-	program = null;
-	pc = 0;
-
-	running = false;
-	finished = false;
-	
-	keys = [];
-	
-	document.getElementById("step-btn").classList.remove("disabled");
-}
-
-function restart() {
-	initEnv();
-	window.clearTimeout();
-	$(document).off("keydown");
-	document.getElementById("run-btn").classList.remove("disabled");
-}
-
-function finishedExecution() {
-	$(document).off("keydown");
-	running = false;
-	finished = true;
-	document.getElementById("step-btn").classList.add("disabled");
-	document.getElementById("run-btn").classList.remove("disabled");
-}
-
-/* execute program */
-function loop() {
-	evaluate(program[pc], env, lbl);
-	//console.log(pc+1, env)
-	pc++;
-	if (env._sleep > 0) {
-		return setTimeout(function () {
-			env._sleep = 0;
-			if (pc < program.length) {
-				return loop();
-			}
-		}, env._sleep);
-	} else {
-		window.clearTimeout();
-		if (pc < program.length) {
-			return loop();
-		}
-	}
-	finishedExecution();
-}
-
-function executeAll() {
-	if (running) {
-		return;
-	}
-	document.getElementById("run-btn").classList.add("disabled");
-	$(document).on("keydown", function (e) {
-		keys.push(e.which);
-	});
-
-	parseSrc(editor.session.getValue())
-
-	if (!finished) {
-		running = true;
-		if (pc < program.length) {
-			loop();
-		}
-	}
-}
-
-function executeStep() {
-	if (program === null) {
-		parseSrc(editor.session.getValue())
-	}
-	if (finished) {
-		return;
-	}
-	editor.gotoLine(pc+1, 0);
-	if (pc <= program.length) {
-		evaluate(program[pc], env, lbl);
-		pc++;
-	} else {
-		finishedExecution();
-	}
-}
-
-function parseSrc(src) {
-	initEnv();
-	parsed = runtimeParser.parse(src);
-	program = parsed.program;
-	lbl = parsed.labels;
-}
-
-function getRandomInteger(min, max) {
-	return Math.floor(Math.random() * (max - min) ) + min;
-}
