@@ -99,7 +99,7 @@ let runtimeExecuter = (function() {
 		}
 		editor.gotoLine(env._pc+1, 0);
 		if (env._pc <= program.length) {
-			_evaluater.evaluate(program[pc], env, lbl);
+			_evaluater.evaluate(program[env._pc], env, lbl);
 			env._pc++;
 		} else {
 			finishedExecution();

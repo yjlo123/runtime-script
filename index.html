@@ -18,8 +18,10 @@
 
 <div class="runtime-editor">
 <pre id="editor">
+clr
 let x 9
 #draw_dot
+slp 200
 drw $x 11 1
 add x $x 2
 jne $x 15 draw_dot
@@ -51,7 +53,7 @@ prt 'Hello World!'
 <script src="src/parser.js"></script>
 <script src="src/canvas.js"></script>
 <script src="src/evaluator.js"></script>
-<script src="src/executer.js"></script>
+<script src="src/executor.js"></script>
 <script src="main.js"></script>
 
 </body>

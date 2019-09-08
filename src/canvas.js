@@ -15,6 +15,9 @@ let runtimeCanvas = (function() {
 	let pixels = [];
 
 	function drawPixel(x, y, value) {
+		if (x > widthInBlocks || x < 0 || y > heightInBlocks || y < 0) {
+			return;
+		}
 		x = parseInt(x)
 		y = parseInt(y)
 		pixels[widthInBlocks*x+y] = value;
