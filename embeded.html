@@ -17,45 +17,17 @@
 </head>
 <body>
 
-<div class="runtime-editor">
-<pre id="editor" class="runtime-ace-editor">
-clr
-let x 9
-#draw_dot
-slp 200
-drw $x 11 1
-add x $x 2
-jne $x 15 draw_dot
-prt 'Hello World!'
-</pre>
+<div class="runtime-embeded-box" style="width: 800px; height: 600px;"></div>
 
-	<div class="right">
-		<div id="control-panel">
-			<div class="btn" id="run-btn">Run</div>
-			<div class="btn" id="step-btn">Step</div>
-			<div class="btn" id="restart-btn">Stop</div>
-			<br/>
-			<div class="btn" id="clear-canvas-btn">Clear canvas</div>
-			<br/>
-			<a class="btn" target="_blank" href="https://github.com/yjlo123/runtime-script">Github</a>
-		</div>
-		
-		<div id="canves-panel">
-			<canvas id="canvas" width="240" height="240"></canvas>
-		</div>
-		
-		<div id="console-panel">
-			<div id="console"></div>
-		</div>
-	</div>
-</div>
+<div class="runtime-embeded-box" style="width: 600px; height: 400px;"></div>
 
+<script src="runtime-init.js"></script>
 <script src="ui/editor/ace.js"></script>
 <script src="src/parser.js"></script>
 <script src="src/canvas.js"></script>
 <script src="src/evaluator.js"></script>
 <script src="src/executor.js"></script>
-<script src="main.js"></script>
+<script src="runtime.js"></script>
 
 </body>
 </html>

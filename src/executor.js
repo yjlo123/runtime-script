@@ -1,8 +1,10 @@
-let runtimeExecuter = (function() {
+let runtimeExecuter = function() {
 	let _parser = null;
 	let _evaluater = null;
+	let _editor = null;
 	let _console = null;
 	let _canvas = null;
+	let _controls = {};
 
 	let env = {};
 	let lbl = {};
@@ -11,44 +13,57 @@ let runtimeExecuter = (function() {
 	let running = false;
 	let finished = false;
 
-	function config(parser, evaluater, consl, canvas) {
+	function config(parser, evaluater, editor, consl, canvas, controls) {
 		_parser = parser;
 		_evaluater = evaluater;
+		_editor = editor;
 		_console = consl;
-		_canvas = canvas
+		_canvas = canvas;
+		_controls = controls;
 	}
 
 	function initEnv() {
 		env = {
 			_pc: 0,
 			_sleep: 0,
+			_editor: _editor,
 			_console: _console,
 			_canvas: _canvas,
 			_random: getRandomInteger,
-			_keys: []
+			_keys: [],
+			_controls: _controls
 		};
 		lbl = {};
 		program = null;
 
 		running = false;
 		finished = false;
-
-		document.getElementById("step-btn").classList.remove("disabled");
+		
+		if (_controls.step) {
+			_controls.step.removeClass("disabled")
+		}
 	}
 
 	function restart() {
 		initEnv();
 		window.clearTimeout();
 		$(document).off("keydown");
-		document.getElementById("run-btn").classList.remove("disabled");
+		if (_controls.run) {
+			_controls.run.removeClass("disabled")
+		}
 	}
 
 	function finishedExecution() {
 		$(document).off("keydown");
 		running = false;
 		finished = true;
-		document.getElementById("step-btn").classList.add("disabled");
-		document.getElementById("run-btn").classList.remove("disabled");
+		
+		if (_controls.step) {
+			_controls.step.addClass("disabled")
+		}
+		if (_controls.run) {
+			_controls.run.removeClass("disabled")
+		}
 	}
 
 	/* execute program */
@@ -58,7 +73,8 @@ let runtimeExecuter = (function() {
 		if (env._sleep > 0) {
 			return setTimeout(function () {
 				env._sleep = 0;
-				if (env._pc < program.length) {
+				// program is null when stopped
+				if (program && env._pc < program.length) {
 					return loop();
 				}
 			}, env._sleep);
@@ -75,12 +91,16 @@ let runtimeExecuter = (function() {
 		if (running) {
 			return;
 		}
-		document.getElementById("run-btn").classList.add("disabled");
+
+		if (_controls.run) {
+			_controls.run.addClass("disabled")
+		}
+
 		$(document).on("keydown", function (e) {
 			env._keys.push(e.which);
 		});
 
-		parseSrc(editor.session.getValue())
+		parseSrc(_editor.session.getValue())
 
 		if (!finished) {
 			running = true;
@@ -92,12 +112,12 @@ let runtimeExecuter = (function() {
 
 	function executeStep() {
 		if (program === null) {
-			parseSrc(editor.session.getValue())
+			parseSrc(_editor.session.getValue())
 		}
 		if (finished) {
 			return;
 		}
-		editor.gotoLine(env._pc+1, 0);
+		_editor.gotoLine(env._pc+1, 0);
 		if (env._pc <= program.length) {
 			_evaluater.evaluate(program[env._pc], env, lbl);
 			env._pc++;
@@ -123,4 +143,4 @@ let runtimeExecuter = (function() {
 		executeStep,
 		restart
 	};
-})();
+};

@@ -9,8 +9,30 @@ let jqconsole = $('#console').jqconsole();
 jqconsole.Write('Runtime Script\n', 'console-gray');
 jqconsole.SetPromptLabel('  ');
 
-let runtime = runtimeExecuter;
-runtime.config(runtimeParser, runtimeEvaluator, jqconsole, runtimeCanvas)
+let runtime = runtimeExecuter();
+let canvas = runtimeCanvas();
+canvas.init($('#canvas')[0]);
+let evaluator = runtimeEvaluator();
+let parser = runtimeParser();
+
+let runBtn = $("#run-btn");
+let restartBtn = $("#restart-btn");
+let stepBtn = $("#step-btn");
+let clearBtn = $("#clear-canvas-btn");
+
+runBtn.click(function() {runtime.executeAll()});
+restartBtn.click(function() {runtime.executeStep()});
+stepBtn.click(function() {runtime.restart()});
+clearBtn.click(function() {canvas.clearCanvas()});
+
+let controls = {
+	run: runBtn,
+	restart: restartBtn,
+	stepBtn: stepBtn,
+	clearBtn: clearBtn
+};
+
+runtime.config(parser, evaluator, editor, jqconsole, canvas, controls);
 
 let startPrompt = function () {
 	// Start the prompt with history enabled.
@@ -61,10 +83,3 @@ let codeId = getURLParameter('src');
 if (codeId) {
 	getCode(codeId);
 }
-
-
-/* listener */
-document.getElementById("run-btn").addEventListener("click", runtime.executeAll);
-document.getElementById("step-btn").addEventListener("click", runtime.executeStep);
-document.getElementById("restart-btn").addEventListener("click", runtime.restart);
-document.getElementById("clear-canvas-btn").addEventListener("click", runtimeCanvas.clearCanvas);

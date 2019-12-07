@@ -2,13 +2,61 @@ body {
 	overflow: hidden;
 }
 
-#editor {
+/* core */
+.runtime-ace-editor {
 	margin: 0;
 	position: absolute;
 	top: 0;
 	bottom: 0;
 	left: 0;
 	right: 240px;
+}
+
+.runtime-embeded-box {
+	border: 2px solid gray;
+	position: relative;
+}
+
+.runtime-ace-editor.runtime-embeded {
+	margin: 0;
+	position: relative;
+	width: 100%;
+	flex: auto;
+}
+
+#runtime-console.runtime-embeded {
+	position: relative;
+	height: 100%;
+}
+
+.runtime-canvas {
+	border: 1px solid black;
+}
+
+#runtime-canvas.runtime-embeded {
+	border: 1px solid black;
+}
+
+.runtime-embeded-left {
+	position:absolute;
+	height: 100%;
+	right: 168px;
+	top: 0;
+	left: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+}
+
+.runtime-embeded-right {
+	position:absolute;
+	width: 168px;
+	height: 100%;
+	right: 0;
+	top: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
 }
 
 .btn {
@@ -32,6 +80,8 @@ body {
 	background: rgb(220,220,220);
 	color: gray;
 }
+
+/* playground */
 
 .right {
 	position:absolute;
@@ -68,8 +118,4 @@ body {
 
 #canves-panel canvas {
 	margin: auto;
-}
-
-.canvas {
-	border: 1px solid black;
 }

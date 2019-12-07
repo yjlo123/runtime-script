@@ -1,4 +1,4 @@
-let runtimeParser = (function() {
+let runtimeParser = function() {
 	function parseProgram(src) {
 		let program = [];
 		let labels = {}
@@ -59,4 +59,4 @@ let runtimeParser = (function() {
 	return {
 		parse: parseProgram
 	};
-})();
+};

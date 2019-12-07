@@ -1,4 +1,4 @@
-let runtimeEvaluator = (function() {
+let runtimeEvaluator = function() {
 	let _env = null;
 
 	function evaluate(ts, env, lbl) {
@@ -163,4 +163,4 @@ let runtimeEvaluator = (function() {
 	return {
 		evaluate
 	}
-})();
+};
