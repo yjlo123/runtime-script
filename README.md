@@ -1,2 +1,2 @@
 # runtime-script
-runtime programming language
+An assembly-like programming language

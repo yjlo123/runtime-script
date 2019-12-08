@@ -8,7 +8,7 @@
 	<script src="ui/main/jquery-1.12.4.js"></script>
 	
 	<!-- console -->
-	<link rel="stylesheet" href="ui/console/jqconsole.css">
+	<link rel="stylesheet" href="ui/console/jqconsole-embeded.css">
 	<script src="ui/console/jqconsole.js"></script>
 
 	<link rel="icon" href="https://siwei.dev/favicon.gif">
@@ -17,9 +17,21 @@
 </head>
 <body>
 
-<div class="runtime-embeded-box" style="width: 800px; height: 600px;"></div>
+<div class="runtime-embeded-box" style="width: 800px; height: 600px;">
+clr
+let x 9
+#draw_dot
+slp 200
+drw $x 11 1
+add x $x 2
+jne $x 15 draw_dot
+prt 'Hello World!'
+</div>
 
-<div class="runtime-embeded-box" style="width: 600px; height: 400px;"></div>
+<div class="runtime-embeded-box runtime-show-canvas" style="width: 600px; height: 400px;"></div>
+
+<div class="runtime-embeded-box runtime-show-canvas runtime-hide-console" style="width: 100%; height: 280px;">
+</div>
 
 <script src="runtime-init.js"></script>
 <script src="ui/editor/ace.js"></script>
@@ -28,6 +40,13 @@
 <script src="src/evaluator.js"></script>
 <script src="src/executor.js"></script>
 <script src="runtime.js"></script>
+
+<style>
+	.ace-chrome .ace_gutter {
+		background: white;
+		border-right: 1px solid #ddd;
+	}
+</style>
 
 </body>
 </html>

@@ -2,14 +2,14 @@
 	$(".runtime-embeded-box").each(function() {
 		let editorElement = $(this).find('.runtime-ace-editor')[0];
 		let editor = ace.edit(editorElement.id);
-		editor.setTheme("ace/theme/chrome");
+		editor.setTheme("ace/theme/chrome-white");
 		editor.session.setMode("ace/mode/runtime");
 		editor.setFontSize(13);
 
 		/* Console */
 		let jqconsole = $(this).find('#runtime-console').jqconsole();
 		jqconsole.Write('Runtime Script\n', 'console-gray');
-		jqconsole.SetPromptLabel('  ');
+		jqconsole.SetPromptLabel('>');
 
 		/* control buttons */
 		let runBtn = $(this).find("#run-btn");
@@ -24,12 +24,14 @@
 			clearBtn: clearBtn
 		};
 		
+		let options = {};
+		
 		let runtime = runtimeExecuter();
 		let canvas = runtimeCanvas();
 		let evaluator = runtimeEvaluator();
 		let parser = runtimeParser();
 		canvas.init($(this).find('#runtime-canvas')[0]);
-		runtime.config(parser, evaluator, editor, jqconsole, canvas, controls);
+		runtime.config(parser, evaluator, editor, jqconsole, canvas, controls, options);
 
 		let startPrompt = function () {
 			// Start the prompt with history enabled.
@@ -46,7 +48,12 @@
 
 		/* listener */
 		runBtn.click(function() {
-			runtime.executeAll();
+			try {
+				runtime.executeAll();
+			} catch(err) {
+				jqconsole.Write(`${err}\n`, 'console-error');
+			}
+			
 		});
 		restartBtn.click(function() {
 			runtime.restart();

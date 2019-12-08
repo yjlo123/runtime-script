@@ -5,6 +5,7 @@ let runtimeExecuter = function() {
 	let _console = null;
 	let _canvas = null;
 	let _controls = {};
+	let _options = {};
 
 	let env = {};
 	let lbl = {};
@@ -13,13 +14,14 @@ let runtimeExecuter = function() {
 	let running = false;
 	let finished = false;
 
-	function config(parser, evaluater, editor, consl, canvas, controls) {
+	function config(parser, evaluater, editor, consl, canvas, controls, options) {
 		_parser = parser;
 		_evaluater = evaluater;
 		_editor = editor;
 		_console = consl;
 		_canvas = canvas;
 		_controls = controls;
+		_options = options;
 	}
 
 	function initEnv() {
@@ -31,7 +33,8 @@ let runtimeExecuter = function() {
 			_canvas: _canvas,
 			_random: getRandomInteger,
 			_keys: [],
-			_controls: _controls
+			_controls: _controls,
+			_options: _options
 		};
 		lbl = {};
 		program = null;
