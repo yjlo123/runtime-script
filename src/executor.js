@@ -71,7 +71,7 @@ let runtimeExecuter = function() {
 
 	/* execute program */
 	function loop() {
-		_evaluater.evaluate(program[env._pc], env, lbl);
+		_evaluater.evaluate(program[env._pc], env, lbl, program);
 		env._pc++;
 		if (env._sleep > 0) {
 			return setTimeout(function () {
@@ -122,7 +122,7 @@ let runtimeExecuter = function() {
 		}
 		_editor.gotoLine(env._pc+1, 0);
 		if (env._pc <= program.length) {
-			_evaluater.evaluate(program[env._pc], env, lbl);
+			_evaluater.evaluate(program[env._pc], env, lbl, program);
 			env._pc++;
 		} else {
 			finishedExecution();

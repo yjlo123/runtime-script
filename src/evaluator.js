@@ -1,7 +1,19 @@
 let runtimeEvaluator = function() {
 	let _env = null;
 
-	function evaluate(ts, env, lbl) {
+	function gotoIfFalse(program, env) {
+		while (env._pc <= program.length && program[env._pc][0] !== 'els' && program[env._pc][0] !== 'fin') {
+			env._pc++;
+		}
+	}
+
+	function gotoIfEnd(program, env) {
+		while (env._pc <= program.length && program[env._pc][0] !== 'fin') {
+			env._pc++;
+		}
+	}
+
+	function evaluate(ts, env, lbl, program) {
 		_env = env; // for expr
 		if (ts.length === 0) {
 			return;
@@ -45,7 +57,16 @@ let runtimeEvaluator = function() {
 			if (expr(ts[1]) > expr(ts[2])) {
 				env._pc = lbl[ts[3]] - 1;
 			}
-		}else if (cmd === 'add') {
+		} else if (cmd === 'ife') {
+			// if
+			if (expr(ts[1]) !== expr(ts[2])) {
+				gotoIfFalse(program, env);
+			}
+		} else if (cmd === 'els') {
+			gotoIfEnd(program, env);
+		} else if (cmd === 'fin') {
+			return;
+		} else if (cmd === 'add') {
 			env[ts[1]] = expr(ts[2]) + expr(ts[3]);
 		} else if (cmd === 'sub') {
 			env[ts[1]] = expr(ts[2]) - expr(ts[3]);
