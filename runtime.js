@@ -2,7 +2,7 @@
 	$(".runtime-embeded-box").each(function() {
 		let editorElement = $(this).find('.runtime-ace-editor')[0];
 		let editor = ace.edit(editorElement.id);
-		editor.setTheme("ace/theme/chrome-white");
+		editor.setTheme("ace/theme/chrome");
 		editor.session.setMode("ace/mode/runtime");
 		editor.setFontSize(13);
 
@@ -60,5 +60,7 @@
 		});
 
 	});
+	
+	setTimeout(function(){ $(window).scrollTop(0); }, 100);
 	
 })();
