@@ -8,7 +8,7 @@ var runtimeHighlightRules = function() {
 
     this.$rules = { start: 
       [ { token: 'keyword.control.runtime',
-           regex: '\\b(?:let|jmp|slp|tim|add|sub|mul|mod|div|psh|pop|pol|put|get|drw|drt|pxl|clr|prt|rnd|j(?:eq|ne|lt|gt)|ife|ifg|els|fin)\\b',
+           regex: '\\b(?:let|jmp|slp|tim|add|sub|mul|mod|div|psh|pop|pol|put|get|drw|drt|pxl|clr|prt|rnd|j(?:eq|ne|lt|gt)|ife|ifg|els|fin|def|ret|end|cal)\\b',
            caseInsensitive: true },
 
          { token: 'variable',

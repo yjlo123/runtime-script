@@ -7,13 +7,13 @@ let runtimeEvaluator = function() {
 		}
 	}
 
-	function gotoIfEnd(program, env) {
-		while (env._pc <= program.length && program[env._pc][0] !== 'fin') {
+	function gotoEnd(program, env, keyword) {
+		while (env._pc <= program.length && program[env._pc][0] !== keyword) {
 			env._pc++;
 		}
 	}
 
-	function evaluate(ts, env, lbl, program) {
+	function evaluate(ts, env, lbl, fun, program) {
 		_env = env; // for expr
 		if (ts.length === 0) {
 			return;
@@ -68,7 +68,7 @@ let runtimeEvaluator = function() {
 				gotoIfFalse(program, env);
 			}
 		} else if (cmd === 'els') {
-			gotoIfEnd(program, env);
+			gotoEnd(program, env, 'fin');
 		} else if (cmd === 'fin') {
 			return;
 		} else if (cmd === 'add') {
@@ -140,7 +140,7 @@ let runtimeEvaluator = function() {
 			let lstVar = ts[1];
 			env[ts[3]] = env[lstVar.slice(1)][expr(ts[2])];
 		} else if (cmd === 'rnd') {
-			env[ts[1]] = env._random(expr(ts[2]), expr(ts[3]))
+			env[ts[1]] = env._random(expr(ts[2]), expr(ts[3]));
 		} else if (cmd === 'tim') {
 			let dateFuncMap = {
 				'year': Date.prototype.getFullYear,
@@ -152,9 +152,17 @@ let runtimeEvaluator = function() {
 				'second': Date.prototype.getSeconds,
 				'milli': Date.prototype.getMilliseconds
 			}
-			env[ts[1]] = dateFuncMap[ts[2]].call(new Date);
+			env[ts[1]] = dateFuncMap[ts[2]].call(new Date());
+		} else if (cmd === 'def') {
+			gotoEnd(program, env, 'end');
+		} else if (cmd === 'ret' || cmd === 'end') {
+			let retPc = env._stack.pop();
+			env._pc = retPc;
+		} else if (cmd === 'cal') {
+			env._stack.push(env._pc);
+			env._pc = fun[ts[1]];
 		} else {
-			console.log('ignore', cmd)
+			console.log('ignore', cmd);
 		}
 	}
 

@@ -9,6 +9,7 @@ let runtimeExecuter = function() {
 
 	let env = {};
 	let lbl = {};
+	let fun = {};
 
 	let program = null;
 	let running = false;
@@ -33,10 +34,12 @@ let runtimeExecuter = function() {
 			_canvas: _canvas,
 			_random: getRandomInteger,
 			_keys: [],
+			_stack: [], // pc stack
 			_controls: _controls,
 			_options: _options
 		};
 		lbl = {};
+		fun = {};
 		program = null;
 
 		running = false;
@@ -71,7 +74,7 @@ let runtimeExecuter = function() {
 
 	/* execute program */
 	function loop() {
-		_evaluater.evaluate(program[env._pc], env, lbl, program);
+		_evaluater.evaluate(program[env._pc], env, lbl, fun, program);
 		env._pc++;
 		if (env._sleep > 0) {
 			return setTimeout(function () {
@@ -122,7 +125,7 @@ let runtimeExecuter = function() {
 		}
 		_editor.gotoLine(env._pc+1, 0);
 		if (env._pc <= program.length) {
-			_evaluater.evaluate(program[env._pc], env, lbl, program);
+			_evaluater.evaluate(program[env._pc], env, lbl, fun, program);
 			env._pc++;
 		} else {
 			finishedExecution();
@@ -134,6 +137,7 @@ let runtimeExecuter = function() {
 		parsed = _parser.parse(src);
 		program = parsed.program;
 		lbl = parsed.labels;
+		fun = parsed.funcs;
 	}
 
 	function getRandomInteger(min, max) {
