@@ -21,8 +21,8 @@ let stepBtn = $("#step-btn");
 let clearBtn = $("#clear-canvas-btn");
 
 runBtn.click(function() {runtime.executeAll()});
-restartBtn.click(function() {runtime.executeStep()});
-stepBtn.click(function() {runtime.restart()});
+restartBtn.click(function() {runtime.restart()});
+stepBtn.click(function() {runtime.executeStep()});
 clearBtn.click(function() {canvas.clearCanvas()});
 
 let controls = {
