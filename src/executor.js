@@ -29,6 +29,8 @@ let runtimeExecuter = function() {
 		env = {
 			_pc: 0,
 			_sleep: 0,
+			_pause: false,
+			_resume: executeStep, // callback function, default execute step
 			_editor: _editor,
 			_console: _console,
 			_canvas: _canvas,
@@ -74,6 +76,10 @@ let runtimeExecuter = function() {
 
 	/* execute program */
 	function loop() {
+		if (env._pause) {
+			env._resume = loop;
+			return;
+		}
 		_evaluater.evaluate(program[env._pc], env, lbl, fun, program);
 		env._pc++;
 		if (env._sleep > 0) {
@@ -123,8 +129,12 @@ let runtimeExecuter = function() {
 		if (finished) {
 			return;
 		}
+		if (env._pause) {
+			env._resume = executeStep;
+			return;
+		}
 		_editor.gotoLine(env._pc+1, 0);
-		if (env._pc <= program.length) {
+		if (env._pc < program.length) {
 			_evaluater.evaluate(program[env._pc], env, lbl, fun, program);
 			env._pc++;
 		} else {

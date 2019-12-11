@@ -1,16 +1,24 @@
 let runtimeEvaluator = function() {
 	let _env = null;
 
-	function gotoIfFalse(program, env) {
+	function _gotoIfFalse(program, env) {
 		while (env._pc <= program.length && program[env._pc][0] !== 'els' && program[env._pc][0] !== 'fin') {
 			env._pc++;
 		}
 	}
 
-	function gotoEnd(program, env, keyword) {
+	function _gotoEnd(program, env, keyword) {
 		while (env._pc <= program.length && program[env._pc][0] !== keyword) {
 			env._pc++;
 		}
+	}
+
+	function _input(env, message, varName) {
+		env._console.Input(function(input) {
+			env[varName] = input;
+			env._pause = false;
+			env._resume.call();
+		});
 	}
 
 	function evaluate(ts, env, lbl, fun, program) {
@@ -34,6 +42,9 @@ let runtimeEvaluator = function() {
 				resultExp += '';
 			}
 			env._console.Write(resultExp + '\n', 'console-default');
+		} else if (cmd === 'inp') {
+			_input(env, '>', ts[1]);
+			env._pause = true;
 		} else if (cmd === 'jmp') {
 			// console.log('jump', ts[1], lbl[ts[1]])
 			env._pc = lbl[ts[1]] - 1;
@@ -60,15 +71,15 @@ let runtimeEvaluator = function() {
 		} else if (cmd === 'ife') {
 			// if equal
 			if (expr(ts[1]) !== expr(ts[2])) {
-				gotoIfFalse(program, env);
+				_gotoIfFalse(program, env);
 			}
 		} else if (cmd === 'ifg') {
 			// if greater than
 			if (expr(ts[1]) <= expr(ts[2])) {
-				gotoIfFalse(program, env);
+				_gotoIfFalse(program, env);
 			}
 		} else if (cmd === 'els') {
-			gotoEnd(program, env, 'fin');
+			_gotoEnd(program, env, 'fin');
 		} else if (cmd === 'fin') {
 			return;
 		} else if (cmd === 'add') {
@@ -154,7 +165,7 @@ let runtimeEvaluator = function() {
 			}
 			env[ts[1]] = dateFuncMap[ts[2]].call(new Date());
 		} else if (cmd === 'def') {
-			gotoEnd(program, env, 'end');
+			_gotoEnd(program, env, 'end');
 		} else if (cmd === 'ret' || cmd === 'end') {
 			let retPc = env._stack.pop();
 			env._pc = retPc;

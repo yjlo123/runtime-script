@@ -9,7 +9,7 @@
 		/* Console */
 		let jqconsole = $(this).find('#runtime-console').jqconsole();
 		jqconsole.Write('Runtime Script\n', 'console-gray');
-		jqconsole.SetPromptLabel('>');
+		jqconsole.SetPromptLabel(' ');
 
 		/* control buttons */
 		let runBtn = $(this).find("#run-btn");
