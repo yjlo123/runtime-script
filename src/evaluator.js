@@ -92,6 +92,19 @@ let runtimeEvaluator = function() {
 			env[ts[1]] = expr(ts[2]) % expr(ts[3]);
 		} else if (cmd === 'div') {
 			env[ts[1]] = Math.floor(expr(ts[2]) / expr(ts[3]));
+		} else if (cmd === 'int') {
+			env[ts[1]] = parseInt(expr(ts[2]));
+		} else if (cmd === 'str') {
+			env[ts[1]] = expr(ts[2]).toString();
+		} else if (cmd === 'typ') {
+			let val = expr(ts[2]);
+			if (typeof val === 'number') {
+				env[ts[1]] = 'int';
+			} else if (typeof val === 'string') {
+				env[ts[1]] = 'str';
+			} else {
+				env[ts[1]] = 'err';
+			}
 		} else if (cmd === 'slp') {
 			env._sleep = expr(ts[1]);
 		} else if (cmd === 'drw') {
@@ -180,7 +193,7 @@ let runtimeEvaluator = function() {
 	function expr(exp) {
 		if (exp[0] === '$') {
 			// var
-			let varName = exp.slice(1)
+			let varName = exp.slice(1);
 			if (varName === 'lastkey') {
 				result = _env._keys.length > 0 ? _env._keys.shift() : -1;
 			} else {
@@ -188,7 +201,7 @@ let runtimeEvaluator = function() {
 				if (value[0] === '\'' && value[value.length-1] === '\'') {
 					result = value.slice(1, -1);
 				} else {
-					result = value
+					result = value;
 				}
 			}
 		} else if (exp === '[]') {
@@ -204,7 +217,7 @@ let runtimeEvaluator = function() {
 			} else {
 				if (!isNaN(parseInt(exp)) && exp <= Number.MAX_SAFE_INTEGER) {
 					// integer
-					result = parseInt(exp)
+					result = parseInt(exp);
 				} else {
 					result = exp;
 				}
@@ -219,5 +232,5 @@ let runtimeEvaluator = function() {
 
 	return {
 		evaluate
-	}
+	};
 };

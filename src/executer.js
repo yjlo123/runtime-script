@@ -48,7 +48,7 @@ let runtimeExecuter = function() {
 		finished = false;
 		
 		if (_controls.step) {
-			_controls.step.removeClass("disabled")
+			_controls.step.removeClass("disabled");
 		}
 	}
 
@@ -57,7 +57,7 @@ let runtimeExecuter = function() {
 		window.clearTimeout();
 		$(document).off("keydown");
 		if (_controls.run) {
-			_controls.run.removeClass("disabled")
+			_controls.run.removeClass("disabled");
 		}
 	}
 
@@ -67,10 +67,10 @@ let runtimeExecuter = function() {
 		finished = true;
 		
 		if (_controls.step) {
-			_controls.step.addClass("disabled")
+			_controls.step.addClass("disabled");
 		}
 		if (_controls.run) {
-			_controls.run.removeClass("disabled")
+			_controls.run.removeClass("disabled");
 		}
 	}
 
@@ -105,14 +105,14 @@ let runtimeExecuter = function() {
 		}
 
 		if (_controls.run) {
-			_controls.run.addClass("disabled")
+			_controls.run.addClass("disabled");
 		}
 
 		$(document).on("keydown", function (e) {
 			env._keys.push(e.which);
 		});
 
-		parseSrc(_editor.session.getValue())
+		parseSrc(_editor.session.getValue());
 
 		if (!finished) {
 			running = true;
@@ -124,7 +124,7 @@ let runtimeExecuter = function() {
 
 	function executeStep() {
 		if (program === null) {
-			parseSrc(_editor.session.getValue())
+			parseSrc(_editor.session.getValue());
 		}
 		if (finished) {
 			return;
