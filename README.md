@@ -1,6 +1,18 @@
-# runtime-script
+# Runtime Script
 An assembly-like programming language.
 
+## Playground
+https://runtime.siwei.dev/
+
+## Tutorial
+https://siwei.dev/doc/runtime/
+
+## Examples
+https://runtime.siwei.dev/?src=snake
+https://runtime.siwei.dev/?src=bird
+https://runtime.siwei.dev/?src=puzzle
+
+## Language reference
 ```
 let N V
 prt V
