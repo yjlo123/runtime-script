@@ -8,9 +8,9 @@ https://runtime.siwei.dev/
 https://siwei.dev/doc/runtime/
 
 ## Examples
-https://runtime.siwei.dev/?src=snake
-https://runtime.siwei.dev/?src=bird
-https://runtime.siwei.dev/?src=puzzle
+https://runtime.siwei.dev/?src=snake  
+https://runtime.siwei.dev/?src=bird  
+https://runtime.siwei.dev/?src=puzzle  
 
 ## Language reference
 ```
