@@ -38,6 +38,11 @@ slp V
 rnd N V V
 tim N year|month|date|day|hour|minute|second|milli
 
+# data type
+int N V
+str N V
+typ N V
+
 # advanced
 ife V V
 ifg V V
