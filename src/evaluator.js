@@ -13,7 +13,7 @@ let runtimeEvaluator = function() {
 		}
 	}
 
-	function _input(env, message, varName) {
+	function _input(env, varName) {
 		env._console.Input(function(input) {
 			env[varName] = input;
 			env._pause = false;
@@ -43,7 +43,7 @@ let runtimeEvaluator = function() {
 			}
 			env._console.Write(resultExp + '\n', 'console-default');
 		} else if (cmd === 'inp') {
-			_input(env, '>', ts[1]);
+			_input(env, ts[1]);
 			env._pause = true;
 		} else if (cmd === 'jmp') {
 			// console.log('jump', ts[1], lbl[ts[1]])

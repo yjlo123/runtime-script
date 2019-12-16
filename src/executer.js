@@ -59,6 +59,7 @@ let runtimeExecuter = function() {
 		if (_controls.run) {
 			_controls.run.removeClass("disabled");
 		}
+		_console.AbortPrompt();
 	}
 
 	function finishedExecution() {

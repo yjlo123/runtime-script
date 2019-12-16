@@ -37,7 +37,7 @@
 
 /* The command history */
 .jqconsole-old-prompt {
-	color: #0b8800;
+	color: #0e9602;
 	font-weight: normal;
 }
 .jqconsole-old-prompt:before {
@@ -46,7 +46,7 @@
 
 /* The text color when in input mode. */
 .jqconsole-input {
-	color: #4fc3f7;
+	color: #21a9e9;
 	font-weight: normal;
 	background-size: 8px 12px;
 	background-position: 2px 2px;
@@ -57,7 +57,7 @@
 
 /* Previously entered input. */
 .jqconsole-old-input {
-	color: #2196f3;
+	color: #0866b3;
 	font-weight: normal;
 	background-size: 8px 12px;
 	background-position: 2px 2px;

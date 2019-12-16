@@ -648,7 +648,8 @@ Licensed under the MIT license
           this.Write(text + NEWLINE, CLASS_OLD_INPUT);
         }
       } else {
-        this.Write(text + NEWLINE, CLASS_OLD_PROMPT);
+        // prevent empty old prompt
+        //this.Write(text + NEWLINE, CLASS_OLD_PROMPT);
       }
       this.ClearPromptText(true);
       this.state = STATE_OUTPUT;
