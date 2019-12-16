@@ -657,6 +657,26 @@ Licensed under the MIT license
       this._CheckInputQueue();
       return void 0;
     };
+    
+    JQConsole.prototype.AbortInput = function() {
+      var text;
+      if (this.state === STATE_OUTPUT) {
+        throw new Error('Cannot abort prompt when not in prompt or input state.');
+      }
+      text = this.GetPromptText(true);
+      if (this.state === STATE_INPUT) {
+        if (text.trim().length !== 0) {
+          this.Write(text + NEWLINE, CLASS_OLD_INPUT);
+        }
+      } else {
+        return void 0;
+      }
+      this.ClearPromptText(true);
+      this.state = STATE_OUTPUT;
+      this.input_callback = this.multiline_callback = null;
+      this._CheckInputQueue();
+      return void 0;
+    };
 
     JQConsole.prototype.Focus = function() {
       if (!this.IsDisabled()) {
