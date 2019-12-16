@@ -7,7 +7,10 @@
 		editor.setFontSize(13);
 
 		/* Console */
-		let jqconsole = $(this).find('#runtime-console').jqconsole();
+		let jqconsole = $(this).find('#runtime-console').jqconsole(
+			//welcomeString, promptLabel, continueLabel, disableAutoFocus
+			'', '', '', true
+		);
 		jqconsole.Write('Runtime Script\n', 'console-gray');
 		jqconsole.SetPromptLabel(' ');
 
@@ -60,7 +63,5 @@
 		});
 
 	});
-	
-	setTimeout(function(){ $(window).scrollTop(0); }, 100);
-	
+
 })();
