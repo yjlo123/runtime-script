@@ -9,19 +9,19 @@
 	right: 240px;
 }
 
-.runtime-embeded-box {
+.runtime-embedded-box {
 	border: 1px solid gray;
 	position: relative;
 }
 
-.runtime-ace-editor.runtime-embeded {
+.runtime-ace-editor.runtime-embedded {
 	margin: 0;
 	position: relative;
 	width: 100%;
 	flex: auto;
 }
 
-#runtime-console.runtime-embeded {
+#runtime-console.runtime-embedded {
 	position: relative;
 	height: 100%;
 }
@@ -30,11 +30,11 @@
 	border: 1px solid black;
 }
 
-#runtime-canvas.runtime-embeded {
+#runtime-canvas.runtime-embedded {
 	border: 1px solid black;
 }
 
-.runtime-embeded-left {
+.runtime-embedded-left {
 	position:absolute;
 	height: 100%;
 	right: 168px;
@@ -45,7 +45,7 @@
 	flex-direction: column;
 }
 
-.runtime-embeded-right {
+.runtime-embedded-right {
 	position:absolute;
 	width: 168px;
 	height: 100%;
@@ -74,13 +74,13 @@
 	background: rgb(200,200,200);
 }
 
-.btn.runtime-embeded {
+.btn.runtime-embedded {
 	font-size: 11px;
 	padding: 4px 8px;
 	background: white;
 }
 
-.btn.runtime-embeded:hover {
+.btn.runtime-embedded:hover {
 	background: rgb(220,220,220);
 }
 
@@ -97,7 +97,7 @@
 	overflow: hidden;
 }
 
-#console-panel.runtime-embeded {
+#console-panel.runtime-embedded {
 	background-color: white;
 	color: black;
 }

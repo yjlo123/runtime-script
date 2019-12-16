@@ -1,5 +1,5 @@
 (function() {
-	$(".runtime-embeded-box").each(function() {
+	$(".runtime-embedded-box").each(function() {
 		let editorElement = $(this).find('.runtime-ace-editor')[0];
 		let editor = ace.edit(editorElement.id);
 		editor.setTheme("ace/theme/chrome");
