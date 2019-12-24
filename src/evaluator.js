@@ -87,7 +87,13 @@ let runtimeEvaluator = function() {
 		} else if (cmd === 'sub') {
 			env[ts[1]] = expr(ts[2]) - expr(ts[3]);
 		} else if (cmd === 'mul') {
-			env[ts[1]] = expr(ts[2]) * expr(ts[3]);
+			let val1 = expr(ts[2]);
+			let val2 = expr(ts[3]);
+			if (typeof val1 === 'string' && typeof val2 === 'number') {
+				env[ts[1]] = val1.repeat(val2);
+			} else {
+				env[ts[1]] = expr(ts[2]) * expr(ts[3]);
+			}
 		} else if (cmd === 'mod') {
 			env[ts[1]] = expr(ts[2]) % expr(ts[3]);
 		} else if (cmd === 'div') {
