@@ -36,8 +36,10 @@ let runtimeEvaluator = function() {
 
 		} else if (cmd === 'prt') {
 			let resultExp = expr(ts[1]);
-			if (resultExp instanceof Array) {
+			if (Array.isArray(resultExp)) {
 				resultExp = JSON.stringify(resultExp);
+			} else if (typeof resultExp === 'object') {
+				resultExp = JSON.stringify(resultExp, null, " ")
 			} else {
 				resultExp += '';
 			}
