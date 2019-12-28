@@ -108,6 +108,10 @@ let runtimeEvaluator = function() {
 				env[ts[1]] = 'int';
 			} else if (typeof val === 'string') {
 				env[ts[1]] = 'str';
+			} else if (Array.isArray(val)) {
+				env[ts[1]] = 'list';
+			} else if (typeof val === 'object') {
+				env[ts[1]] = 'map';
 			} else {
 				env[ts[1]] = 'err';
 			}
