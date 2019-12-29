@@ -36,6 +36,7 @@ let runtimeEvaluator = function() {
 
 		} else if (cmd === 'prt') {
 			let resultExp = expr(ts[1]);
+			let endChar = ts[2] === undefined ? '\n' : expr(ts[2]);
 			if (Array.isArray(resultExp)) {
 				resultExp = JSON.stringify(resultExp);
 			} else if (typeof resultExp === 'object') {
@@ -43,7 +44,7 @@ let runtimeEvaluator = function() {
 			} else {
 				resultExp += '';
 			}
-			env._console.Write(resultExp + '\n', 'console-default');
+			env._console.Write(resultExp + endChar, 'console-default');
 		} else if (cmd === 'inp') {
 			_input(env, ts[1]);
 			env._pause = true;
