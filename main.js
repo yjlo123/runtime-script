@@ -1,6 +1,7 @@
 var editor = ace.edit("editor");
 editor.setTheme("ace/theme/chrome");
 editor.session.setMode("ace/mode/runtime");
+editor.session.setTabSize(1);
 editor.setFontSize(15);
 
 

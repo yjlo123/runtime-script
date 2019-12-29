@@ -1,0 +1,73 @@
+/ Digital Clock
+/ by Siwei
+/ Dec 2019
+
+let map {}
+put $map '' '0110100110011001100110010110'
+put $map 0 '0110100110011001100110010110'
+put $map 1 '0010011000100010001000100010'
+put $map 2 '0110100100010010010010001111'
+put $map 3 '0110100100010010000110010110'
+put $map 4 '0001001101011001111100010001'
+put $map 5 '1111100011100001000110010110'
+put $map 6 '0110100110001110100110010110'
+put $map 7 '1111000100010010001001000100'
+put $map 8 '0110100110010110100110010110'
+put $map 9 '0110100110010111000110010110'
+
+def draw_num
+ / x, y, num
+ let x1 $x
+ let y1 $y
+ let i 0
+ #draw_num
+ jeq $num '' num_done
+ pol $num c
+ drw $x1 $y1 $c
+ add x1 $x1 1
+ add i $i 1
+ jne $i 4 draw_num
+ let x1 $x
+ let i 0
+ add y1 $y1 1
+ jmp draw_num
+ #num_done
+end
+
+let y 8
+let sec 0
+
+#refresh
+
+/ draw minute
+tim min minute
+str min $min
+pop $min d 
+get $map $d num
+let x 19
+cal draw_num
+pop $min d 
+get $map $d num
+let x 14
+cal draw_num
+
+/ draw hour
+tim hr hour
+str hr $hr
+pop $hr d
+get $map $d num
+let x 6
+cal draw_num
+pop $hr d
+get $map $d num
+let x 1
+cal draw_num
+
+/ draw second dots
+add sec $sec 1
+mod sec $sec 2
+drw 11 10 $sec
+drw 11 12 $sec
+
+slp 500
+jmp refresh
