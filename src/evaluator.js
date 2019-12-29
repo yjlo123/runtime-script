@@ -152,8 +152,12 @@ let runtimeEvaluator = function() {
 			let lstVal = env[lstVar];
 			if (typeof lstVal === 'string') {
 				// string
-				env[ts[2]] = lstVal.slice(-1);
-				env[lstVar] = lstVal.substring(0, lstVal.length-1);
+				if (lstVal.length === 0) {
+					env[ts[2]] = '';
+				} else {
+					env[ts[2]] = lstVal.slice(-1);
+					env[lstVar] = lstVal.substring(0, lstVal.length-1);
+				}
 			} else {
 				// array
 				env[ts[2]] = lstVal.pop();
@@ -163,8 +167,12 @@ let runtimeEvaluator = function() {
 			let lstVal = env[lstVar];
 			if (typeof lstVal === 'string') {
 				// string
-				env[ts[2]] = lstVal.slice(-1);
-				env[lstVar] = lstVal.substring(1, lstVal.length);
+				if (lstVal.length === 0) {
+					env[ts[2]] = '';
+				} else {
+					env[ts[2]] = lstVal.charAt(0);
+					env[lstVar] = lstVal.substring(1, lstVal.length);
+				}
 			} else {
 				// array
 				env[ts[2]] = lstVal.shift();
@@ -210,6 +218,9 @@ let runtimeEvaluator = function() {
 				result = _env._keys.length > 0 ? _env._keys.shift() : -1;
 			} else {
 				value = _env[varName];
+				if (value === undefined) {
+					console.error(`Variable ${varName} undefined`);
+				}
 				if (value[0] === '\'' && value[value.length-1] === '\'') {
 					result = value.slice(1, -1);
 				} else {
