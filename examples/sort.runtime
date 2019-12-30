@@ -1,0 +1,51 @@
+/ Selection Sort
+/ by Siwei
+/ Dec 2019
+
+let list '23,12,8,10,2'
+let nums []
+
+#next_num
+let num ''
+#parse_num
+pol $list c
+jeq $c '' parse_done
+jeq $c ',' num_done
+add num $num $c
+jmp parse_num
+#num_done
+int num $num
+psh $nums $num
+jmp next_num
+#parse_done
+
+prt $nums
+
+let tmp []
+let res []
+
+#select
+let min $nil
+#next
+pol $nums cur
+jne $min $nil has_min
+jeq $cur $nil done
+let min $cur
+jmp next
+#has_min
+jeq $cur $nil got_min
+jlt $cur $min replace_min
+psh $tmp $cur
+jmp next
+#replace_min
+psh $tmp $min
+let min $cur
+jmp next
+#got_min
+psh $res $min
+let nums $tmp
+let tmp []
+jmp select
+
+#done
+prt $res
