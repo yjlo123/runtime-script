@@ -20,6 +20,21 @@ let runtimeEvaluator = function() {
 			env._resume.call();
 		});
 	}
+	
+	function _print(env, ts) {
+		let resultExp = expr(ts[1]);
+		let endChar = ts[2] === undefined ? '\n' : expr(ts[2]);
+		if (Array.isArray(resultExp)) {
+			resultExp = JSON.stringify(resultExp);
+		} else if (resultExp === null) {
+			resultExp = 'nil';
+		} else if (typeof resultExp === 'object') {
+			resultExp = JSON.stringify(resultExp, null, " ")
+		} else {
+			resultExp += '';
+		}
+		env._console.Write(resultExp + endChar, 'console-default');
+	}
 
 	function evaluate(ts, env, lbl, fun, program) {
 		_env = env; // for expr
@@ -35,18 +50,7 @@ let runtimeEvaluator = function() {
 			env[ts[1]] = expr(ts[2]);
 
 		} else if (cmd === 'prt') {
-			let resultExp = expr(ts[1]);
-			let endChar = ts[2] === undefined ? '\n' : expr(ts[2]);
-			if (Array.isArray(resultExp)) {
-				resultExp = JSON.stringify(resultExp);
-			} else if (resultExp === null) {
-				resultExp = 'nil';
-			} else if (typeof resultExp === 'object') {
-				resultExp = JSON.stringify(resultExp, null, " ")
-			} else {
-				resultExp += '';
-			}
-			env._console.Write(resultExp + endChar, 'console-default');
+			_print(env, ts)
 		} else if (cmd === 'inp') {
 			_input(env, ts[1]);
 			env._pause = true;
@@ -228,8 +232,8 @@ let runtimeEvaluator = function() {
 				value = _env[varName];
 				if (value === undefined) {
 					console.error(`Variable ${varName} undefined`);
-				}
-				if (value && value[0] === '\'' && value[value.length-1] === '\'') {
+					result = null;
+				} else if (value && value[0] === '\'' && value[value.length-1] === '\'') {
 					result = value.slice(1, -1);
 				} else {
 					result = value;

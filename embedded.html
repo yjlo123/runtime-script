@@ -28,7 +28,16 @@ jne $x 15 draw_dot
 prt 'Hello World!'
 </div>
 
-<div class="runtime-embedded-box runtime-show-canvas" style="width: 600px; height: 400px;"></div>
+<div class="runtime-embedded-box runtime-show-canvas" style="width: 600px; height: 400px;">
+clr
+let x 9
+#draw_dot
+slp 200
+drw $x 11 1
+add x $x 2
+jne $x 15 draw_dot
+prt 'Hello World!'
+</div>
 
 <div class="runtime-embedded-box runtime-show-canvas runtime-hide-console" style="width: 100%; height: 280px;">
 </div>
