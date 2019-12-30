@@ -39,6 +39,8 @@ let runtimeEvaluator = function() {
 			let endChar = ts[2] === undefined ? '\n' : expr(ts[2]);
 			if (Array.isArray(resultExp)) {
 				resultExp = JSON.stringify(resultExp);
+			} else if (resultExp === null) {
+				resultExp = 'nil';
 			} else if (typeof resultExp === 'object') {
 				resultExp = JSON.stringify(resultExp, null, " ")
 			} else {
@@ -161,7 +163,8 @@ let runtimeEvaluator = function() {
 				}
 			} else {
 				// array
-				env[ts[2]] = lstVal.pop();
+				let val = lstVal.pop();
+				env[ts[2]] = val === undefined ? null : val;
 			}
 		} else if (cmd === 'pol') {
 			let lstVar = ts[1].slice(1);
@@ -176,14 +179,16 @@ let runtimeEvaluator = function() {
 				}
 			} else {
 				// array
-				env[ts[2]] = lstVal.shift();
+				let val = lstVal.shift();
+				env[ts[2]] = val === undefined ? null : val;
 			}
 		} else if (cmd === 'put') {
 			let lstVar = ts[1];
 			env[lstVar.slice(1)][expr(ts[2])] = expr(ts[3]);
 		} else if (cmd === 'get') {
 			let lstVar = ts[1];
-			env[ts[3]] = env[lstVar.slice(1)][expr(ts[2])];
+			let valByKey = env[lstVar.slice(1)][expr(ts[2])]
+			env[ts[3]] = valByKey === undefined ? null : valByKey;
 		} else if (cmd === 'rnd') {
 			env[ts[1]] = env._random(expr(ts[2]), expr(ts[3]));
 		} else if (cmd === 'tim') {
@@ -217,12 +222,14 @@ let runtimeEvaluator = function() {
 			let varName = exp.slice(1);
 			if (varName === 'lastkey') {
 				result = _env._keys.length > 0 ? _env._keys.shift() : -1;
+			} else if (varName === 'nil'){
+				result = null;
 			} else {
 				value = _env[varName];
 				if (value === undefined) {
 					console.error(`Variable ${varName} undefined`);
 				}
-				if (value[0] === '\'' && value[value.length-1] === '\'') {
+				if (value && value[0] === '\'' && value[value.length-1] === '\'') {
 					result = value.slice(1, -1);
 				} else {
 					result = value;
