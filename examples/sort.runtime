@@ -3,8 +3,16 @@
 / Dec 2019
 
 let list '23,12,8,10,2'
-let nums []
 
+/ add a trailing comma
+pop $list c
+jeq $c ',' add_comma
+psh $list $c
+#add_comma
+psh $list ','
+
+/ parse input string
+let nums []
 #next_num
 let num ''
 #parse_num
@@ -21,6 +29,7 @@ jmp next_num
 
 prt $nums
 
+/ selection sort
 let tmp []
 let res []
 
