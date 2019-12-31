@@ -2,21 +2,27 @@
 An assembly-like programming language.
 
 ## Playground
-https://runtime.siwei.dev/
+https://runtime.siwei.dev
 
 ## Tutorial
-https://siwei.dev/doc/runtime/
+https://siwei.dev/doc/runtime
 
 ## Examples
-https://runtime.siwei.dev/?src=snake  
-https://runtime.siwei.dev/?src=bird  
-https://runtime.siwei.dev/?src=puzzle  
+[Snake](https://runtime.siwei.dev/?src=snake)  
+[Plappy Bird](https://runtime.siwei.dev/?src=bird)  
+[Sliding Puzzle](https://runtime.siwei.dev/?src=puzzle)  
+[Digital Clock](https://runtime.siwei.dev/?src=clock)  
+[Selection Sort](https://runtime.siwei.dev/?src=sort)  
 
 ## Language reference
 ```
 let N V
 prt V
-inp N
+
+# data type
+int N V
+str N V
+typ N V
 
 # arithmetic
 add N V V
@@ -46,14 +52,10 @@ drw V V V
 pxl N V V
 
 # sys
+inp N
 slp V
 rnd N V V
 tim N year|month|date|day|hour|minute|second|milli
-
-# data type
-int N V
-str N V
-typ N V
 
 # advanced
 ife V V
