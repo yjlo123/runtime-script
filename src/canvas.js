@@ -1,5 +1,22 @@
 let runtimeCanvas = function() {
-	let colors = ['#000000', '#ffffff', '#d6a090', '#fe3b1e', '#a12c32', '#fa2f7a', '#fb9fda', '#e61cf7', '#992f7c', '#47011f', '#051155', '#4f02ec', '#2d69cb', '#00a6ee', '#6febff', '#08a29a', '#2a666a', '#063619', '#4a4957', '#8e7ba4', '#b7c0ff', '#acbe9c', '#827c70', '#5a3b1c', '#ae6507', '#f7aa30', '#f4ea5c', '#9b9500', '#566204', '#11963b', '#51e113', '#08fdcc']
+	let colors = [
+		'#000000',
+		'#ffffff',
+		'#fbf305', // yellow
+		'#ff6403', // orange
+		'#dd0907', // red
+		'#f20884', // magenta
+		'#4700a5', // purple
+		'#0000d3', // blue
+		'#02abea', // cyan
+		'#1fb714', // green
+		'#006412', // dark green
+		'#562c05', // brown
+		'#90713a', // tan
+		'#C0C0C0', // silver (light gray)
+		'#808080', // gray (medium gray)
+		'#404040' // dark gray
+	]
 
 	let ctx = null;
 	let width = null;
