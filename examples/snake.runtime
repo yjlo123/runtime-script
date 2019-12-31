@@ -37,7 +37,7 @@ rnd wall_x 0 $width
 rnd wall_y 0 $height
 #wall_h
 jeq $wall_x $width wall_vertical
-drw $wall_x $wall_y 22
+drw $wall_x $wall_y 14
 add wall_x $wall_x 1
 jmp wall_h
 
@@ -46,7 +46,7 @@ rnd wall_x 0 $width
 rnd wall_y 0 $height
 #wall_v
 jeq $wall_y $height apple
-drw $wall_x $wall_y 22
+drw $wall_x $wall_y 14
 add wall_y $wall_y 1
 jmp wall_v
 
@@ -55,7 +55,7 @@ rnd apple_x 0 $width
 rnd apple_y 0 $height
 pxl color $apple_x $apple_y
 jne $color 0 apple
-drw $apple_x $apple_y 25
+drw $apple_x $apple_y 4
 
 #begin
 mul timed $score 5
