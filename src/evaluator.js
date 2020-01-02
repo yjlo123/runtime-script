@@ -124,6 +124,10 @@ let runtimeEvaluator = function() {
 			} else {
 				env[ts[1]] = 'err';
 			}
+		} else if (cmd === 'a2i') {
+			env[ts[1]] = expr(ts[2]).charCodeAt(0);
+		} else if (cmd === 'i2a') {
+			env[ts[1]] = String.fromCharCode(expr(ts[2]));
 		} else if (cmd === 'slp') {
 			env._sleep = expr(ts[1]);
 		} else if (cmd === 'drw') {
