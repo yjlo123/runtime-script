@@ -3,8 +3,6 @@
 / Jan 2020
 
 / About Brainfuck: https://en.wikipedia.org/wiki/Brainfuck
-/ [ This program may not work in Chrome due to RangeError,
-/   please try using Firefox or Safari ]
 
 let source '++++++++++[>+>+++>+++++++>++++++++++<<<<-]>>>++.>+.+++++++..+++.<<++.>+++++++++++++++.>.+++.------.--------.<<+.<.'
 

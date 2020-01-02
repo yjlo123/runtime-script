@@ -77,24 +77,26 @@ let runtimeExecuter = function() {
 
 	/* execute program */
 	function loop() {
-		if (env._pause) {
-			env._resume = loop;
-			return;
-		}
-		_evaluater.evaluate(program[env._pc], env, lbl, fun, program);
-		env._pc++;
-		if (env._sleep > 0) {
-			return setTimeout(function () {
-				env._sleep = 0;
-				// program is null when stopped
-				if (program && env._pc < program.length) {
-					return loop();
-				}
-			}, env._sleep);
-		} else {
+		while (true) {
+			if (env._pause) {
+				env._resume = loop;
+				return;
+			}
+			_evaluater.evaluate(program[env._pc], env, lbl, fun, program);
+			env._pc++;
+			if (env._sleep > 0) {
+				return setTimeout(function () {
+					env._sleep = 0;
+					// program is null when stopped
+					if (program && env._pc < program.length) {
+						return loop();
+					}
+				}, env._sleep);
+			}
+
 			window.clearTimeout();
-			if (env._pc < program.length) {
-				return loop();
+			if (env._pc >= program.length) {
+				break;
 			}
 		}
 		finishedExecution();
