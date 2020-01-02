@@ -51,11 +51,13 @@ clr
 drw V V V
 pxl N V V
 
-# sys
+# misc
 inp N
 slp V
 rnd N V V
 tim N year|month|date|day|hour|minute|second|milli
+i2a N V
+a2i N V
 
 # advanced
 ife V V
