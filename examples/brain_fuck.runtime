@@ -1,0 +1,99 @@
+/ Brainfuck Interpreter
+/ by Siwei
+/ Jan 2020
+
+/ About Brainfuck: https://en.wikipedia.org/wiki/Brainfuck
+/ [ This program may not work in Chrome due to RangeError,
+/   please try using Firefox or Safari ]
+
+let source '++++++++++[>+>+++>+++++++>++++++++++<<<<-]>>>++.>+.+++++++..+++.<<++.>+++++++++++++++.>.+++.------.--------.<<+.<.'
+
+let width 24
+let ptr 0
+
+let left ''
+let right ''
+
+clr
+
+#reverse
+pop $source c
+jeq $c '' reversed
+psh $right $c
+jmp reverse
+#reversed
+
+def forward
+ pop $right c
+ psh $left $c
+end
+
+def back
+ pop $left c
+ psh $right $c
+end
+
+#main_loop
+cal forward
+jeq $c '' finished
+
+/ >
+jne $c '>' not_>
+add ptr $ptr 1
+#not_>
+
+/ <
+jne $c '<' not_<
+sub ptr $ptr 1
+#not_<
+
+mod x $ptr $width
+div y $ptr $width
+pxl v $x $y
+
+/ +
+jne $c '+' not_+
+add v $v 1
+drw $x $y $v
+#not_+
+
+/ -
+jne $c '-' not_-
+sub v $v 1
+drw $x $y $v
+#not_-
+
+/ .
+jne $c '.' not_.
+i2a char $v
+prt $char ''
+#not_.
+
+/ [
+jne $c '[' not_[
+jne $v 0 main_loop
+#find_closing
+cal forward
+jne $c ']' find_closing
+#not_[
+
+/ ]
+jne $c ']' not_]
+let bracket_count 0
+jeq $v 0 main_loop
+#find_opening
+cal back
+ife $c ']'
+ add bracket_count $bracket_count 1
+fin
+ife $c '['
+ sub bracket_count $bracket_count 1
+fin
+jne $c '[' find_opening
+jgt $bracket_count 0 find_opening
+cal forward
+#not_]
+
+jmp main_loop
+
+#finished
