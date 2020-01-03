@@ -13,6 +13,7 @@ https://siwei.dev/doc/runtime
 [Sliding Puzzle](https://runtime.siwei.dev/?src=puzzle)  
 [Digital Clock](https://runtime.siwei.dev/?src=clock)  
 [Selection Sort](https://runtime.siwei.dev/?src=sort)  
+[Brainfuck Interpreter](https://runtime.siwei.dev/?src=brain_fuck) 
 
 ## Language reference
 ```
@@ -56,8 +57,8 @@ inp N
 slp V
 rnd N V V
 tim N year|month|date|day|hour|minute|second|milli
-i2a N V
 a2i N V
+i2a N V
 
 # advanced
 ife V V
