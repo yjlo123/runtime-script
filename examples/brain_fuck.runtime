@@ -35,6 +35,8 @@ end
 cal forward
 jeq $c '' finished
 
+slp 1
+
 / >
 jne $c '>' not_>
 add ptr $ptr 1
@@ -69,10 +71,18 @@ prt $char ''
 
 / [
 jne $c '[' not_[
+let bracket_count 0
 jne $v 0 main_loop
 #find_closing
 cal forward
+ife $c '['
+ add bracket_count $bracket_count 1
+fin
+ife $c ']'
+ sub bracket_count $bracket_count 1
+fin
 jne $c ']' find_closing
+jgt $bracket_count 0 find_closing
 #not_[
 
 / ]
