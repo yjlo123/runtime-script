@@ -1,0 +1,57 @@
+/ Division With Precision
+/ by Siwei
+/ Jan 2020
+
+let num_1 5
+let num_2 23
+
+let precision 4
+
+add temp_pre $precision 1
+let multiplier 1
+
+#cal_multiplier
+jeq $temp_pre 0 continue
+mul multiplier $multiplier 10
+sub temp_pre $temp_pre 1
+jmp cal_multiplier
+
+#continue
+
+mul temp $num_1 $multiplier
+div res $temp $num_2
+
+div res_trim $res 10
+
+str res_str $res
+
+pop $res_str last_digit
+jlt $last_digit 5 skip_round_up
+add res_trim $res_trim 1
+str res_str $res_trim
+#skip_round_up
+
+
+let right_rev ''
+#move_decimal
+pop $res_str digit
+psh $right_rev $digit
+sub precision $precision 1
+jne $precision 0 move_decimal
+
+let result ''
+
+ife $res_str ''
+ psh $result '0'
+els
+ psh $result $res_str
+fin
+
+psh $result '.'
+
+#append
+pop $right_rev digit
+psh $result $digit
+jne $right_rev '' append
+
+prt $result
