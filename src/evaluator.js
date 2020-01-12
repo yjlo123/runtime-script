@@ -214,9 +214,16 @@ let runtimeEvaluator = function() {
 		} else if (cmd === 'def') {
 			_gotoEnd(program, env, 'end');
 		} else if (cmd === 'ret' || cmd === 'end') {
+			env._func_args.pop();
 			let retPc = env._stack.pop();
 			env._pc = retPc;
 		} else if (cmd === 'cal') {
+			let args = ts.slice(2);
+			let func_args = []
+			for (let v of args) {
+				func_args.push(expr(v));
+			}
+			env._func_args.push(func_args);
 			env._stack.push(env._pc);
 			env._pc = fun[ts[1]];
 		} else {
@@ -229,18 +236,33 @@ let runtimeEvaluator = function() {
 			// var
 			let varName = exp.slice(1);
 			if (varName === 'lastkey') {
+				// specila value: lastkey
 				result = _env._keys.length > 0 ? _env._keys.shift() : -1;
 			} else if (varName === 'nil'){
+				// special value: nil
 				result = null;
 			} else {
-				value = _env[varName];
-				if (value === undefined) {
-					console.error(`Variable ${varName} undefined`);
-					result = null;
-				} else if (value && value[0] === '\'' && value[value.length-1] === '\'') {
-					result = value.slice(1, -1);
+				if (!isNaN(varName) && Number.isInteger(parseInt(varName))) {
+					// func arg
+					let argIndex = parseInt(varName);
+					let funcArgsCount = _env._func_args.length;
+					let func_args = funcArgsCount > 0 ? _env._func_args[funcArgsCount-1] : [];
+					if (func_args.length > 0 && argIndex < func_args.length) {
+						result = func_args[argIndex];
+					} else {
+						console.error(`Invalid func argument index: ${argIndex}`);
+					}
 				} else {
-					result = value;
+					// env value
+					let value = _env[varName];
+					if (value === undefined) {
+						console.error(`Variable ${varName} undefined`);
+						result = null;
+					} else if (value && value[0] === '\'' && value[value.length-1] === '\'') {
+						result = value.slice(1, -1);
+					} else {
+						result = value;
+					}
 				}
 			}
 		} else if (exp === '[]') {

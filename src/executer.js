@@ -37,6 +37,7 @@ let runtimeExecuter = function() {
 			_random: getRandomInteger,
 			_keys: [],
 			_stack: [], // pc stack
+			_func_args: [], // func env stack
 			_controls: _controls,
 			_options: _options
 		};
