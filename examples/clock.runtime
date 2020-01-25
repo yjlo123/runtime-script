@@ -17,8 +17,8 @@ put $map 9 '0110100110010111000110010110'
 
 def draw_num
  / x, y, num
- let x1 $x
- let y1 $y
+ let x1 $0
+ let y1 $1
  let i 0
  #draw_num
  jeq $num '' num_done
@@ -27,15 +27,16 @@ def draw_num
  add x1 $x1 1
  add i $i 1
  jne $i 4 draw_num
- let x1 $x
+ let x1 $0
  let i 0
  add y1 $y1 1
  jmp draw_num
  #num_done
 end
 
-let y 8
 let sec 0
+
+clr
 
 #refresh
 
@@ -44,24 +45,20 @@ tim min minute
 str min $min
 pop $min d 
 get $map $d num
-let x 19
-cal draw_num
+cal draw_num 19 8
 pop $min d 
 get $map $d num
-let x 14
-cal draw_num
+cal draw_num 14 8
 
 / draw hour
 tim hr hour
 str hr $hr
 pop $hr d
 get $map $d num
-let x 6
-cal draw_num
+cal draw_num 6 8
 pop $hr d
 get $map $d num
-let x 1
-cal draw_num
+cal draw_num 1 8
 
 / draw second dots
 add sec $sec 1

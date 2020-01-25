@@ -251,6 +251,7 @@ let runtimeEvaluator = function() {
 						result = func_args[argIndex];
 					} else {
 						console.error(`Invalid func argument index: ${argIndex}`);
+						result = null;
 					}
 				} else {
 					// env value
