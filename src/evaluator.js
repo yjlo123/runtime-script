@@ -250,14 +250,14 @@ let runtimeEvaluator = function() {
 					if (func_args.length > 0 && argIndex < func_args.length) {
 						result = func_args[argIndex];
 					} else {
-						console.error(`Invalid func argument index: ${argIndex}`);
+						//console.error(`Invalid func argument index: ${argIndex}`);
 						result = null;
 					}
 				} else {
 					// env value
 					let value = _env[varName];
 					if (value === undefined) {
-						console.error(`Variable ${varName} undefined`);
+						//console.error(`Variable ${varName} undefined`);
 						result = null;
 					} else if (value && value[0] === '\'' && value[value.length-1] === '\'') {
 						result = value.slice(1, -1);
