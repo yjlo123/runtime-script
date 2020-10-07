@@ -20,11 +20,13 @@ let runBtn = $("#run-btn");
 let restartBtn = $("#restart-btn");
 let stepBtn = $("#step-btn");
 let clearBtn = $("#clear-canvas-btn");
+let runInput = $("#run-input-btn");
 
-runBtn.click(function() {runtime.executeAll()});
-restartBtn.click(function() {runtime.restart()});
-stepBtn.click(function() {runtime.executeStep()});
-clearBtn.click(function() {canvas.clearCanvas()});
+runBtn.click(function() {runtime.executeAll();});
+restartBtn.click(function() {runtime.restart();});
+stepBtn.click(function() {runtime.executeStep();});
+clearBtn.click(function() {canvas.clearCanvas();});
+runInput.click(function() {runtime.inputAndExecute();});
 
 let controls = {
 	run: runBtn,

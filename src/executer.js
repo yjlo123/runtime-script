@@ -25,7 +25,7 @@ let runtimeExecuter = function() {
 		_options = options;
 	}
 
-	function initEnv() {
+	function initEnv(args) {
 		env = {
 			_pc: 0,
 			_sleep: 0,
@@ -39,7 +39,8 @@ let runtimeExecuter = function() {
 			_stack: [], // pc stack
 			_func_args: [], // func env stack
 			_controls: _controls,
-			_options: _options
+			_options: _options,
+			...args
 		};
 		lbl = {};
 		fun = {};
@@ -103,7 +104,7 @@ let runtimeExecuter = function() {
 		finishedExecution();
 	}
 
-	function executeAll() {
+	function executeAll(args) {
 		if (running) {
 			return;
 		}
@@ -116,7 +117,7 @@ let runtimeExecuter = function() {
 			env._keys.push(e.which);
 		});
 
-		parseSrc(_editor.session.getValue());
+		parseSrc(_editor.session.getValue(), args);
 
 		if (!finished) {
 			running = true;
@@ -124,6 +125,17 @@ let runtimeExecuter = function() {
 				loop();
 			}
 		}
+	}
+
+	function inputAndExecute() {
+		const input = prompt("Type your input\ne.g.\n  1024\n  Hello World!\n  [1, 2, 3]\nThen get the value from $in", "");
+		let parsedInput = input;
+		try {
+			parsedInput = JSON.parse(input);
+		} catch (e) {}
+		executeAll({
+			in: parsedInput
+		});
 	}
 
 	function executeStep() {
@@ -146,8 +158,8 @@ let runtimeExecuter = function() {
 		}
 	}
 
-	function parseSrc(src) {
-		initEnv();
+	function parseSrc(src, args) {
+		initEnv(args);
 		parsed = _parser.parse(src);
 		program = parsed.program;
 		lbl = parsed.labels;
@@ -161,6 +173,7 @@ let runtimeExecuter = function() {
 	return {
 		config,
 		executeAll,
+		inputAndExecute,
 		executeStep,
 		restart
 	};
