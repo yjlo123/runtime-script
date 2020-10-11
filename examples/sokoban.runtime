@@ -180,7 +180,7 @@ cal check_move $icl $ct $iicl $ct
 ife $can_move 1
  let cl $icl
 fin
-jmp update_index
+jmp continue
 
 #press_right
 add icl $cl 1
@@ -189,7 +189,7 @@ cal check_move $icl $ct $iicl $ct
 ife $can_move 1
  let cl $icl
 fin
-jmp update_index
+jmp continue
 
 #press_up
 sub ict $ct 1 
@@ -198,7 +198,7 @@ cal check_move $cl $ict $cl $iict
 ife $can_move 1
  let ct $ict
 fin
-jmp update_index
+jmp continue
 
 #press_down
 add ict $ct 1
@@ -207,9 +207,9 @@ cal check_move $cl $ict $cl $iict
 ife $can_move 1
  let ct $ict
 fin
-jmp update_index
+jmp continue
 
-#update_index
+#continue
 jmp check_result
 
 #next
