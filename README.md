@@ -8,9 +8,11 @@ https://runtime.siwei.dev
 https://siwei.dev/doc/runtime
 
 ## Examples
-[Snake](https://runtime.siwei.dev/?src=snake)  
-[Plappy Bird](https://runtime.siwei.dev/?src=bird)  
-[Sliding Puzzle](https://runtime.siwei.dev/?src=puzzle)  
+[Game: Snake](https://runtime.siwei.dev/?src=snake)  
+[Game: Plappy Bird](https://runtime.siwei.dev/?src=bird)  
+[Game: Sliding Puzzle](https://runtime.siwei.dev/?src=puzzle)  
+[Game: Sokoban](https://runtime.siwei.dev/?src=sokoban)  
+
 [Digital Clock](https://runtime.siwei.dev/?src=clock)  
 [Selection Sort](https://runtime.siwei.dev/?src=sort)  
 [Brainfuck Interpreter](https://runtime.siwei.dev/?src=brain_fuck) 
