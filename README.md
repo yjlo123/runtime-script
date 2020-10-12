@@ -57,8 +57,6 @@ inp N
 slp V
 rnd N V V
 tim N year|month|date|day|hour|minute|second|milli
-a2i N V
-i2a N V
 
 # advanced
 ife V V

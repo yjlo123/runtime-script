@@ -92,9 +92,21 @@ let runtimeEvaluator = function() {
 		} else if (cmd === 'fin') {
 			return;
 		} else if (cmd === 'add') {
-			env[ts[1]] = expr(ts[2]) + expr(ts[3]);
+			let val1 = expr(ts[2]);
+			let val2 = expr(ts[3]);
+			if (val1 === '0' && typeof val2 === 'number') {
+				env[ts[1]] = String.fromCharCode(val2);
+			} else {
+				env[ts[1]] = val1 + val2;
+			}
 		} else if (cmd === 'sub') {
-			env[ts[1]] = expr(ts[2]) - expr(ts[3]);
+			let val1 = expr(ts[2]);
+			let val2 = expr(ts[3]);
+			if (typeof val1 === 'string' && val1.length === 1 && val2 === 0) {
+				env[ts[1]] = val1.charCodeAt(0) - val2;
+			} else {
+				env[ts[1]] = val1 - val2;
+			}
 		} else if (cmd === 'mul') {
 			let val1 = expr(ts[2]);
 			let val2 = expr(ts[3]);
@@ -124,10 +136,6 @@ let runtimeEvaluator = function() {
 			} else {
 				env[ts[1]] = 'err';
 			}
-		} else if (cmd === 'a2i') {
-			env[ts[1]] = expr(ts[2]).charCodeAt(0);
-		} else if (cmd === 'i2a') {
-			env[ts[1]] = String.fromCharCode(expr(ts[2]));
 		} else if (cmd === 'slp') {
 			env._sleep = expr(ts[1]);
 		} else if (cmd === 'drw') {

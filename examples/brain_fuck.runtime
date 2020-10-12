@@ -65,7 +65,7 @@ drw $x $y $v
 
 / .
 jne $c '.' not_.
-i2a char $v
+add char '0' $v / interger to ascii
 prt $char ''
 #not_.
 
