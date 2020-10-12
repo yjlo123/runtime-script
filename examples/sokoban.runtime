@@ -11,7 +11,7 @@ let map4 '0111111100|0122222111|1131112221|1262322321|1244123211|1144122210|0111
 let map5 '0001111111000|1111222221000|1222411121000|1212122221100|1212323142100|1212252212100|1241323212100|1122221212111|0121114222261|0122222112221|0111111111111'
 
 / set a map
-let map $map1
+let map $map3
 
 let cm {}
 put $cm 0 0  / empty: black
@@ -180,7 +180,7 @@ cal check_move $icl $ct $iicl $ct
 ife $can_move 1
  let cl $icl
 fin
-jmp continue
+jmp check_win
 
 #press_right
 add icl $cl 1
@@ -189,7 +189,7 @@ cal check_move $icl $ct $iicl $ct
 ife $can_move 1
  let cl $icl
 fin
-jmp continue
+jmp check_win
 
 #press_up
 sub ict $ct 1 
@@ -198,7 +198,7 @@ cal check_move $cl $ict $cl $iict
 ife $can_move 1
  let ct $ict
 fin
-jmp continue
+jmp check_win
 
 #press_down
 add ict $ct 1
@@ -207,18 +207,16 @@ cal check_move $cl $ict $cl $iict
 ife $can_move 1
  let ct $ict
 fin
-jmp continue
+jmp check_win
 
-#continue
-jmp check_result
+#check_win
+jeq $done_count $target_count win
 
 #next
 slp 20
 jmp begin
 
-#check_result
-jne $done_count $target_count next
-
+#win
 / refresh result canvas
 cal draw
 drw $cl $ct 8
