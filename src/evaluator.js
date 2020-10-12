@@ -94,7 +94,7 @@ let runtimeEvaluator = function() {
 		} else if (cmd === 'add') {
 			let val1 = expr(ts[2]);
 			let val2 = expr(ts[3]);
-			if (val1 === '0' && typeof val2 === 'number') {
+			if (val1 === null && typeof val2 === 'number') {
 				env[ts[1]] = String.fromCharCode(val2);
 			} else {
 				env[ts[1]] = val1 + val2;
@@ -102,7 +102,7 @@ let runtimeEvaluator = function() {
 		} else if (cmd === 'sub') {
 			let val1 = expr(ts[2]);
 			let val2 = expr(ts[3]);
-			if (typeof val1 === 'string' && val1.length === 1 && val2 === 0) {
+			if (typeof val1 === 'string' && val1.length === 1 && val2 === null) {
 				env[ts[1]] = val1.charCodeAt(0) - val2;
 			} else {
 				env[ts[1]] = val1 - val2;
