@@ -33,19 +33,24 @@ clr
 
 / -- random wall --
 #wall_horizontal
-rnd wall_x 0 $width
+sub wall_w $width 3
+sub wall_w2 $width 6
+rnd wall_x 3 $wall_w2
 rnd wall_y 0 $height
+
 #wall_h
-jeq $wall_x $width wall_vertical
+jeq $wall_x $wall_w wall_vertical
 drw $wall_x $wall_y 14
 add wall_x $wall_x 1
 jmp wall_h
 
 #wall_vertical
+sub wall_h $height 3
+sub wall_h2 $height 6
 rnd wall_x 0 $width
-rnd wall_y 0 $height
+rnd wall_y 3 $wall_h2
 #wall_v
-jeq $wall_y $height apple
+jeq $wall_y $wall_h apple
 drw $wall_x $wall_y 14
 add wall_y $wall_y 1
 jmp wall_v

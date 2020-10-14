@@ -8,9 +8,11 @@ https://runtime.siwei.dev
 https://siwei.dev/doc/runtime
 
 ## Examples
-[Snake](https://runtime.siwei.dev/?src=snake)  
-[Plappy Bird](https://runtime.siwei.dev/?src=bird)  
-[Sliding Puzzle](https://runtime.siwei.dev/?src=puzzle)  
+[Game: Snake](https://runtime.siwei.dev/?src=snake)  
+[Game: Flappy Bird](https://runtime.siwei.dev/?src=bird)  
+[Game: Sliding Puzzle](https://runtime.siwei.dev/?src=puzzle)  
+[Game: Sokoban](https://runtime.siwei.dev/?src=sokoban)  
+
 [Digital Clock](https://runtime.siwei.dev/?src=clock)  
 [Selection Sort](https://runtime.siwei.dev/?src=sort)  
 [Brainfuck Interpreter](https://runtime.siwei.dev/?src=brain_fuck) 
@@ -57,8 +59,6 @@ inp N
 slp V
 rnd N V V
 tim N year|month|date|day|hour|minute|second|milli
-a2i N V
-i2a N V
 
 # advanced
 ife V V
@@ -66,7 +66,7 @@ ifg V V
 els
 fin
 
-def N
+def F
 ret
 end
 cal F
@@ -75,8 +75,8 @@ cal F
 N: variable name
 V: variable reference ($VR)
    or value (int|str|[]|{})
-S: list or str $VR
+S: list|str $VR
 M: map $VR
 L: label
-F: function $VR
+F: function name
 ```

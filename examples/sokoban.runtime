@@ -180,7 +180,7 @@ cal check_move $icl $ct $iicl $ct
 ife $can_move 1
  let cl $icl
 fin
-jmp continue
+jmp check_win
 
 #press_right
 add icl $cl 1
@@ -189,7 +189,7 @@ cal check_move $icl $ct $iicl $ct
 ife $can_move 1
  let cl $icl
 fin
-jmp continue
+jmp check_win
 
 #press_up
 sub ict $ct 1 
@@ -198,7 +198,7 @@ cal check_move $cl $ict $cl $iict
 ife $can_move 1
  let ct $ict
 fin
-jmp continue
+jmp check_win
 
 #press_down
 add ict $ct 1
@@ -207,18 +207,16 @@ cal check_move $cl $ict $cl $iict
 ife $can_move 1
  let ct $ict
 fin
-jmp continue
+jmp check_win
 
-#continue
-jmp check_result
+#check_win
+jeq $done_count $target_count win
 
 #next
 slp 20
 jmp begin
 
-#check_result
-jne $done_count $target_count next
-
+#win
 / refresh result canvas
 cal draw
 drw $cl $ct 8
