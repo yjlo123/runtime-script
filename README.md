@@ -66,7 +66,7 @@ ifg V V
 els
 fin
 
-def N
+def F
 ret
 end
 cal F
