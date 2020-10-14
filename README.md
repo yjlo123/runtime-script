@@ -75,7 +75,7 @@ cal F
 N: variable name
 V: variable reference ($VR)
    or value (int|str|[]|{})
-S: list or str $VR
+S: list|str $VR
 M: map $VR
 L: label
 F: function name
