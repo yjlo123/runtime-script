@@ -1,0 +1,46 @@
+/ Leetcode 20. Valid Parentheses
+/ by Siwei
+/ Oct 2020
+
+let input '{[][()]}'
+cal check
+prt $result
+
+def check
+ let stack ''
+ 
+ #loop
+ pol $input c
+ jeq $c '' final
+ jeq $c '(' push
+ jeq $c '[' push
+ jeq $c '{' push
+ 
+ jmp check
+ 
+ #push
+ psh $stack $c
+ jmp loop
+ 
+ #check
+ pop $stack top
+ jeq $top '' false
+ ife $top '('
+  jne $c ')' false
+ fin
+ ife $top '['
+  jne $c ']' false
+ fin
+ ife $top '{'
+  jne $c '}' false
+ fin
+ jmp loop
+ 
+ #false
+ let result 'false'
+ ret
+ 
+ #final
+ jne $stack '' false
+ let result 'true'
+end
