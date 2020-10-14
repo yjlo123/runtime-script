@@ -9,7 +9,7 @@ https://siwei.dev/doc/runtime
 
 ## Examples
 [Game: Snake](https://runtime.siwei.dev/?src=snake)  
-[Game: Plappy Bird](https://runtime.siwei.dev/?src=bird)  
+[Game: Flappy Bird](https://runtime.siwei.dev/?src=bird)  
 [Game: Sliding Puzzle](https://runtime.siwei.dev/?src=puzzle)  
 [Game: Sokoban](https://runtime.siwei.dev/?src=sokoban)  
 
