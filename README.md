@@ -78,5 +78,5 @@ V: variable reference ($VR)
 S: list or str $VR
 M: map $VR
 L: label
-F: function $VR
+F: function name
 ```
