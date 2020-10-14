@@ -3,10 +3,10 @@
 / Oct 2020
 
 let input '{[][()]}'
-cal check
+cal is_valid
 prt $result
 
-def check
+def is_valid
  let stack ''
  
  #loop
