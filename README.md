@@ -14,6 +14,7 @@ https://siwei.dev/doc/runtime
 [Game: Sokoban](https://runtime.siwei.dev/?src=sokoban)  
 
 [Leetcode 20. Valid Parentheses](https://runtime.siwei.dev/?src=leetcode20)  
+[Leetcode 21. Merge Two Sorted Lists](https://runtime.siwei.dev/?src=leetcode21)  
 
 [Digital Clock](https://runtime.siwei.dev/?src=clock)  
 [Selection Sort](https://runtime.siwei.dev/?src=sort)  
