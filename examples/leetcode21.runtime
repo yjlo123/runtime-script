@@ -1,0 +1,41 @@
+/ Leetcode 21. Merge Two Sorted Lists
+/ by Siwei
+/ Oct 2020
+
+prs l1 '[0,1,2,4,5]'
+prs l2 '[1,5,6,9]'
+
+cal merge_two_lists
+prt $result
+
+def merge_two_lists
+ let result []
+ 
+ pol $l1 h1
+ pol $l2 h2
+ 
+ #next
+ jeq $h1 $nil process_l1
+ jeq $h2 $nil process_l1
+ ifg $h1 $h2
+  psh $result $h2
+  pol $l2 h2
+ els
+  psh $result $h1
+  pol $l1 h1
+ fin
+ jmp next
+ 
+ #process_l1
+ jeq $h1 $nil process_l2
+ psh $result $h1
+ pol $l1 h1
+ jmp process_l1
+ 
+ #process_l2
+ jeq $h2 $nil done
+ psh $result $h2
+ pol $l2 h2
+ jmp process_l1
+ #done
+end

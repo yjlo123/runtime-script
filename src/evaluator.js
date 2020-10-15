@@ -138,6 +138,8 @@ let runtimeEvaluator = function() {
 			}
 		} else if (cmd === 'slp') {
 			env._sleep = expr(ts[1]);
+		} else if (cmd === 'prs') {
+			env[ts[1]] = JSON.parse(expr(ts[2]));
 		} else if (cmd === 'drw') {
 			// draw pixel
 			let x = expr(ts[1]);
