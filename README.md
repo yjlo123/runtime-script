@@ -13,6 +13,7 @@ https://siwei.dev/doc/runtime
 [Game: Sliding Puzzle](https://runtime.siwei.dev/?src=puzzle)  
 [Game: Sokoban](https://runtime.siwei.dev/?src=sokoban)  
 
+[Leetcode 1. Two Sum](https://runtime.siwei.dev/?src=leetcode1)  
 [Leetcode 20. Valid Parentheses](https://runtime.siwei.dev/?src=leetcode20)  
 [Leetcode 21. Merge Two Sorted Lists](https://runtime.siwei.dev/?src=leetcode21)  
 

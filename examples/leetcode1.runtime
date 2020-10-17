@@ -1,0 +1,30 @@
+/ Leetcode 1. Two Sum
+/ by Siwei
+/ Oct 2020
+
+prs input '[2,7,11,15]' 
+let target 22
+let result []
+cal two_sum
+prt $result
+
+def two_sum
+ let map {}
+ let idx 0
+ 
+ #loop
+ pol $input num
+ jeq $num $nil done
+ get $map $num v
+ ife $v $nil
+  sub key $target $num
+  put $map $key $idx
+ els
+  psh $result $v
+  psh $result $idx
+  ret
+ fin
+ add idx $idx 1
+ jmp loop
+ #done
+end
