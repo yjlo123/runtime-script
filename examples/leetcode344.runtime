@@ -1,0 +1,17 @@
+/ Leetcode 344. Reverse String
+/ by Siwei
+/ Oct 2020
+
+let input 'Hello World!'
+let result ''
+cal reverse_string
+prt $result
+
+def reverse_string
+ #loop
+ pol $input c
+ jeq $c '' done
+ add result $c $result
+ jmp loop
+ #done
+end
