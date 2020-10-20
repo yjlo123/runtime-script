@@ -1,0 +1,21 @@
+/ Leetcode 231. Power of Two
+/ by Siwei
+/ Oct 2020
+
+let input 16
+let result 'false'
+cal is_power_of_two
+prt $result
+
+
+def is_power_of_two
+ let i 1
+ #loop
+ jeq $i $input true
+ jgt $i $input false
+ mul i $i 2
+ jmp loop
+ #true
+ let result 'true'
+ #false
+end
