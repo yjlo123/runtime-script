@@ -7,7 +7,6 @@ let result 'false'
 cal is_power_of_two
 prt $result
 
-
 def is_power_of_two
  let i 1
  #loop
