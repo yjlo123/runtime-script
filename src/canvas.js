@@ -19,6 +19,7 @@ let runtimeCanvas = function() {
 	]
 
 	let ctx = null;
+	let el = null;
 	let width = null;
 	let height = null;
 	let widthInBlocks = 24;
@@ -28,9 +29,12 @@ let runtimeCanvas = function() {
 	let pixels = [];
 
 	function init(element) {
-		ctx = element.getContext('2d');
-		width = element.width;
-		height = element.height;
+		if (element && el === null) {
+			el = element
+		}
+		ctx = el.getContext('2d');
+		width = el.width;
+		height = el.height;
 		ctx.fillStyle = "#000";
 		ctx.fillRect(0, 0, width, height);
 		blockSize = width / widthInBlocks;
@@ -64,7 +68,10 @@ let runtimeCanvas = function() {
 		return pixels[widthInBlocks*x+y] | 0;
 	}
 
-	function clearCanvas() {
+	function clearCanvas(size=24) {
+		widthInBlocks = size;
+		heightInBlocks = size;
+		init();
 		for (let i = 0 ; i < widthInBlocks; i++) {
 			for (let j = 0; j < heightInBlocks; j++) {
 				drawPixel(i, j, 0);

@@ -80,7 +80,7 @@ let runtimeEvaluator = function() {
 				env._pc = lbl[ts[3]] - 1;
 			}
 
-			
+
 		} else if (cmd === 'ife') {
 			// if equal
 			if (expr(ts[1]) !== expr(ts[2])) {
@@ -163,7 +163,8 @@ let runtimeEvaluator = function() {
 		} else if (cmd === 'pxl') {
 			env[ts[1]] = env._canvas.getPixel(expr(ts[2]), expr(ts[3]))
 		} else if (cmd === 'clr') {
-			env._canvas.clearCanvas();
+			let canvasSize = ts[1] === undefined ? 24 : expr(ts[1]);
+			env._canvas.clearCanvas(canvasSize);
 
 		/* ===== LIST ===== */
 		} else if (cmd === 'psh') {
