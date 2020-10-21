@@ -54,6 +54,8 @@ let runtimeEvaluator = function() {
 		} else if (cmd === 'inp') {
 			_input(env, ts[1]);
 			env._pause = true;
+
+		/* ===== JUMP ===== */
 		} else if (cmd === 'jmp') {
 			// console.log('jump', ts[1], lbl[ts[1]])
 			env._pc = lbl[ts[1]] - 1;
@@ -77,6 +79,8 @@ let runtimeEvaluator = function() {
 			if (expr(ts[1]) > expr(ts[2])) {
 				env._pc = lbl[ts[3]] - 1;
 			}
+
+			
 		} else if (cmd === 'ife') {
 			// if equal
 			if (expr(ts[1]) !== expr(ts[2])) {
@@ -140,6 +144,8 @@ let runtimeEvaluator = function() {
 			env._sleep = expr(ts[1]);
 		} else if (cmd === 'prs') {
 			env[ts[1]] = JSON.parse(expr(ts[2]));
+		
+		/* ===== CANVAS ===== */
 		} else if (cmd === 'drw') {
 			// draw pixel
 			let x = expr(ts[1]);
@@ -158,6 +164,8 @@ let runtimeEvaluator = function() {
 			env[ts[1]] = env._canvas.getPixel(expr(ts[2]), expr(ts[3]))
 		} else if (cmd === 'clr') {
 			env._canvas.clearCanvas();
+
+		/* ===== LIST ===== */
 		} else if (cmd === 'psh') {
 			let lstVar = ts[1].slice(1);
 			let lstVal = env[lstVar];
@@ -200,6 +208,8 @@ let runtimeEvaluator = function() {
 				let val = lstVal.shift();
 				env[ts[2]] = val === undefined ? null : val;
 			}
+
+		/* ===== MAP ===== */
 		} else if (cmd === 'put') {
 			let lstVar = ts[1];
 			env[lstVar.slice(1)][expr(ts[2])] = expr(ts[3]);
@@ -207,6 +217,13 @@ let runtimeEvaluator = function() {
 			let lstVar = ts[1];
 			let valByKey = env[lstVar.slice(1)][expr(ts[2])]
 			env[ts[3]] = valByKey === undefined ? null : valByKey;
+		} else if (cmd === 'key') {
+			let map = env[ts[1].slice(1)];
+			env[ts[2]] = Object.keys(map);
+		} else if (cmd === 'del') {
+			delete env[ts[1].slice(1)][expr(ts[2])]
+
+		/* ===== MISC ===== */
 		} else if (cmd === 'rnd') {
 			env[ts[1]] = env._random(expr(ts[2]), expr(ts[3]));
 		} else if (cmd === 'tim') {

@@ -27,7 +27,7 @@ https://siwei.dev/doc/runtime
 ## Language reference
 ```
 let N V
-prt V
+prt V V*
 
 # data type
 int N V
@@ -55,9 +55,11 @@ pol S N
 
 put M V V
 get M V N
+key M N
+del M V
 
 # canvas
-clr
+clr V*
 drw V V V
 pxl N V V
 
