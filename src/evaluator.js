@@ -157,7 +157,8 @@ let runtimeEvaluator = function() {
 		} else if (cmd === 'pxl') {
 			env[ts[1]] = env._canvas.getPixel(expr(ts[2]), expr(ts[3]))
 		} else if (cmd === 'clr') {
-			env._canvas.clearCanvas();
+			let canvasSize = ts[1] === undefined ? 24 : expr(ts[1]);
+			env._canvas.clearCanvas(canvasSize);
 		} else if (cmd === 'psh') {
 			let lstVar = ts[1].slice(1);
 			let lstVal = env[lstVar];
