@@ -22,6 +22,7 @@ https://siwei.dev/doc/runtime
 [Leetcode 1. Two Sum](https://runtime.siwei.dev/?src=leetcode1)  
 [Leetcode 20. Valid Parentheses](https://runtime.siwei.dev/?src=leetcode20)  
 [Leetcode 21. Merge Two Sorted Lists](https://runtime.siwei.dev/?src=leetcode21)  
+[Leetcode 136. Single Number](https://runtime.siwei.dev/?src=leetcode136)  
 [Leetcode 231. Power of Two](https://runtime.siwei.dev/?src=leetcode231)  
 [Leetcode 344. Reverse String](https://runtime.siwei.dev/?src=leetcode344)  
 [Leetcode 412. Fizz Buzz](https://runtime.siwei.dev/?src=leetcode412)  

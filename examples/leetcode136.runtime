@@ -1,0 +1,26 @@
+/ Leetcode 136. Single Number
+/ by Siwei
+/ Oct 2020
+
+prs input '[2,4,1,2,1]'
+let result $nil
+cal single_number
+prt $result
+
+def single_number
+ let set {}
+ #loop
+ pol $input num
+ jeq $num $nil done
+ str num $num
+ get $set $num v
+ ife $v $nil
+  put $set $num 1
+ els
+  del $set $num
+ fin
+ jmp loop
+ #done
+ key $set keys
+ pol $keys result
+end
