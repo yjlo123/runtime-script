@@ -104,7 +104,7 @@ let runtimeExecuter = function() {
 		finishedExecution();
 	}
 
-	function executeAll(args) {
+	function executeAll(args, src_text) {
 		if (running) {
 			return;
 		}
@@ -117,7 +117,7 @@ let runtimeExecuter = function() {
 			env._keys.push(e.which);
 		});
 
-		parseSrc(_editor.session.getValue(), args);
+		parseSrc(src_text || _editor.session.getValue(), args);
 
 		if (!finished) {
 			running = true;
