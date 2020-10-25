@@ -1,0 +1,25 @@
+/ Leetcode 122. Best Time to Buy and Sell Stock II
+/ by Siwei
+/ Oct 2020
+
+prs prices '[7,1,5,3,6,4]'
+let profit 0
+cal max_profit
+prt $profit
+
+def max_profit
+ pol $prices prev
+ jne $prev $nil loop
+ ret
+ #loop
+ pol $prices current
+ jeq $current $nil done
+ let diff 0
+ ifg $current $prev
+  sub diff $current $prev
+  add profit $profit $diff
+ fin
+ let prev $current
+ jmp loop
+ #done
+end
