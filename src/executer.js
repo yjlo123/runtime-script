@@ -50,7 +50,7 @@ let runtimeExecuter = function() {
 		program = null;
 
 		running = false;
-		paused = false;
+		paused = false; // for breakpoint
 		finished = false;
 		
 		if (_controls.step) {
@@ -74,6 +74,8 @@ let runtimeExecuter = function() {
 	function finishedExecution() {
 		$(document).off("keydown");
 		finished = true;
+		running = false;
+		paused = false;
 		
 		if (_controls.stepBtn) {
 			_controls.stepBtn.addClass("disabled");
@@ -138,7 +140,10 @@ let runtimeExecuter = function() {
 		if (!finished) {
 			running = true;
 			if (env._pc < program.length) {
-				paused = false;
+				if (paused) {
+					paused = false;
+					executeStep();
+				}
 				loop();
 			}
 		}
