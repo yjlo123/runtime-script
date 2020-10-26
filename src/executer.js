@@ -13,7 +13,10 @@ let runtimeExecuter = function() {
 
 	let program = null;
 	let running = false;
+	let paused = false;
 	let finished = false;
+
+	let break_points = [];
 
 	function config(parser, evaluater, editor, consl, canvas, controls, options) {
 		_parser = parser;
@@ -29,7 +32,7 @@ let runtimeExecuter = function() {
 		env = {
 			_pc: 0,
 			_sleep: 0,
-			_pause: false,
+			_pause: false, // for user input
 			_resume: executeStep, // callback function, default execute step
 			_editor: _editor,
 			_console: _console,
@@ -47,6 +50,7 @@ let runtimeExecuter = function() {
 		program = null;
 
 		running = false;
+		paused = false;
 		finished = false;
 		
 		if (_controls.step) {
@@ -61,16 +65,18 @@ let runtimeExecuter = function() {
 		if (_controls.run) {
 			_controls.run.removeClass("running");
 		}
+		if (_controls.stepBtn) {
+			_controls.stepBtn.removeClass("disabled");
+		}
 		_console.AbortInput();
 	}
 
 	function finishedExecution() {
 		$(document).off("keydown");
-		running = false;
 		finished = true;
 		
-		if (_controls.step) {
-			_controls.step.addClass("running");
+		if (_controls.stepBtn) {
+			_controls.stepBtn.addClass("disabled");
 		}
 		if (_controls.run) {
 			_controls.run.removeClass("running");
@@ -82,6 +88,12 @@ let runtimeExecuter = function() {
 		while (true) {
 			if (env._pause) {
 				env._resume = loop;
+				return;
+			}
+			if (break_points.includes(env._pc)) {
+				// break point
+				_editor.gotoLine(env._pc+1, 0);
+				paused = true;
 				return;
 			}
 			_evaluater.evaluate(program[env._pc], env, lbl, fun, program);
@@ -105,7 +117,7 @@ let runtimeExecuter = function() {
 	}
 
 	function executeAll(args, src_text) {
-		if (running) {
+		if (running && !paused) {
 			return;
 		}
 
@@ -113,15 +125,20 @@ let runtimeExecuter = function() {
 			_controls.run.addClass("running");
 		}
 
+		$(document).off("keydown"); // clear previous listener (if any)
 		$(document).on("keydown", function (e) {
 			env._keys.push(e.which);
 		});
 
-		parseSrc(src_text || _editor.session.getValue(), args);
+
+		if (!paused) {
+			parseSrc(src_text || _editor.session.getValue(), args);
+		}
 
 		if (!finished) {
 			running = true;
 			if (env._pc < program.length) {
+				paused = false;
 				loop();
 			}
 		}
@@ -170,11 +187,26 @@ let runtimeExecuter = function() {
 		return Math.floor(Math.random() * (max - min) ) + min;
 	}
 
+	function setBreakpoints(rows) {
+		break_points = rows;
+	}
+
+	function getEnv() {
+		return Object.keys(env)
+		.filter(key => !key.startsWith('_'))
+		.reduce((obj, key) => {
+		  obj[key] = env[key];
+		  return obj;
+		}, {});
+	}
+
 	return {
 		config,
 		executeAll,
 		inputAndExecute,
 		executeStep,
-		restart
+		restart,
+		setBreakpoints,
+		getEnv
 	};
 };

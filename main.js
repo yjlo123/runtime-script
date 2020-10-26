@@ -16,6 +16,8 @@ canvas.init($('#canvas')[0]);
 let evaluator = runtimeEvaluator();
 let parser = runtimeParser();
 
+
+/* UI */
 let runBtn = $("#run-btn");
 let restartBtn = $("#restart-btn");
 let stepBtn = $("#step-btn");
@@ -37,13 +39,45 @@ let controls = {
 
 runtime.config(parser, evaluator, editor, jqconsole, canvas, controls);
 
+/* Breakpoints */
+editor.on("guttermousedown", function(e){
+    var target = e.domEvent.target;
+
+    if (target.className.indexOf("ace_gutter-cell") == -1){ return; }
+    if (!editor.isFocused()){ return; }
+    if (e.clientX > 25 + target.getBoundingClientRect().left){ return; }
+
+	var breakpoints = e.editor.session.getBreakpoints();
+	var row = e.getDocumentPosition().row;
+
+	if(typeof breakpoints[row] === typeof undefined){
+		e.editor.session.setBreakpoint(row);
+	}else{
+		e.editor.session.clearBreakpoint(row);
+	}
+
+	let breakpointIdx = [];
+	for (let i = 0; i < breakpoints.length; i++) {
+		if (breakpoints[i] !== undefined) {
+			breakpointIdx.push(i);
+		}
+	}
+
+	runtime.setBreakpoints(breakpointIdx);
+
+	e.stop();
+})
+
 let startPrompt = function () {
 	// Start the prompt with history enabled.
 	jqconsole.Prompt(true, function (input) {
 		switch (input) {
 			case 'clear':
-			jqconsole.Reset();
-			break;
+				jqconsole.Reset();
+				break;
+			case 'env':
+				jqconsole.Write(`${JSON.stringify(runtime.getEnv(), null, 2)}\n`, 'console-default');
+				break;
 		}
 		startPrompt();
 	});
