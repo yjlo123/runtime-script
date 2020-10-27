@@ -19,21 +19,21 @@ let parser = runtimeParser();
 
 /* UI */
 let runBtn = $("#run-btn");
-let restartBtn = $("#restart-btn");
+let resetBtn = $("#reset-btn");
 let stepBtn = $("#step-btn");
 let clearBtn = $("#clear-canvas-btn");
 let runInput = $("#run-input-btn");
 let statusIndicator = $('#status-indicator');
 
 runBtn.click(function() {runtime.executeAll();});
-restartBtn.click(function() {runtime.restart();});
+resetBtn.click(function() {runtime.restart();});
 stepBtn.click(function() {runtime.executeStep();});
 clearBtn.click(function() {canvas.clearCanvas();});
 runInput.click(function() {runtime.inputAndExecute();});
 
 let controls = {
 	run: runBtn,
-	restart: restartBtn,
+	restart: resetBtn,
 	stepBtn: stepBtn,
 	clearBtn: clearBtn,
 	statusIndicator: statusIndicator

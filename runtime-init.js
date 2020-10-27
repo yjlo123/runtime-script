@@ -15,7 +15,7 @@
 		/* left */
 		let controlBox = $("<div class='runtime-embedded-control-box'></div>")
 		let runBtn = $("<div class='btn runtime-embedded' id='run-btn'>Run</div>");
-		let restartBtn = $("<div class='btn runtime-embedded' id='restart-btn'>Stop</div>");
+		let restartBtn = $("<div class='btn runtime-embedded' id='restart-btn'>Reset</div>");
 		runBtn.appendTo(controlBox);
 		restartBtn.appendTo(controlBox);
 		controlBox.appendTo(leftPane)
