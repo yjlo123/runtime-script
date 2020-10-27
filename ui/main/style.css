@@ -98,8 +98,6 @@
 }
 
 #run-btn {
-	margin-left: 34px;
-	padding: 5px 12px;
 	font-weight: bold;
 }
 
@@ -128,6 +126,12 @@
 
 .btn.runtime-embedded:hover {
 	background: rgb(220,220,220);
+}
+
+.ide-run-btn {
+	margin-left: 34px;
+	padding: 5px 12px;
+	font-weight: bold;
 }
 
 .disabled {
