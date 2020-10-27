@@ -22,7 +22,7 @@
 }
 
 .ace_gutter-cell:hover::before {
-	content: "•";
+	content: "\25CF";
 	position: absolute;
 	left: 0px;
 	top: 0px;
@@ -33,7 +33,7 @@
 }
 
 .ace_gutter-cell.ace_breakpoint::before{
-	content: "•";
+	content: "\25CF";
 	position: absolute;
 	left: 0px;
 	top: 0px;
@@ -79,6 +79,30 @@
 	border-left: 1px solid rgb(209, 209, 209);
 }
 
+.status-indicator {
+	position: absolute;
+	width: 15px;
+	height: 15px;
+	margin-left: 10px;
+	margin-top: 10px;
+	border-radius: 50%;
+	background-color: #eee;
+}
+
+.status-run {
+	background-color: rgb(76, 216, 63);
+}
+
+.status-break {
+	background-color: rgb(255, 168, 38);
+}
+
+#run-btn {
+	margin-left: 34px;
+	padding: 5px 14px;
+	font-weight: bold;
+}
+
 .btn {
 	display: inline-block;
 	border: 1px solid black;
@@ -112,8 +136,8 @@
 }
 
 .running {
-	background: rgb(224, 245, 231)!important;
-	color: gray;
+	background: rgb(220,220,220)!important;
+	color: black;
 }
 
 #console-panel {

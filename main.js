@@ -23,6 +23,7 @@ let restartBtn = $("#restart-btn");
 let stepBtn = $("#step-btn");
 let clearBtn = $("#clear-canvas-btn");
 let runInput = $("#run-input-btn");
+let statusIndicator = $('#status-indicator');
 
 runBtn.click(function() {runtime.executeAll();});
 restartBtn.click(function() {runtime.restart();});
@@ -34,7 +35,8 @@ let controls = {
 	run: runBtn,
 	restart: restartBtn,
 	stepBtn: stepBtn,
-	clearBtn: clearBtn
+	clearBtn: clearBtn,
+	statusIndicator: statusIndicator
 };
 
 runtime.config(parser, evaluator, editor, jqconsole, canvas, controls);

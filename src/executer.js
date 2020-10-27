@@ -53,21 +53,19 @@ let runtimeExecuter = function() {
 		paused = false; // for breakpoint
 		finished = false;
 		
-		if (_controls.step) {
-			_controls.step.removeClass("running");
-		}
+		_controls.step && _controls.step.removeClass("running");
 	}
 
 	function restart() {
 		initEnv();
 		window.clearTimeout();
 		$(document).off("keydown");
-		if (_controls.run) {
-			_controls.run.removeClass("running");
-		}
-		if (_controls.stepBtn) {
-			_controls.stepBtn.removeClass("disabled");
-		}
+
+		_controls.run && _controls.run.removeClass("running");
+		_controls.stepBtn && _controls.stepBtn.removeClass("disabled");
+		_controls.statusIndicator && _controls.statusIndicator.removeClass("status-run");
+		_controls.statusIndicator && _controls.statusIndicator.removeClass("status-break");
+
 		_console.AbortInput();
 	}
 
@@ -77,12 +75,10 @@ let runtimeExecuter = function() {
 		running = false;
 		paused = false;
 		
-		if (_controls.stepBtn) {
-			_controls.stepBtn.addClass("disabled");
-		}
-		if (_controls.run) {
-			_controls.run.removeClass("running");
-		}
+		_controls.stepBtn && _controls.stepBtn.addClass("disabled");
+		_controls.run && _controls.run.removeClass("running");
+		_controls.statusIndicator && _controls.statusIndicator.removeClass("status-run");
+		_controls.statusIndicator && _controls.statusIndicator.removeClass("status-break");
 	}
 
 	/* execute program */
@@ -96,6 +92,8 @@ let runtimeExecuter = function() {
 				// break point
 				_editor.gotoLine(env._pc+1, 0);
 				paused = true;
+				_controls.statusIndicator && _controls.statusIndicator.removeClass("status-run");
+				_controls.statusIndicator && _controls.statusIndicator.addClass("status-break");
 				return;
 			}
 			_evaluater.evaluate(program[env._pc], env, lbl, fun, program);
@@ -123,13 +121,13 @@ let runtimeExecuter = function() {
 			return;
 		}
 
-		if (_controls.run) {
-			_controls.run.addClass("running");
-		}
+		_controls.run && _controls.run.addClass("running");
+		_controls.statusIndicator && _controls.statusIndicator.addClass("status-run");
 
 		$(document).off("keydown"); // clear previous listener (if any)
 		$(document).on("keydown", function (e) {
 			env._keys.push(e.which);
+			env._keys.splice(0, env._keys.length - 10);
 		});
 
 
@@ -197,6 +195,7 @@ let runtimeExecuter = function() {
 	}
 
 	function getEnv() {
+		console.log(env);
 		return Object.keys(env)
 		.filter(key => !key.startsWith('_'))
 		.reduce((obj, key) => {
