@@ -39,6 +39,9 @@ https://siwei.dev/doc/runtime
 [Online Editor](https://runtime.siwei.dev)  
 [Visual Studio Code Extension](https://marketplace.visualstudio.com/items?itemName=yjlo123.runtime)  
 
+## Blog
+[#runtime_script](https://blog.siwei.dev/tags/runtime-script/)
+
 ## Language reference
 ```
 let N V
