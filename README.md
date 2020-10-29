@@ -33,7 +33,8 @@ https://siwei.dev/doc/runtime
 [Brainfuck Interpreter](https://runtime.siwei.dev/?src=brain_fuck) 
 
 ## Works
-[倉庫番](https://siwei.dev/app/sokoban/)  
+[倉庫番](https://siwei.dev/app/sokoban/): A sokoban game  
+[Rundis](https://siwei.dev/app/rundis/): A mock Redis CLI  
 
 ## Editor
 [Online Editor](https://runtime.siwei.dev)  

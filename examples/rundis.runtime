@@ -1,0 +1,90 @@
+/ Rundis
+/ by Siwei
+/ Oct 2020
+
+let data {}
+
+def set
+ put $data $0 $1
+end
+
+def get
+ get $data $0 val
+end
+
+def wrong_num_arg
+ add str 'ERR wrong number of arguments for "' $0
+ add str $str '" command'
+ prt $str
+end
+
+def parse_input
+ let tokens []
+ #next_token
+ let token ''
+ #parse_token
+ pol $input c
+ jeq $c '' parse_done
+ jeq $c ' ' token_done
+ add token $token $c
+ jmp parse_token
+ #token_done
+ ife $token ''
+  jmp next_token
+ els
+  psh $tokens $token
+ fin
+ jmp next_token
+ #parse_done
+ ife $token ''
+  ret
+ fin
+ psh $tokens $token
+end
+
+#loop
+prt '>' ''
+inp input
+jeq $input 'quit' exit
+
+cal parse_input
+pol $tokens cmd
+
+ife $cmd 'set'
+ pol $tokens key
+ pol $tokens val
+ ife $val $nil
+  cal wrong_num_arg 'set'
+  jmp loop
+ fin
+ cal set $key $val
+ prt 'OK'
+ jmp loop
+fin
+ife $cmd 'get'
+ pol $tokens key
+ ife $key $nil
+  cal wrong_num_arg 'get'
+  jmp loop
+ fin
+ cal get $key
+ ife $val $nil
+  prt '(nil)'
+ els
+  add result '"' $val
+  add result $result '"'
+  prt $result
+ fin
+ jmp loop
+fin
+ife $cmd 'help'
+ prt 'Supported commands:'
+ prt ' set get quit'
+ jmp loop
+fin
+add err 'Unknown command: ' $cmd
+prt $err
+jmp loop
+
+#exit
+prt 'bye'
