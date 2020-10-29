@@ -79,7 +79,6 @@ let runtimeParser = function() {
 		if (current !== '') {
 			tokens.push(current);
 		}
-		console.log(tokens)
 		return tokens;
 	}
 
