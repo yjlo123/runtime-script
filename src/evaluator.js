@@ -2,7 +2,23 @@ let runtimeEvaluator = function() {
 	let _env = null;
 
 	function _gotoIfFalse(program, env) {
-		while (env._pc <= program.length && program[env._pc][0] !== 'els' && program[env._pc][0] !== 'fin') {
+		env._pc++; // first 'ife'
+		let ifStack = 0;
+		while (env._pc <= program.length) {
+			let currentCmd = program[env._pc][0];
+			if (currentCmd === 'ife') {
+				ifStack++;
+			} else if (currentCmd === 'fin') {
+				if (ifStack === 0) {
+					return;
+				} else {
+					ifStack--;
+				}
+			} else if (currentCmd === 'els') {
+				if (ifStack === 0) {
+					return;
+				}
+			}
 			env._pc++;
 		}
 	}
