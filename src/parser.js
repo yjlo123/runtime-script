@@ -42,9 +42,31 @@ let runtimeParser = function() {
 				}
 				current += line[i];
 				i++;
-				while (i < line.length && line[i] !== '\'') {
-					current += line[i];
-					i++;
+				while (i < line.length) {
+					if (line[i] === '\'') {
+						break;
+					}
+					let cc = line[i];
+					if (cc === '\\') {
+						i += 1;
+						if (i >= line.length){
+							console.error('Unterminated string');
+						}
+						cc = line[i];
+						switch (cc) {
+							case 'b':
+								cc = '\b';
+								break;
+							case 'n':
+								cc = '\n';
+								break;
+							case 't':
+								cc = '\t';
+								break;
+						}
+					}
+					current += cc;
+					i += 1;
 				}
 				current += line[i];
 			} else if (c != ' ') {
@@ -57,6 +79,7 @@ let runtimeParser = function() {
 		if (current !== '') {
 			tokens.push(current);
 		}
+		console.log(tokens)
 		return tokens;
 	}
 
