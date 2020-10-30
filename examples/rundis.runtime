@@ -26,6 +26,24 @@ def parse_input
  pol $input c
  jeq $c '' parse_done
  jeq $c ' ' token_done
+ jeq $c '\'' parse_string
+ jeq $c '"' parse_string
+ jmp add_token_char
+ 
+ #parse_string
+ let q $c
+ let s ''
+ #parse_string_char
+ pol $input c
+ ife $c $q
+  psh $tokens $s
+  jmp next_token
+ els
+  psh $s $c
+  jmp parse_string_char
+ fin
+ 
+ #add_token_char
  add token $token $c
  jmp parse_token
  #token_done
@@ -82,7 +100,7 @@ ife $cmd 'help'
  prt ' set get quit'
  jmp loop
 fin
-add err 'Unknown command: ' $cmd
+add err 'ERR unknown command: ' $cmd
 prt $err
 jmp loop
 
