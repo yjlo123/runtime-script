@@ -63,8 +63,14 @@ let runtimeEvaluator = function() {
 		
 		let cmd = ts[0];
 		if (cmd === 'let') {
-			env[ts[1]] = expr(ts[2]);
-
+			let varName = ts[1];
+			let val = expr(ts[2]);
+			if (varName[0] === '_' && env._stack.length > 0) {
+				// function scoped variable
+				env._stack[env._stack.length-1][varName] = val;
+			} else {
+				env[varName] = val;
+			}
 		} else if (cmd === 'prt') {
 			_print(env, ts)
 		} else if (cmd === 'inp') {
@@ -259,8 +265,8 @@ let runtimeEvaluator = function() {
 			_gotoEnd(program, env, 'end');
 		} else if (cmd === 'ret' || cmd === 'end') {
 			env._func_args.pop();
-			let retPc = env._stack.pop();
-			env._pc = retPc;
+			let stackObj = env._stack.pop();
+			env._pc = stackObj.pc;
 		} else if (cmd === 'cal') {
 			let args = ts.slice(2);
 			let func_args = []
@@ -268,7 +274,10 @@ let runtimeEvaluator = function() {
 				func_args.push(expr(v));
 			}
 			env._func_args.push(func_args);
-			env._stack.push(env._pc);
+			env._stack.push({
+				pc: env._pc,
+				env: {}
+			});
 			env._pc = fun[ts[1]];
 		} else {
 			console.log('ignore', cmd);
@@ -299,7 +308,13 @@ let runtimeEvaluator = function() {
 					}
 				} else {
 					// env value
-					let value = _env[varName];
+					let value = null;
+					if (varName[0] === '_' && _env._stack.length > 0) {
+						// function scoped variable
+						value = _env._stack[_env._stack.length-1][varName];
+					} else {
+						value = _env[varName];
+					}
 					if (value === undefined) {
 						//console.error(`Variable ${varName} undefined`);
 						result = null;
