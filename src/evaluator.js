@@ -303,7 +303,7 @@ let runtimeEvaluator = function() {
 					if (value === undefined) {
 						//console.error(`Variable ${varName} undefined`);
 						result = null;
-					} else if (value && value[0] === '\'' && value[value.length-1] === '\'') {
+					} else if (value && value.length > 1 && value[0] === '\'' && value[value.length-1] === '\'') {
 						result = value.slice(1, -1);
 					} else {
 						result = value;
@@ -317,7 +317,7 @@ let runtimeEvaluator = function() {
 			// hash table
 			result = {};
 		} else {
-			if (exp[0] === '\'' && exp[exp.length-1] === '\'') {
+			if (exp.length > 1 && exp[0] === '\'' && exp[exp.length-1] === '\'') {
 				// string
 				result = exp.slice(1, -1);
 			} else {
