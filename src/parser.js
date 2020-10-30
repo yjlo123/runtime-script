@@ -5,6 +5,7 @@ let runtimeParser = function() {
 		let funcs = {};
 
 		let lines = src.split('\n');
+		let _inside_func = false;
 		for (let ln in lines) {
 			let l = lines[ln].trim();
 			if (l === '' || l.startsWith('/')) {
@@ -18,6 +19,10 @@ let runtimeParser = function() {
 			}
 			if (l.startsWith('def ')) {
 				funcs[l.slice(3).trim()] = ln;
+				_inside_func = true;
+			}
+			if (l.trim() === 'end') {
+				_inside_func = false;
 			}
 			let lineTokens = tokenizeLine(l);
 			program.push(lineTokens);
