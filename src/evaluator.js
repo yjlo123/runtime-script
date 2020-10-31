@@ -314,7 +314,6 @@ let runtimeEvaluator = function() {
 			let val = ts[1] && expr(ts[1]); // must eval before pop
 			let stackObj = env._stack.pop();
 			if (val !== undefined && cmd === 'ret') {
-				console.log(env)
 				_assignVar(env, 'ret', val, forceScope=true);
 			}
 			env._pc = stackObj.pc;
