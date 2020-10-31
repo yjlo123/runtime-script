@@ -2,16 +2,17 @@
 / by Siwei
 / Oct 2020
 
-let input 'Hello World!'
-let result ''
-cal reverse_string
-prt $result
+cal reverse_string 'Hello World!'
+prt $ret
 
 def reverse_string
+ let input $0
+ let result ''
  #loop
  pol $input c
  jeq $c '' done
  add result $c $result
  jmp loop
  #done
+ ret $result
 end

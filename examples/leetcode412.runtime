@@ -2,14 +2,12 @@
 / by Siwei
 / Oct 2020
 
-let n 17
-let result []
-
-cal fizz_buzz
-prt $result
+cal fizz_buzz 17
+prt $ret
 
 def fizz_buzz
- add n $n 1
+ add n $0 1
+ let result []
  let i 1
  
  #loop
@@ -35,4 +33,5 @@ def fizz_buzz
  add i $i 1
  jmp loop
  #done
+ ret $result
 end

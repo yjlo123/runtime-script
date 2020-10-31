@@ -1,11 +1,14 @@
 let runtimeParser = function() {
 	function parseProgram(src) {
 		let program = [];
-		let labels = {};
+		let labels = {
+			global: {},
+			function: {}
+		};
 		let funcs = {};
 
 		let lines = src.split('\n');
-		let _inside_func = false;
+		let _current_func = null;
 		for (let ln in lines) {
 			let l = lines[ln].trim();
 			if (l === '' || l.startsWith('/')) {
@@ -15,14 +18,21 @@ let runtimeParser = function() {
 
 			// label
 			if (l[0] === '#') {
-				labels[l.slice(1).trim()] = ln;
+				let labelName = l.slice(1).trim();
+				if (_current_func !== null) {
+					labels[_current_func][labelName] = ln;
+				} else {
+					labels['global'][labelName] = ln;
+				}
 			}
 			if (l.startsWith('def ')) {
-				funcs[l.slice(3).trim()] = ln;
-				_inside_func = true;
+				let funcName = l.slice(3).trim();
+				funcs[funcName] = ln;
+				labels[funcName] = {};
+				_current_func = funcName;
 			}
 			if (l.trim() === 'end') {
-				_inside_func = false;
+				_current_func = null;
 			}
 			let lineTokens = tokenizeLine(l);
 			program.push(lineTokens);

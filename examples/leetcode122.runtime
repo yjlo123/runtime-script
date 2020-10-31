@@ -3,11 +3,13 @@
 / Oct 2020
 
 prs prices '[7,1,5,3,6,4]'
-let profit 0
-cal max_profit
-prt $profit
+cal max_profit $prices 
+prt $ret
 
 def max_profit
+ let prices $0
+ let profit 0
+
  pol $prices prev
  jne $prev $nil loop
  ret
@@ -22,4 +24,5 @@ def max_profit
  let prev $current
  jmp loop
  #done
+ ret $profit
 end

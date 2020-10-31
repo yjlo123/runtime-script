@@ -2,11 +2,11 @@
 / by Siwei
 / Oct 2020
 
-let input '{[][()]}'
-cal is_valid
-prt $result
+cal is_valid '{[][()]}'
+prt $ret
 
 def is_valid
+ let input $0
  let stack ''
  
  #loop
@@ -37,10 +37,9 @@ def is_valid
  jmp loop
  
  #false
- let result 'false'
- ret
+ ret 'false'
  
  #final
  jne $stack '' false
- let result 'true'
+ ret'true'
 end

@@ -52,16 +52,6 @@ let runtimeCanvas = function() {
 		ctx.fillRect(x * blockSize, y * blockSize, blockSize, blockSize);
 	}
 
-	function drawText(x, y, text, size, color) {
-		let fontSize = 10 * size;
-		x = parseInt(x) * blockSize;
-		y = parseInt(y) * blockSize + (fontSize-(2*(fontSize/10)));
-		ctx.fillStyle = colors[parseInt(color)];
-		
-		ctx.font = fontSize + "px monospace";
-		ctx.fillText(text, x, y);
-	}
-
 	function getPixel(x, y) {
 		x = parseInt(x)
 		y = parseInt(y)
@@ -83,7 +73,6 @@ let runtimeCanvas = function() {
 		init,
 		drawPixel,
 		getPixel,
-		drawText,
 		clearCanvas
 	};
 };

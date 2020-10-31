@@ -39,8 +39,7 @@ let runtimeExecuter = function() {
 			_canvas: _canvas,
 			_random: getRandomInteger,
 			_keys: [],
-			_stack: [], // pc stack
-			_func_args: [], // func env stack
+			_stack: [], // function call stack {pc, func_name, func_env, func_lbls}
 			_controls: _controls,
 			_options: _options,
 			...args

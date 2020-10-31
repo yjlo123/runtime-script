@@ -2,19 +2,18 @@
 / by Siwei
 / Oct 2020
 
-let input 16
-let result 'false'
-cal is_power_of_two
-prt $result
+cal is_power_of_two 16
+prt $ret
 
 def is_power_of_two
  let i 1
  #loop
- jeq $i $input true
- jgt $i $input false
+ jeq $i $0 true
+ jgt $i $0 false
  mul i $i 2
  jmp loop
  #true
- let result 'true'
+ ret 'true'
  #false
+ ret 'false'
 end

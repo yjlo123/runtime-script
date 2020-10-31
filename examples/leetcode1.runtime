@@ -2,13 +2,13 @@
 / by Siwei
 / Oct 2020
 
-prs input '[2,7,11,15]' 
-let target 22
-let result []
-cal two_sum
-prt $result
+cal two_sum '[2,7,11,15]' 22
+prt $ret
 
 def two_sum
+ prs input $0
+ let target $1
+ let result []
  let map {}
  let idx 0
  
@@ -17,14 +17,15 @@ def two_sum
  jeq $num $nil done
  get $map $num v
  ife $v $nil
-  sub key $target $num
-  put $map $key $idx
+  sub _key $target $num
+  put $map $_key $idx
  els
   psh $result $v
   psh $result $idx
-  ret
+  ret $result
  fin
  add idx $idx 1
  jmp loop
  #done
+ ret $result
 end

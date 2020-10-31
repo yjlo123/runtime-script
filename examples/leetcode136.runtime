@@ -3,11 +3,12 @@
 / Oct 2020
 
 prs input '[2,4,1,2,1]'
-let result $nil
-cal single_number
-prt $result
+
+cal single_number $input
+prt $ret
 
 def single_number
+ let input $0
  let set {}
  #loop
  pol $input num
@@ -23,4 +24,5 @@ def single_number
  #done
  key $set keys
  pol $keys result
+ ret $result
 end

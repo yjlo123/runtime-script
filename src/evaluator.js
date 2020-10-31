@@ -31,7 +31,7 @@ let runtimeEvaluator = function() {
 
 	function _input(env, varName) {
 		env._console.Input(function(input) {
-			env[varName] = input;
+			_assignVar(env, varName, input);
 			env._pause = false;
 			env._resume.call();
 		});
@@ -52,6 +52,42 @@ let runtimeEvaluator = function() {
 		env._console.Write(resultExp + endChar, 'console-default');
 	}
 
+	function _assignVar(env, varName, val, forceScope=false) {
+		if ((forceScope || varName[0] === '_') && env._stack.length > 0) {
+			// function scoped variable
+			env._stack[env._stack.length-1]['env'][varName] = val;
+		} else {
+			// global variable
+			env[varName] = val;
+		}
+	}
+
+	function _getVarVal(env, varName) {
+		// for `list` and `map`
+		if (varName[0] === '_' && env._stack.length > 0) {
+			// function scoped variable
+			return env._stack[env._stack.length-1]['env'][varName];
+		} else {
+			// global variable
+			return env[varName];
+		}
+	}
+
+	function _gotoLabelPc(env, lbl, name) {
+		let lblSet = -1;
+		if (env._stack.length > 0) {
+			let funcStackObj = env._stack[env._stack.length-1];
+			lblSet = lbl[funcStackObj.func];
+		} else {
+			lblSet = lbl['global'];
+		}
+		if (name in lblSet) {
+			env._pc = lblSet[name] - 1;
+		} else {
+			console.error('Invalid label in scope:', name);
+		}
+	}
+
 	function evaluate(ts, env, lbl, fun, program) {
 		_env = env; // for expr
 		if (ts.length === 0) {
@@ -65,12 +101,7 @@ let runtimeEvaluator = function() {
 		if (cmd === 'let') {
 			let varName = ts[1];
 			let val = expr(ts[2]);
-			if (varName[0] === '_' && env._stack.length > 0) {
-				// function scoped variable
-				env._stack[env._stack.length-1][varName] = val;
-			} else {
-				env[varName] = val;
-			}
+			_assignVar(env, varName, val);
 		} else if (cmd === 'prt') {
 			_print(env, ts)
 		} else if (cmd === 'inp') {
@@ -79,29 +110,27 @@ let runtimeEvaluator = function() {
 
 		/* ===== JUMP ===== */
 		} else if (cmd === 'jmp') {
-			// console.log('jump', ts[1], lbl[ts[1]])
-			env._pc = lbl[ts[1]] - 1;
+			_gotoLabelPc(env, lbl, ts[1]);
 		} else if (cmd === 'jeq') {
 			// equal
 			if (expr(ts[1]) == expr(ts[2])) {
-				env._pc = lbl[ts[3]] - 1;
+				_gotoLabelPc(env, lbl, ts[3]);
 			}
 		} else if (cmd === 'jne') {
 			// not equal
 			if (expr(ts[1]) != expr(ts[2])) {
-				env._pc = lbl[ts[3]] - 1;
+				_gotoLabelPc(env, lbl, ts[3]);
 			}
 		} else if (cmd === 'jlt') {
 			// less than
 			if (expr(ts[1]) < expr(ts[2])) {
-				env._pc = lbl[ts[3]] - 1;
+				_gotoLabelPc(env, lbl, ts[3]);
 			}
 		} else if (cmd === 'jgt') {
 			// greater than
 			if (expr(ts[1]) > expr(ts[2])) {
-				env._pc = lbl[ts[3]] - 1;
+				_gotoLabelPc(env, lbl, ts[3]);
 			}
-
 
 		} else if (cmd === 'ife') {
 			// if equal
@@ -118,54 +147,61 @@ let runtimeEvaluator = function() {
 		} else if (cmd === 'fin') {
 			return;
 		} else if (cmd === 'add') {
+			let varName = ts[1];
 			let val1 = expr(ts[2]);
 			let val2 = expr(ts[3]);
 			if (val1 === null && typeof val2 === 'number') {
-				env[ts[1]] = String.fromCharCode(val2);
+				_assignVar(env, varName, String.fromCharCode(val2));
 			} else {
-				env[ts[1]] = val1 + val2;
+				_assignVar(env, varName, val1 + val2);
 			}
 		} else if (cmd === 'sub') {
+			let varName = ts[1];
 			let val1 = expr(ts[2]);
 			let val2 = expr(ts[3]);
 			if (typeof val1 === 'string' && val1.length === 1 && val2 === null) {
-				env[ts[1]] = val1.charCodeAt(0) - val2;
+				_assignVar(env, varName, val1.charCodeAt(0) - val2);
 			} else {
-				env[ts[1]] = val1 - val2;
+				_assignVar(env, varName, val1 - val2);
 			}
 		} else if (cmd === 'mul') {
+			let varName = ts[1];
 			let val1 = expr(ts[2]);
 			let val2 = expr(ts[3]);
 			if (typeof val1 === 'string' && typeof val2 === 'number') {
-				env[ts[1]] = val1.repeat(val2);
+				_assignVar(env, varName, val1.repeat(val2));
 			} else {
-				env[ts[1]] = expr(ts[2]) * expr(ts[3]);
+				_assignVar(env, varName, expr(ts[2]) * expr(ts[3]));
 			}
 		} else if (cmd === 'mod') {
-			env[ts[1]] = expr(ts[2]) % expr(ts[3]);
+			let res = expr(ts[2]) % expr(ts[3]);
+			_assignVar(env, ts[1], res);
 		} else if (cmd === 'div') {
-			env[ts[1]] = Math.floor(expr(ts[2]) / expr(ts[3]));
+			let res = Math.floor(expr(ts[2]) / expr(ts[3]));
+			_assignVar(env, ts[1], res);
 		} else if (cmd === 'int') {
-			env[ts[1]] = parseInt(expr(ts[2]));
+			let res = parseInt(expr(ts[2]));
+			_assignVar(env, ts[1], res);
 		} else if (cmd === 'str') {
-			env[ts[1]] = expr(ts[2]).toString();
+			let res = expr(ts[2]).toString();
+			_assignVar(env, ts[1], res);
 		} else if (cmd === 'typ') {
 			let val = expr(ts[2]);
+			let type = 'err';
 			if (typeof val === 'number') {
-				env[ts[1]] = 'int';
+				type = 'int';
 			} else if (typeof val === 'string') {
-				env[ts[1]] = 'str';
+				type = 'str';
 			} else if (Array.isArray(val)) {
-				env[ts[1]] = 'list';
+				type = 'list';
 			} else if (typeof val === 'object') {
-				env[ts[1]] = 'map';
-			} else {
-				env[ts[1]] = 'err';
+				type = 'map';
 			}
+			_assignVar(env, ts[1], type);
 		} else if (cmd === 'slp') {
 			env._sleep = expr(ts[1]);
 		} else if (cmd === 'prs') {
-			env[ts[1]] = JSON.parse(expr(ts[2]));
+			_assignVar(env, ts[1], JSON.parse(expr(ts[2])));
 		
 		/* ===== CANVAS ===== */
 		} else if (cmd === 'drw') {
@@ -174,81 +210,91 @@ let runtimeEvaluator = function() {
 			let y = expr(ts[2]);
 			let c = expr(ts[3]);
 			env._canvas.drawPixel(x, y, c);
-		} else if (cmd === 'drt') {
-			// draw text
-			let x = expr(ts[1]);
-			let y = expr(ts[2]);
-			let t = expr(ts[3]);
-			let s = expr(ts[4]);
-			let c = expr(ts[5]);
-			env._canvas.drawText(x, y, t, s, c);
 		} else if (cmd === 'pxl') {
-			env[ts[1]] = env._canvas.getPixel(expr(ts[2]), expr(ts[3]))
+			let val = env._canvas.getPixel(expr(ts[2]), expr(ts[3]));
+			_assignVar(env, ts[1], val);
 		} else if (cmd === 'clr') {
 			let canvasSize = ts[1] === undefined ? 24 : expr(ts[1]);
 			env._canvas.clearCanvas(canvasSize);
 
 		/* ===== LIST ===== */
 		} else if (cmd === 'psh') {
-			let lstVar = ts[1].slice(1);
-			let lstVal = env[lstVar];
-			if (typeof lstVal === 'string') {
+			let listVarName = ts[1].slice(1); // remove `$`
+			let listVarVal = _getVarVal(env, listVarName);
+			if (typeof listVarVal === 'string') {
 				// string
-				env[lstVar] = lstVal + expr(ts[2]);
+				_assignVar(env, listVarName, listVarVal + expr(ts[2]));
 			} else {
 				// array
-				lstVal.push(expr(ts[2]));
+				listVarVal.push(expr(ts[2]));
 			}
 		} else if (cmd === 'pop') {
-			let lstVar = ts[1].slice(1);
-			let lstVal = env[lstVar];
-			if (typeof lstVal === 'string') {
+			let listVarName = ts[1].slice(1); // remove `$`
+			let listVarVal = _getVarVal(env, listVarName);
+			let varName = ts[2];
+			if (typeof listVarVal === 'string') {
 				// string
-				if (lstVal.length === 0) {
-					env[ts[2]] = '';
+				if (listVarVal.length === 0) {
+					_assignVar(env, varName, '');
 				} else {
-					env[ts[2]] = lstVal.slice(-1);
-					env[lstVar] = lstVal.substring(0, lstVal.length-1);
+					_assignVar(env, varName, listVarVal.slice(-1));
+					let newStrVal = listVarVal.substring(0, listVarVal.length-1);
+					_assignVar(env, listVarName, newStrVal);
 				}
 			} else {
 				// array
-				let val = lstVal.pop();
-				env[ts[2]] = val === undefined ? null : val;
+				let val = listVarVal.pop();
+				let varVal = val === undefined ? null : val;
+				_assignVar(env, varName, varVal);
 			}
 		} else if (cmd === 'pol') {
-			let lstVar = ts[1].slice(1);
-			let lstVal = env[lstVar];
-			if (typeof lstVal === 'string') {
+			let listVarName = ts[1].slice(1); // remove `$`
+			let listVarVal = _getVarVal(env, listVarName);
+			let varName = ts[2];
+			if (typeof listVarVal === 'string') {
 				// string
-				if (lstVal.length === 0) {
-					env[ts[2]] = '';
+				if (listVarVal.length === 0) {
+					_assignVar(env, varName, '');
 				} else {
-					env[ts[2]] = lstVal.charAt(0);
-					env[lstVar] = lstVal.substring(1, lstVal.length);
+					_assignVar(env, varName,  listVarVal.charAt(0));
+					let newStrVal = listVarVal.substring(1, listVarVal.length);
+					_assignVar(env, listVarName, newStrVal);
 				}
 			} else {
 				// array
-				let val = lstVal.shift();
-				env[ts[2]] = val === undefined ? null : val;
+				let val = listVarVal.shift();
+				let varVal = val === undefined ? null : val;
+				_assignVar(env, varName, varVal);
 			}
 
 		/* ===== MAP ===== */
 		} else if (cmd === 'put') {
-			let lstVar = ts[1];
-			env[lstVar.slice(1)][expr(ts[2])] = expr(ts[3]);
+			let mapVarName = ts[1].slice(1); // remove `$`
+			let mapVarVal = _getVarVal(env, mapVarName);
+			let mapKey = expr(ts[2]);
+			let mapVal = expr(ts[3]);
+			mapVarVal[mapKey] = mapVal;
 		} else if (cmd === 'get') {
-			let lstVar = ts[1];
-			let valByKey = env[lstVar.slice(1)][expr(ts[2])]
-			env[ts[3]] = valByKey === undefined ? null : valByKey;
+			let mapVarName = ts[1].slice(1); // remove `$`
+			let mapVarVal = _getVarVal(env, mapVarName);
+			let mapKey = expr(ts[2]);
+			let mapValByKey = mapVarVal[mapKey]
+			let varVal =  mapValByKey === undefined ? null : mapValByKey;
+			_assignVar(env, ts[3], varVal);
 		} else if (cmd === 'key') {
-			let map = env[ts[1].slice(1)];
-			env[ts[2]] = Object.keys(map);
+			let mapVarName = ts[1].slice(1); // remove `$`
+			let mapVarVal = _getVarVal(env, mapVarName);
+			_assignVar(env, ts[2], Object.keys(mapVarVal));
 		} else if (cmd === 'del') {
-			delete env[ts[1].slice(1)][expr(ts[2])]
+			let mapVarName = ts[1].slice(1); // remove `$`
+			let mapKey = expr(ts[2]);
+			let mapVarVal = _getVarVal(env, mapVarName);
+			delete mapVarVal[mapKey]
 
 		/* ===== MISC ===== */
 		} else if (cmd === 'rnd') {
-			env[ts[1]] = env._random(expr(ts[2]), expr(ts[3]));
+			let val = env._random(expr(ts[2]), expr(ts[3]));
+			_assignVar(env, ts[1], val);
 		} else if (cmd === 'tim') {
 			let dateFuncMap = {
 				'year': Date.prototype.getFullYear,
@@ -260,33 +306,39 @@ let runtimeEvaluator = function() {
 				'second': Date.prototype.getSeconds,
 				'milli': Date.prototype.getMilliseconds
 			}
-			env[ts[1]] = dateFuncMap[ts[2]].call(new Date());
+			let val = dateFuncMap[ts[2]].call(new Date());
+			_assignVar(env, ts[1], val);
 		} else if (cmd === 'def') {
 			_gotoEnd(program, env, 'end');
 		} else if (cmd === 'ret' || cmd === 'end') {
-			env._func_args.pop();
+			let val = ts[1] && expr(ts[1]); // must eval before pop
 			let stackObj = env._stack.pop();
+			if (val !== undefined && cmd === 'ret') {
+				console.log(env)
+				_assignVar(env, 'ret', val, forceScope=true);
+			}
 			env._pc = stackObj.pc;
 		} else if (cmd === 'cal') {
+			let funcName = ts[1];
 			let args = ts.slice(2);
-			let func_args = []
-			for (let v of args) {
-				func_args.push(expr(v));
-			}
-			env._func_args.push(func_args);
-			env._stack.push({
-				pc: env._pc,
-				env: {}
+			let funcEnv = {}
+			args.forEach((v, i) => {
+				funcEnv[i] = expr(v);
 			});
-			env._pc = fun[ts[1]];
+			env._stack.push({
+				func: funcName,
+				pc: env._pc, // pc for jump back
+				env: funcEnv
+			});
+			env._pc = fun[funcName];
 		} else {
-			console.log('ignore', cmd);
+			console.error('Unknown command:', cmd);
 		}
 	}
 
 	function expr(exp) {
 		if (exp[0] === '$') {
-			// var
+			// value reference
 			let varName = exp.slice(1);
 			if (varName === 'lastkey') {
 				// specila value: lastkey
@@ -295,54 +347,40 @@ let runtimeEvaluator = function() {
 				// special value: nil
 				result = null;
 			} else {
-				if (!isNaN(varName) && Number.isInteger(parseInt(varName))) {
-					// func arg
-					let argIndex = parseInt(varName);
-					let funcArgsCount = _env._func_args.length;
-					let func_args = funcArgsCount > 0 ? _env._func_args[funcArgsCount-1] : [];
-					if (func_args.length > 0 && argIndex < func_args.length) {
-						result = func_args[argIndex];
-					} else {
-						//console.error(`Invalid func argument index: ${argIndex}`);
-						result = null;
-					}
+				// env value
+				let value = null;
+				let funcStackObj = _env._stack.length > 0? _env._stack[_env._stack.length-1] : null;
+				if (funcStackObj && varName in funcStackObj.env) {
+					// function scoped variable
+					value = funcStackObj.env[varName];
+				} else if (!isNaN(varName) && Number.isInteger(parseInt(varName))) {
+					value = funcStackObj.env[varName];
 				} else {
-					// env value
-					let value = null;
-					if (varName[0] === '_' && _env._stack.length > 0) {
-						// function scoped variable
-						value = _env._stack[_env._stack.length-1][varName];
-					} else {
-						value = _env[varName];
-					}
-					if (value === undefined) {
-						//console.error(`Variable ${varName} undefined`);
-						result = null;
-					} else if (value && value.length > 1 && value[0] === '\'' && value[value.length-1] === '\'') {
-						result = value.slice(1, -1);
-					} else {
-						result = value;
-					}
+					value = _env[varName];
+				}
+				if (value === undefined) {
+					console.error(`Variable ${varName} undefined`);
+					result = null;
+				} else if (value && value.length > 1 && value[0] === '\'' && value[value.length-1] === '\'') {
+					result = value.slice(1, -1);
+				} else {
+					result = value;
 				}
 			}
 		} else if (exp === '[]') {
-			// array
+			// list
 			result = [];
 		} else if (exp === '{}') {
-			// hash table
+			// map
 			result = {};
+		} else if (exp.length > 1 && exp[0] === '\'' && exp[exp.length-1] === '\'') {
+			// string
+			result = exp.slice(1, -1);
+		} else if (!isNaN(parseInt(exp)) && exp <= Number.MAX_SAFE_INTEGER) {
+			// integer
+			result = parseInt(exp);
 		} else {
-			if (exp.length > 1 && exp[0] === '\'' && exp[exp.length-1] === '\'') {
-				// string
-				result = exp.slice(1, -1);
-			} else {
-				if (!isNaN(parseInt(exp)) && exp <= Number.MAX_SAFE_INTEGER) {
-					// integer
-					result = parseInt(exp);
-				} else {
-					result = exp;
-				}
-			}
+			result = exp;
 		}
 
 		if (typeof result === "boolean") {

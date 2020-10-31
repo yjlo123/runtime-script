@@ -5,12 +5,14 @@
 prs l1 '[0,1,2,4,5]'
 prs l2 '[1,5,6,9]'
 
-cal merge_two_lists
-prt $result
+cal merge_two_lists $l1 $l2
+prt $ret
 
 def merge_two_lists
+ let l1 $0
+ let l2 $1
  let result []
- 
+
  pol $l1 h1
  pol $l2 h2
  
@@ -38,4 +40,5 @@ def merge_two_lists
  pol $l2 h2
  jmp process_l1
  #done
+ ret $result
 end

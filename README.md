@@ -96,7 +96,7 @@ els
 fin
 
 def F
-ret
+ret V*
 end
 cal F
 ```
