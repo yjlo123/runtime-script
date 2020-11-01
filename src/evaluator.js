@@ -84,7 +84,7 @@ let runtimeEvaluator = function() {
 		if (name in lblSet) {
 			env._pc = lblSet[name] - 1;
 		} else {
-			console.error('Invalid label in scope:', name);
+			console.log('Invalid label in scope:', name);
 		}
 	}
 
@@ -331,7 +331,7 @@ let runtimeEvaluator = function() {
 			});
 			env._pc = fun[funcName];
 		} else {
-			console.error('Unknown command:', cmd);
+			console.log('Unknown command:', cmd);
 		}
 	}
 
@@ -358,7 +358,7 @@ let runtimeEvaluator = function() {
 					value = _env[varName];
 				}
 				if (value === undefined) {
-					console.error(`Variable ${varName} undefined`);
+					console.log(`Variable ${varName} undefined`);
 					result = null;
 				} else if (value && value.length > 1 && value[0] === '\'' && value[value.length-1] === '\'') {
 					result = value.slice(1, -1);
