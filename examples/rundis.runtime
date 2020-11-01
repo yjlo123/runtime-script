@@ -12,6 +12,10 @@ def get
  get $data $0 val
 end
 
+def del
+ del $data $0
+end
+
 def wrong_num_arg
  add str 'ERR wrong number of arguments for "' $0
  add str $str '" command'
@@ -95,9 +99,24 @@ ife $cmd 'get'
  fin
  jmp loop
 fin
+ife $cmd 'del'
+ pol $tokens key
+ ife $key $nil
+  cal wrong_num_arg 'del'
+  jmp loop
+ fin
+ cal del $key
+ prt 'OK'
+ jmp loop
+fin
+ife $cmd 'ping'
+ prt 'PONG'
+ jmp loop
+fin
 ife $cmd 'help'
  prt 'Supported commands:'
- prt ' set get quit'
+ prt ' ping set get del'
+ prt ' quit'
  jmp loop
 fin
 add err 'ERR unknown command: ' $cmd
