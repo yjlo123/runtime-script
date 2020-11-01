@@ -51,6 +51,7 @@ let runtimeParser = function() {
 		for (let i = 0; i < line.length; i++) {
 			let c = line[i];
 			if (c === '\'') {
+				// string
 				if (current !== '') {
 					tokens.push(current);
 					current = '';
@@ -84,14 +85,20 @@ let runtimeParser = function() {
 					i += 1;
 				}
 				current += line[i];
-			} else if (c != ' ') {
-				current += c;
+			} else if (c === '/') {
+				// comment
+				break;
+			} else if (c === ' ') {
+				// add token
+				if (current.length > 0) {
+					tokens.push(current);
+					current = '';
+				}
 			} else {
-				tokens.push(current);
-				current = ''
+				current += c;
 			}
 		}
-		if (current !== '') {
+		if (current.length > 0) {
 			tokens.push(current);
 		}
 		return tokens;
