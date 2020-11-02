@@ -5,15 +5,127 @@
 let data {}
 
 def set
- put $data $0 $1
+ let _content {}
+ put $_content 'type' 'string'
+ put $_content 'expire' 0
+ put $_content 'value' $1
+ put $data $0 $_content
 end
 
 def get
- get $data $0 val
+ get $data $0 _content
+ ife $_content $nil
+  ret $nil
+ fin
+ cal check_expire $0
+ ife $ret 0
+  ret $nil
+ fin
+ get $_content 'value' _val
+ ret $_val
+end
+
+def exists
+ get $data $0 _content
+ ife $_content $nil
+  ret 0
+ fin
+ cal check_expire $0
+ ife $ret 0
+  ret 0
+ fin
+ ret 1
 end
 
 def del
  del $data $0
+end
+
+def incr
+ get $data $0 _content
+ ife $_content $nil
+  cal set $0 1
+  ret 1
+ fin
+ cal check_expire $0
+ ife $ret 0
+  cal set $0 1
+  ret 1
+ fin
+ get $_content 'value' val
+ int _new_val $val
+ add _new_val $_new_val 1
+ put $_content 'value' $_new_val
+ ret $_new_val
+end
+
+def decr
+ get $data $0 _content
+ ife $_content $nil
+  cal set $0 -1
+  ret -1
+ fin
+ cal check_expire $0
+ ife $ret 0
+  cal set $0 -1
+  ret -1
+ fin
+ get $_content 'value' val
+ int _new_val $val
+ sub _new_val $_new_val 1
+ put $_content 'value' $_new_val
+ ret $_new_val
+end
+
+def expire
+ get $data $0 _content
+ ife $_content $nil
+  ret 0
+ fin
+ cal check_expire $0
+ ife $ret 0
+  ret 0
+ fin
+ tim _now now
+ int _sec $1
+ mul _milli $_sec 1000
+ add _new_expire $_now $_milli
+ put $_content 'expire' $_new_expire
+ ret 1
+end
+
+def ttl
+ get $data $0 _content
+ ife $_content $nil
+  ret -2
+ fin
+ cal check_expire $0
+ ife $ret 0
+  ret -2
+ fin
+ get $_content 'expire' _expire
+ ife $_expire 0
+  ret -1
+ fin
+ tim _now now
+ sub _diff $_expire $_now
+ div _sec $_diff 1000
+ ret $_sec
+end
+
+def check_expire
+ / assert key exists
+ get $data $0 _content
+ get $_content 'expire' _expire
+ ife $_expire 0
+  ret 1
+ fin
+ tim _now now
+ ifg $_now $_expire
+  cal del $0
+  ret 0 / expired
+ fin
+ ret 1
 end
 
 def wrong_num_arg
@@ -72,6 +184,10 @@ jeq $input 'quit' exit
 cal parse_input
 pol $tokens cmd
 
+ife $cmd $nil
+ jmp loop
+fin
+/ ----- SET -----
 ife $cmd 'set'
  pol $tokens key
  pol $tokens val
@@ -83,6 +199,7 @@ ife $cmd 'set'
  prt 'OK'
  jmp loop
 fin
+/ ----- GET -----
 ife $cmd 'get'
  pol $tokens key
  ife $key $nil
@@ -90,15 +207,27 @@ ife $cmd 'get'
   jmp loop
  fin
  cal get $key
- ife $val $nil
+ ife $ret $nil
   prt '(nil)'
  els
-  add result '"' $val
+  add result '"' $ret
   add result $result '"'
   prt $result
  fin
  jmp loop
 fin
+/ ----- EXISTS -----
+ife $cmd 'exists'
+ pol $tokens key
+ ife $key $nil
+  cal wrong_num_arg 'exists'
+  jmp loop
+ fin
+ cal exists $key
+ prt $ret
+ jmp loop
+fin
+/ ----- DEL -----
 ife $cmd 'del'
  pol $tokens key
  ife $key $nil
@@ -113,10 +242,57 @@ ife $cmd 'ping'
  prt 'PONG'
  jmp loop
 fin
+/ ----- INCR -----
+ife $cmd 'incr'
+ pol $tokens key
+ ife $key $nil
+  cal wrong_num_arg 'incr'
+  jmp loop
+ fin
+ cal incr $key
+ prt $ret
+ jmp loop
+fin
+/ ----- DECR -----
+ife $cmd 'decr'
+ pol $tokens key
+ ife $key $nil
+  cal wrong_num_arg 'decr'
+  jmp loop
+ fin
+ cal decr $key
+ prt $ret
+ jmp loop
+fin
+/ ----- EXPIRE -----
+ife $cmd 'expire'
+ pol $tokens key
+ pol $tokens sec
+ ife $sec $nil
+  cal wrong_num_arg 'expire'
+  jmp loop
+ fin
+ cal expire $key $sec
+ prt $ret
+ jmp loop
+fin
+/ ----- TTL -----
+ife $cmd 'ttl'
+ pol $tokens key
+ ife $key $nil
+  cal wrong_num_arg 'ttl'
+  jmp loop
+ fin
+ cal ttl $key
+ prt $ret
+ jmp loop
+fin
+/ ----- HELP -----
 ife $cmd 'help'
  prt 'Supported commands:'
  prt ' ping set get del'
- prt ' quit'
+ prt ' exists incr decr'
+ prt ' expire ttl quit'
  jmp loop
 fin
 add err 'ERR unknown command: ' $cmd
