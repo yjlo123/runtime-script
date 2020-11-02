@@ -58,7 +58,7 @@ let runtimeEvaluator = function() {
 			env._stack[env._stack.length-1]['env'][varName] = val;
 		} else {
 			// global variable
-			env[varName] = val;
+			env._global[varName] = val;
 		}
 	}
 
@@ -69,7 +69,7 @@ let runtimeEvaluator = function() {
 			return env._stack[env._stack.length-1]['env'][varName];
 		} else {
 			// global variable
-			return env[varName];
+			return env._global[varName];
 		}
 	}
 
@@ -361,7 +361,7 @@ let runtimeEvaluator = function() {
 				} else if (!isNaN(varName) && Number.isInteger(parseInt(varName))) {
 					value = funcStackObj.env[varName];
 				} else {
-					value = _env[varName];
+					value = _env._global[varName];
 				}
 				if (value === undefined) {
 					console.log(`Variable ${varName} undefined`);

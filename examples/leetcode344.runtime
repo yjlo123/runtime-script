@@ -6,13 +6,13 @@ cal reverse_string 'Hello World!'
 prt $ret
 
 def reverse_string
- let input $0
- let result ''
+ let _input $0
+ let _result ''
  #loop
- pol $input c
- jeq $c '' done
- add result $c $result
+ pol $_input _c
+ jeq $_c '' done
+ add _result $_c $_result
  jmp loop
  #done
- ret $result
+ ret $_result
 end

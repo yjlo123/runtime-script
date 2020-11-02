@@ -42,7 +42,9 @@ let runtimeExecuter = function() {
 			_stack: [], // function call stack {pc, func_name, func_env, func_lbls}
 			_controls: _controls,
 			_options: _options,
-			...args
+			_global: {
+				...args
+			}
 		};
 		lbl = {};
 		fun = {};
@@ -195,12 +197,12 @@ let runtimeExecuter = function() {
 
 	function getEnv() {
 		console.log(env);
-		return Object.keys(env)
-		.filter(key => !key.startsWith('_'))
-		.reduce((obj, key) => {
-		  obj[key] = env[key];
-		  return obj;
-		}, {});
+		return {
+			global: env._global,
+			func_stack: env._stack,
+			pc: env._pc,
+			keys: env._keys
+		}
 	}
 
 	return {

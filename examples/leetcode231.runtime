@@ -6,11 +6,11 @@ cal is_power_of_two 16
 prt $ret
 
 def is_power_of_two
- let i 1
+ let _i 1
  #loop
- jeq $i $0 true
- jgt $i $0 false
- mul i $i 2
+ jeq $_i $0 true
+ jgt $_i $0 false
+ mul _i $_i 2
  jmp loop
  #true
  ret 'true'
