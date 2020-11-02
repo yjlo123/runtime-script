@@ -150,6 +150,9 @@ let runtimeExecuter = function() {
 
 	function inputAndExecute() {
 		const input = prompt("Type your input\ne.g.\n  1024\n  Hello World!\n  [1, 2, 3]\nThen get the value from $in", "");
+		if (input === null) {
+			return;
+		}
 		let parsedInput = input;
 		try {
 			parsedInput = JSON.parse(input);
