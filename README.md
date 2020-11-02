@@ -86,7 +86,7 @@ pxl N V V
 inp N
 slp V
 rnd N V V
-tim N year|month|date|day|hour|minute|second|milli
+tim N year|month|date|day|hour|minute|second|milli|now
 prs N V
 
 # advanced

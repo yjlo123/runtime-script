@@ -296,6 +296,7 @@ let runtimeEvaluator = function() {
 			let val = env._random(expr(ts[2]), expr(ts[3]));
 			_assignVar(env, ts[1], val);
 		} else if (cmd === 'tim') {
+			let timeType = ts[2];
 			let dateFuncMap = {
 				'year': Date.prototype.getFullYear,
 				'month': Date.prototype.getMonth,
@@ -306,7 +307,12 @@ let runtimeEvaluator = function() {
 				'second': Date.prototype.getSeconds,
 				'milli': Date.prototype.getMilliseconds
 			}
-			let val = dateFuncMap[ts[2]].call(new Date());
+			let val = -1;
+			if (timeType in dateFuncMap) {
+				val = dateFuncMap[timeType].call(new Date());
+			} else if (timeType === 'now') {
+				val = Date.now();
+			}
 			_assignVar(env, ts[1], val);
 		} else if (cmd === 'def') {
 			_gotoEnd(program, env, 'end');
