@@ -88,8 +88,12 @@ def expire
  fin
  tim _now now
  int _sec $1
- mul _milli $_sec 1000
- add _new_expire $_now $_milli
+ ife $2 $nil    / expire
+  mul _milli $_sec 1000
+  add _new_expire $_now $_milli
+ els            / pexpire
+  add _new_expire $_now $_sec
+ fin
  put $_content 'expire' $_new_expire
  ret 1
 end
@@ -111,6 +115,23 @@ def ttl
  sub _diff $_expire $_now
  div _sec $_diff 1000
  ret $_sec
+end
+
+def persist
+ get $data $0 _content
+ ife $_content $nil
+  ret 0
+ fin
+ cal check_expire $0
+ ife $ret 0
+  ret 0
+ fin
+ get $_content 'expire' _expire
+ ife $_expire 0
+  ret 0
+ fin
+ put $_content 'expire' 0
+ ret 1
 end
 
 def check_expire
@@ -276,6 +297,32 @@ ife $cmd 'expire'
  prt $ret
  jmp loop
 fin
+/ ----- PEXPIRE -----
+ife $cmd 'pexpire'
+ pol $tokens key
+ pol $tokens millisec
+ ife $millisec $nil
+  cal wrong_num_arg 'pexpire'
+  jmp loop
+ fin
+ cal expire $key $millisec 1
+ prt $ret
+ jmp loop
+fin
+/ ----- SETEX -----
+ife $cmd 'setex'
+ pol $tokens key
+ pol $tokens sec
+ pol $tokens val
+ ife $val $nil
+  cal wrong_num_arg 'setex'
+  jmp loop
+ fin
+ cal set $key $val
+ cal expire $key $sec
+ prt $ret
+ jmp loop
+fin
 / ----- TTL -----
 ife $cmd 'ttl'
  pol $tokens key
@@ -287,12 +334,21 @@ ife $cmd 'ttl'
  prt $ret
  jmp loop
 fin
+/ ----- PERSIST -----
+ife $cmd 'persist'
+ pol $tokens key
+ ife $key $nil
+  cal wrong_num_arg 'persist'
+  jmp loop
+ fin
+ cal persist $key
+ prt $ret
+ jmp loop
+fin
 / ----- HELP -----
 ife $cmd 'help'
  prt 'Supported commands:'
- prt ' ping set get del'
- prt ' exists incr decr'
- prt ' expire ttl quit'
+ prt 'decr del exists expire get incr persist pexpire ping quit set setex ttl'
  jmp loop
 fin
 add err 'ERR unknown command: ' $cmd
