@@ -37,7 +37,7 @@ let runtimeCanvas = function() {
 		height = el.height;
 		ctx.fillStyle = "#000";
 		ctx.fillRect(0, 0, width, height);
-		blockSize = width / widthInBlocks;
+		blockSize = Math.floor(width / widthInBlocks);
 	}
 
 	function drawPixel(x, y, value) {
