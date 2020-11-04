@@ -13,7 +13,8 @@ def set
 end
 
 def get
- get $data $0 _content
+ let $_key $0
+ get $data $_key _content
  ife $_content $nil
   ret $nil
  fin
@@ -23,6 +24,47 @@ def get
  fin
  get $_content 'value' _val
  ret $_val
+end
+
+def push
+ let _key $0
+ let _val $1
+ let _type $2   / $nil: lpush, other: rpush
+ get $data $0 _content
+ ife $_content $nil
+  jmp new_list
+ fin
+ cal check_expire $_key
+ ife $ret 0
+  jmp new_list
+ fin
+ get $_content 'type' _t
+ ife $_t 'list'
+  jmp update_list
+ els
+  ret 'WRONGTYPE Operation against a key holding the wrong kind of value'
+ fin
+ #new_list
+  let _content {}
+  put $_content 'type' 'list'
+  put $_content 'expire' 0
+  put $_content 'length' 1
+  let _list []
+  psh $_list $_val
+  put $_content 'value' $_list
+  put $data $_key $_content
+  ret 1
+ #update_list
+  get $_content 'value' _list
+  ife $_type $nil  / lpush
+   / not O(1)
+  els  / rpush
+   psh $_list $_val
+  fin
+  get $_content 'length' _len
+  add _len $_len 1
+  put $_content 'length' $_len
+  ret $_len
 end
 
 def exists
@@ -113,8 +155,10 @@ def ttl
  fin
  tim _now now
  sub _diff $_expire $_now
- div _sec $_diff 1000
- ret $_sec
+ ife $1 $nil     / pttl
+  div _diff $_diff 1000
+ fin
+ ret $_diff
 end
 
 def persist
@@ -218,6 +262,18 @@ ife $cmd 'set'
  fin
  cal set $key $val
  prt 'OK'
+ jmp loop
+fin
+/ ----- RPUSH -----
+ife $cmd 'rpush'
+ pol $tokens key
+ pol $tokens val
+ ife $val $nil
+  cal wrong_num_arg 'rpush'
+  jmp loop
+ fin
+ cal push $key $val 1
+ prt $ret
  jmp loop
 fin
 / ----- GET -----
@@ -334,6 +390,17 @@ ife $cmd 'ttl'
  prt $ret
  jmp loop
 fin
+/ ----- PTTL -----
+ife $cmd 'pttl'
+ pol $tokens key
+ ife $key $nil
+  cal wrong_num_arg 'pttl'
+  jmp loop
+ fin
+ cal ttl $key 1
+ prt $ret
+ jmp loop
+fin
 / ----- PERSIST -----
 ife $cmd 'persist'
  pol $tokens key
@@ -345,10 +412,23 @@ ife $cmd 'persist'
  prt $ret
  jmp loop
 fin
+/ ----- ECHO -----
+ife $cmd 'echo'
+ pol $tokens msg
+ add msg '"' $msg
+ add msg $msg '"'
+ prt $msg
+ jmp loop
+fin
+/ ----- SAVE -----
+ife $cmd 'save'
+ prt $data
+ jmp loop
+fin
 / ----- HELP -----
 ife $cmd 'help'
  prt 'Supported commands:'
- prt 'decr del exists expire get incr persist pexpire ping quit set setex ttl'
+ prt 'decr del echo exists expire get incr persist pexpire ping pttl quit rpush save set setex ttl'
  jmp loop
 fin
 add err 'ERR unknown command: ' $cmd
