@@ -4,6 +4,8 @@
 
 let data {}
 
+let WRONGTYPE 'WRONGTYPE Operation against a key holding the wrong kind of value'
+
 def set
  let _content {}
  put $_content 'type' 'string'
@@ -13,24 +15,31 @@ def set
 end
 
 def get
- let $_key $0
+ let _key $0
  get $data $_key _content
  ife $_content $nil
   ret $nil
  fin
- cal check_expire $0
+ cal check_expire $_key
  ife $ret 0
   ret $nil
  fin
- get $_content 'value' _val
- ret $_val
+ get $_content 'type' _t
+ ife $_t 'string'
+  get $_content 'value' _val
+  add _val '"' $_val
+  add _val $_val '"'
+  ret $_val
+ els
+  ret $WRONGTYPE
+ fin
 end
 
 def push
  let _key $0
  let _val $1
  let _type $2   / $nil: lpush, other: rpush
- get $data $0 _content
+ get $data $_key _content
  ife $_content $nil
   jmp new_list
  fin
@@ -42,29 +51,98 @@ def push
  ife $_t 'list'
   jmp update_list
  els
-  ret 'WRONGTYPE Operation against a key holding the wrong kind of value'
+  ret $WRONGTYPE
  fin
  #new_list
   let _content {}
   put $_content 'type' 'list'
   put $_content 'expire' 0
   put $_content 'length' 1
+  put $_content 'list_l' []
   let _list []
   psh $_list $_val
-  put $_content 'value' $_list
+  put $_content 'list_r' $_list
   put $data $_key $_content
   ret 1
  #update_list
-  get $_content 'value' _list
-  ife $_type $nil  / lpush
-   / not O(1)
-  els  / rpush
-   psh $_list $_val
+  ife $_type $nil
+   / lpush
+   get $_content 'list_l' _list_l
+   psh $_list_l $_val
+  els
+   / rpush
+   get $_content 'list_r' _list_r
+   psh $_list_r $_val
   fin
   get $_content 'length' _len
   add _len $_len 1
   put $_content 'length' $_len
   ret $_len
+end
+
+def pop
+ let _key $0
+ let _type $1 / $nil: lpop, other: rpop
+ get $data $_key _content
+ ife $_content $nil
+  ret $nil
+ fin
+ cal check_expire $_key
+ ife $ret 0
+  ret $nil
+ fin
+ get $_content 'type' _t
+ ife $_t 'list'
+  jmp pop_list
+ els
+  ret $WRONGTYPE
+ fin
+ #pop_list
+ get $_content 'list_l' _list_l
+ get $_content 'list_r' _list_r
+ ife $_type $nil
+  / lpop
+  pop $_list_l _val
+  ife $_val $nil
+   pol $_list_r _val
+  fin
+ els
+  / rpop
+  pop $_list_r _val
+  ife $_val $nil
+   pol $_list_l _val
+  fin
+ fin
+ get $_content 'length' _len
+ sub _len $_len 1
+ put $_content 'length' $_len
+ add _val '"' $_val
+ add _val $_val '"'
+ ife $_len 0
+  cal del $_key
+ fin
+ ret $_val
+end
+
+def len
+ let _key $0
+ get $data $0 _content
+ ife $_content $nil
+  ret 0
+ fin
+ cal check_expire $_key
+ ife $ret 0
+  ret 0
+ fin
+ get $_content 'type' _t
+ ife $_t 'list'
+  jmp get_list_len
+ els
+  ret $WRONGTYPE
+ fin
+ #get_list_len
+ get $_content 'length' _len
+ ret $_len
 end
 
 def exists
@@ -264,6 +342,18 @@ ife $cmd 'set'
  prt 'OK'
  jmp loop
 fin
+/ ----- LPUSH -----
+ife $cmd 'lpush'
+ pol $tokens key
+ pol $tokens val
+ ife $val $nil
+  cal wrong_num_arg 'lpush'
+  jmp loop
+ fin
+ cal push $key $val
+ prt $ret
+ jmp loop
+fin
 / ----- RPUSH -----
 ife $cmd 'rpush'
  pol $tokens key
@@ -273,6 +363,47 @@ ife $cmd 'rpush'
   jmp loop
  fin
  cal push $key $val 1
+ prt $ret
+ jmp loop
+fin
+/ ----- LPOP -----
+ife $cmd 'lpop'
+ pol $tokens key
+ ife $key $nil
+  cal wrong_num_arg 'lpop'
+  jmp loop
+ fin
+ cal pop $key
+ ife $ret $nil
+  prt '(nil)'
+ els
+  prt $ret
+ fin
+ jmp loop
+fin
+/ ----- RPOP -----
+ife $cmd 'rpop'
+ pol $tokens key
+ ife $key $nil
+  cal wrong_num_arg 'rpop'
+  jmp loop
+ fin
+ cal pop $key 1
+ ife $ret $nil
+  prt '(nil)'
+ els
+  prt $ret
+ fin
+ jmp loop
+fin
+/ ----- LLEN -----
+ife $cmd 'llen'
+ pol $tokens key
+ ife $key $nil
+  cal wrong_num_arg 'llen'
+  jmp loop
+ fin
+ cal len $key
  prt $ret
  jmp loop
 fin
@@ -287,9 +418,7 @@ ife $cmd 'get'
  ife $ret $nil
   prt '(nil)'
  els
-  add result '"' $ret
-  add result $result '"'
-  prt $result
+  prt $ret
  fin
  jmp loop
 fin
@@ -428,7 +557,7 @@ fin
 / ----- HELP -----
 ife $cmd 'help'
  prt 'Supported commands:'
- prt 'decr del echo exists expire get incr persist pexpire ping pttl quit rpush save set setex ttl'
+ prt 'decr del echo exists expire get incr llen lpop lpush persist pexpire ping pttl quit rpop rpush save set setex ttl'
  jmp loop
 fin
 add err 'ERR unknown command: ' $cmd
