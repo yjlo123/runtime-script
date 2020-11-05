@@ -38,7 +38,8 @@ end
 def push
  let _key $0
  let _val $1
- let _type $2   / $nil: lpush, other: rpush
+ let _type $2   / 0: lpush, 1: rpush
+ let _extra $3
  get $data $_key _content
  ife $_content $nil
   jmp new_list
@@ -57,32 +58,61 @@ def push
   let _content {}
   put $_content 'type' 'list'
   put $_content 'expire' 0
-  put $_content 'length' 1
   put $_content 'list_l' []
+  put $_content 'list_r' []
+  let _len 0
   let _list []
   psh $_list $_val
-  put $_content 'list_r' $_list
+  add _len $_len 1
+  #push1
+  pol $_extra _v
+  jeq $_v $nil push1_end
+  psh $_list $_v
+  add _len $_len 1
+  jmp push1
+  #push1_end
+  ife $_type 0
+   put $_content 'list_l' $_list
+  els
+   put $_content 'list_r' $_list
+  fin
+  put $_content 'length' $_len
   put $data $_key $_content
-  ret 1
+  ret $_len
  #update_list
-  ife $_type $nil
+  get $_content 'length' _len
+  ife $_type 0
    / lpush
    get $_content 'list_l' _list_l
    psh $_list_l $_val
+   add _len $_len 1
+   #push2
+   pol $_extra _v
+   jeq $_v $nil push2_end
+   psh $_list_l $_v
+   add _len $_len 1
+   jmp push2
+   #push2_end
   els
    / rpush
    get $_content 'list_r' _list_r
    psh $_list_r $_val
+   add _len $_len 1
+   #push3
+   pol $_extra _v
+   jeq $_v $nil push3_end
+   psh $_list_r $_v
+   add _len $_len 1
+   jmp push3
+   #push3_end
   fin
-  get $_content 'length' _len
-  add _len $_len 1
   put $_content 'length' $_len
   ret $_len
 end
 
 def pop
  let _key $0
- let _type $1 / $nil: lpop, other: rpop
+ let _type $1 / 0: lpop, 1: rpop
  get $data $_key _content
  ife $_content $nil
   ret $nil
@@ -100,7 +130,7 @@ def pop
  #pop_list
  get $_content 'list_l' _list_l
  get $_content 'list_r' _list_r
- ife $_type $nil
+ ife $_type 0
   / lpop
   pop $_list_l _val
   ife $_val $nil
@@ -143,6 +173,56 @@ def len
  #get_list_len
  get $_content 'length' _len
  ret $_len
+end
+
+def range
+ let _key $0
+ let _start $1
+ let _end $2
+ get $data $0 _content
+ ife $_content $nil
+  ret []
+ fin
+ cal check_expire $_key
+ ife $ret 0
+  ret []
+ fin
+ get $_content 'type' _t
+ ife $_t 'list'
+  jmp get_list
+ els
+  ret $WRONGTYPE
+ fin
+ #get_list
+ get $_content 'list_l' _list_l
+ let _tmp_l []
+ get $_content 'list_r' _list_r
+ let _tmp_r []
+ let _res []
+ #get_left
+ pop $_list_l _v
+ jeq $_v $nil done_left
+ psh $_res $_v
+ psh $_tmp_l $_v
+ jmp get_left
+ #done_left
+ let _rev_tmp_l []
+ #rev_l
+ pop $_tmp_l _v
+ jeq $_v $nil done_rev_l
+ psh $_rev_tmp_l $_v
+ jmp rev_l
+ #done_rev_l
+ put $_content 'list_l' $_rev_tmp_l
+ #get_right
+ pol $_list_r _v
+ jeq $_v $nil finish
+ psh $_res $_v
+ psh $_tmp_r $_v
+ jmp get_right
+ #finish
+ put $_content 'list_r' $_tmp_r
+ ret $_res
 end
 
 def exists
@@ -350,7 +430,7 @@ ife $cmd 'lpush'
   cal wrong_num_arg 'lpush'
   jmp loop
  fin
- cal push $key $val
+ cal push $key $val 0 $tokens
  prt $ret
  jmp loop
 fin
@@ -362,7 +442,7 @@ ife $cmd 'rpush'
   cal wrong_num_arg 'rpush'
   jmp loop
  fin
- cal push $key $val 1
+ cal push $key $val 1 $tokens
  prt $ret
  jmp loop
 fin
@@ -373,7 +453,7 @@ ife $cmd 'lpop'
   cal wrong_num_arg 'lpop'
   jmp loop
  fin
- cal pop $key
+ cal pop $key 0
  ife $ret $nil
   prt '(nil)'
  els
@@ -405,6 +485,23 @@ ife $cmd 'llen'
  fin
  cal len $key
  prt $ret
+ jmp loop
+fin
+/ ----- LRANGE -----
+ife $cmd 'lrange'
+ pol $tokens key
+ pol $tokens start
+ pol $tokens end
+ ife $end $nil
+  cal wrong_num_arg 'lrange'
+  jmp loop
+ fin
+ cal range $key $start $end
+ ife $ret []
+  prt '(empty list or set)'
+ els
+  prt $ret
+ fin
  jmp loop
 fin
 / ----- GET -----
@@ -549,15 +646,15 @@ ife $cmd 'echo'
  prt $msg
  jmp loop
 fin
-/ ----- SAVE -----
-ife $cmd 'save'
+/ ----- DATA -----
+ife $cmd 'data'
  prt $data
  jmp loop
 fin
 / ----- HELP -----
 ife $cmd 'help'
  prt 'Supported commands:'
- prt 'decr del echo exists expire get incr llen lpop lpush persist pexpire ping pttl quit rpop rpush save set setex ttl'
+ prt 'data decr del echo exists expire get incr llen lpop lpush lrange persist pexpire ping pttl quit rpop rpush set setex ttl'
  jmp loop
 fin
 add err 'ERR unknown command: ' $cmd
