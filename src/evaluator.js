@@ -181,6 +181,9 @@ let runtimeEvaluator = function() {
 			_assignVar(env, ts[1], res);
 		} else if (cmd === 'int') {
 			let res = parseInt(expr(ts[2]));
+			if (Number.isNaN(res)) {
+				res = null;
+			}
 			_assignVar(env, ts[1], res);
 		} else if (cmd === 'str') {
 			let res = expr(ts[2]).toString();
