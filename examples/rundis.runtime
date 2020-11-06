@@ -200,12 +200,10 @@ def range
  get $_content 'list_r' _list_r
  let _tmp_r []
  let _res []
- let _len 0
  #get_left
  pop $_list_l _v
  jeq $_v $nil done_left
  psh $_res $_v
- add _len $_len 1
  psh $_tmp_l $_v
  jmp get_left
  #done_left
@@ -221,11 +219,11 @@ def range
  pol $_list_r _v
  jeq $_v $nil finish
  psh $_res $_v
- add _len $_len 1
  psh $_tmp_r $_v
  jmp get_right
  #finish
  put $_content 'list_r' $_tmp_r
+ get $_content 'length' _len
  psh $_res $_len
  ret $_res / its last value is length
 end
