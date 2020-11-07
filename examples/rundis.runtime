@@ -371,26 +371,29 @@ def print_list
  let _list $0
  int _start $1
  int _end $2
- let _len $3
- ifg 0 $_start
-  add _start $_len $_start
+ let _len $3 / -1 for printing all
+ ifg $_len 0
   ifg 0 $_start
-   let _start 0
+    add _start $_len $_start
+    ifg 0 $_start
+     let _start 0
+    fin
   fin
- fin
- ifg 0 $_end
-  add _end $_len $_end
   ifg 0 $_end
-   let _end -1
+    add _end $_len $_end
+    ifg 0 $_end
+    let _end -1
+    fin
   fin
  fin
  let _i 0
+ let _idx 1
+ let _empty 1
+ jeq $_len -1 start_print / print all
  jlt $_start $_len find_start
  ret 0
  #find_start
  ife $_i $_start
-  let _idx 1
-  let _empty 1
   jmp start_print
  fin
  pol $_list _v
@@ -398,10 +401,15 @@ def print_list
  add _i $_i 1
  jmp find_start
  #start_print
- jgt $_i $_end done_print
+ ifg $_end 0
+  jgt $_i $_end done_print
+ fin
  pol $_list _val
+ jeq $_val $nil done_print
  add _i $_i 1
- jgt $_i $_len done_print
+ ifg $_end 0
+  jgt $_i $_len done_print
+ fin
  add _v $_idx ') "'
  add _v $_v $_val
  add _v $_v '"'
@@ -714,10 +722,21 @@ ife $cmd 'data'
  prt $data
  jmp loop
 fin
+/ ----- KEYS -----
+ife $cmd 'keys'
+ key $data keys
+ cal print_list $keys 0 -1 -1
+ jmp loop
+fin
+/ ----- FLUSHALL -----
+ife $cmd 'flushall'
+ let data {}
+ jmp loop
+fin
 / ----- HELP -----
 ife $cmd 'help'
  prt 'Supported commands:'
- prt 'data decr del echo exists expire get incr llen lpop lpush lrange persist pexpire ping pttl quit rpop rpush set setex ttl'
+ prt 'data decr del echo exists expire flushall get incr keys llen lpop lpush lrange persist pexpire ping pttl quit rpop rpush set setex ttl'
  jmp loop
 fin
 add err 'ERR unknown command: ' $cmd
