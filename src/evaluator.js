@@ -6,7 +6,7 @@ let runtimeEvaluator = function() {
 		let ifStack = 0;
 		while (env._pc <= program.length) {
 			let currentCmd = program[env._pc][0];
-			if (currentCmd === 'ife') {
+			if (currentCmd === 'ife' || currentCmd === 'ifg') {
 				ifStack++;
 			} else if (currentCmd === 'fin') {
 				if (ifStack === 0) {
