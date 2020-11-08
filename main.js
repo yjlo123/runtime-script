@@ -25,11 +25,11 @@ let clearBtn = $("#clear-canvas-btn");
 let runInput = $("#run-input-btn");
 let statusIndicator = $('#status-indicator');
 
-runBtn.click(function() {runtime.executeAll();});
-resetBtn.click(function() {runtime.restart();});
-stepBtn.click(function() {runtime.executeStep();});
-clearBtn.click(function() {canvas.clearCanvas();});
-runInput.click(function() {runtime.inputAndExecute();});
+runBtn.click(() => runtime.executeAll());
+resetBtn.click(() => runtime.restart());
+stepBtn.click(() => runtime.executeStep());
+clearBtn.click(() => canvas.clearCanvas());
+runInput.click(() => runtime.inputAndExecute());
 
 let controls = {
 	run: runBtn,
@@ -42,7 +42,7 @@ let controls = {
 runtime.config(parser, evaluator, editor, jqconsole, canvas, controls);
 
 /* Breakpoints */
-editor.on("guttermousedown", function(e){
+editor.on("guttermousedown",  e => {
     var target = e.domEvent.target;
 
     if (target.className.indexOf("ace_gutter-cell") == -1){ return; }
@@ -70,7 +70,11 @@ editor.on("guttermousedown", function(e){
 	e.stop();
 })
 
-let startPrompt = function () {
+function gotoLine (line) {
+	editor.gotoLine(line+1, 0);
+}
+
+let startPrompt = () => {
 	// Start the prompt with history enabled.
 	jqconsole.Prompt(true, function (input) {
 		switch (input) {
@@ -122,3 +126,17 @@ let codeId = getURLParameter('src');
 if (codeId) {
 	getCode(codeId);
 }
+
+let refreshFuncBtn = $('#refresh-func-btn');
+refreshFuncBtn.click(() => {
+	let funcs = runtime.getFuncList();
+	let funcArray = [];
+	for (var funcName in funcs) {
+		funcArray.push([funcName, funcs[funcName]])
+	}
+	funcArray.sort((a, b) => a[1] - b[1]);
+	$('#func-list').empty();
+	funcArray.forEach(element => {
+		$('#func-list').append($(`<div class="func-item" onClick="gotoLine(${element[1]})">${element[0]}</div>`));
+	});
+});

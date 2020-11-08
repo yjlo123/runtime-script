@@ -14,10 +14,30 @@
 	<link rel="icon" href="favicon.gif">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 	<link rel="stylesheet" href="ui/main/style.css"/>
+	<link rel="stylesheet" href="ui/main/ide.css"/>
 </head>
 <body>
 
 <div class="runtime-editor">
+	<div class="left">
+		<div id="account-info">
+			<img src="./favicon.gif" width="100%" height="100%"/>
+		</div>
+		<div id="menu-list">
+			<a class="btn menu-item" target="_blank" href="https://github.com/yjlo123/runtime-script">Github</a>
+			<a class="btn menu-item" target="_blank" href="https://siwei.dev/doc/runtime">Doc</a>
+			<a class="btn menu-item" target="_blank" href="https://siwei.dev/doc/RuntimeScriptCheatSheet.pdf">Ref Card</a>
+		</div>
+		<div class="func-list-panel">
+			<div class="func-list-title">
+				Func List
+				<div class="btn" id="refresh-func-btn">Refresh</div>
+			</div>
+			
+			<div id="func-list"></div>
+		</div>
+	</div>
+
 <pre id="editor" class="runtime-ace-editor">
 clr
 let x 9
@@ -38,10 +58,6 @@ prt 'Hello World!'
 			<br/>
 			<div class="btn" id="clear-canvas-btn">Clr canvas</div>
 			<div class="btn" id="run-input-btn">Run with arg</div>
-			<br/>
-			<a class="btn" target="_blank" href="https://github.com/yjlo123/runtime-script">Github</a>
-			<a class="btn" target="_blank" href="https://siwei.dev/doc/runtime">Doc</a>
-			<a class="btn" target="_blank" href="https://siwei.dev/doc/RuntimeScriptCheatSheet.pdf">Ref Card</a>
 		</div>
 		
 		<div id="canves-panel">

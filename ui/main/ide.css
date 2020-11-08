@@ -1,0 +1,60 @@
+.runtime-ace-editor {
+	left: 80px;
+}
+
+.left {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    top: 0;
+    left: 0;
+    width: 80px;
+    height: 100%;
+    overflow: hidden;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace;
+}
+
+#menu-list {
+    margin-bottom: 10px;
+}
+
+#account-info {
+    box-sizing: border-box;
+    height: 70px;
+    width: 80px;
+    padding: 10px 15px;
+}
+
+.func-list-title {
+    text-align: center;
+    font-size: 13px;
+    padding-top: 5px;
+    border-top: 1px solid gray;
+}
+
+#refresh-func-btn {
+    padding: 3px;
+    font-size: 11px;
+}
+
+.func-item {
+	font-size: 14px;
+	cursor: pointer;
+    background-color: rgb(243,243,243);
+    margin: 2px 4px;
+    padding: 2px;
+    overflow: hidden;
+}
+
+.func-item:hover {
+    background-color: rgb(220,220,220);
+}
+
+.menu-item {
+    padding: 2px;
+    font-size: 15px;;
+    margin: 0;
+    width: 100%;
+    border: none;
+    text-align: center;
+}

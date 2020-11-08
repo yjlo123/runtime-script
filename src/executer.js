@@ -208,6 +208,11 @@ let runtimeExecuter = function() {
 		}
 	}
 
+	function getFuncList() {
+		parseSrc(_editor.session.getValue());
+		return parsed.funcs;
+	}
+
 	return {
 		config,
 		executeAll,
@@ -215,6 +220,7 @@ let runtimeExecuter = function() {
 		executeStep,
 		restart,
 		setBreakpoints,
-		getEnv
+		getEnv,
+		getFuncList
 	};
 };
