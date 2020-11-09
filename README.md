@@ -30,9 +30,9 @@ https://siwei.dev/doc/runtime
 
 [Digital Clock](https://runtime.siwei.dev/?src=clock)  
 [Selection Sort](https://runtime.siwei.dev/?src=sort)  
-[Brainfuck Interpreter](https://runtime.siwei.dev/?src=brain_fuck) 
 
-[Runtime Script Interpreter](https://runtime.siwei.dev/?src=runtime_script) 
+[Brainfuck Interpreter](https://runtime.siwei.dev/?src=brain_fuck)  
+[Runtime Script Interpreter](https://runtime.siwei.dev/?src=runtime_script)  
 
 ## Works
 [倉庫番](https://siwei.dev/app/sokoban/): A sokoban game  
