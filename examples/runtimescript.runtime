@@ -1,0 +1,189 @@
+/ Interpreting Runtime Script using Runtime Script
+/ by Siwei
+/ Nov 2020
+
+let src []
+psh $src 'clr'
+psh $src 'let x 9'
+psh $src '#draw_dot'
+psh $src 'slp 200'
+psh $src 'drw $x 11 1'
+psh $src 'add x $x 2'
+psh $src 'jne $x 15 draw_dot'
+psh $src 'prt \'Hello World!\''
+
+let p {}
+let lbl {}
+let env {}
+
+/ ====== parsing ======
+def parse_line
+ let _line $0
+ let _tokens []
+ #next_token
+ let _token ''
+ #parse_token
+ pol $_line c
+ jeq $c '' parse_done
+ jeq $c ' ' token_done
+ jeq $c '\'' parse_string
+ jeq $c '"' parse_string
+ jmp add_token_char
+ 
+ #parse_string
+ let q $c
+ let s ''
+ #parse_string_char
+ pol $_line c
+ ife $c $q
+  psh $_tokens $s
+  jmp next_token
+ els
+  psh $s $c
+  jmp parse_string_char
+ fin
+ 
+ #add_token_char
+ add _token $_token $c
+ jmp parse_token
+ #token_done
+ ife $_token ''
+  jmp next_token
+ els
+  psh $_tokens $_token
+ fin
+ jmp next_token
+ #parse_done
+ ife $_token ''
+  ret $_tokens
+ fin
+ psh $_tokens $_token
+ ret $_tokens
+end
+
+let lc 0
+#parser
+pol $src line
+jeq $line $nil parse_done
+
+/ check label
+pol $line c1
+ife $c1 '#'
+ put $lbl $line $lc
+fin
+add line $c1 $line
+
+cal parse_line $line
+put $p $lc $ret
+add lc $lc 1
+jmp parser
+
+#parse_done
+
+/ ====== evaluating ======
+def expr
+ let _expr $0
+ let _original $0
+ int _i $_expr
+ jeq $_i $nil continue
+ ret $_i
+ #continue
+ pol $_expr _c1
+ ife $_c1 '$'
+  get $env $_expr val
+  ret $val
+ fin
+ ife $_c1 '['
+  ret []
+ fin
+ ret $_original
+end
+
+def dup_list
+ let _list $0
+ let _l1 []
+ let _l2 []
+ #loop
+ pol $_list _i
+ jeq $_i $nil done
+ psh $_l1 $_i
+ psh $_l2 $_i
+ jmp loop
+ #done
+ let _res []
+ psh $_res $_l1
+ psh $_res $_l2
+ ret $_res
+end
+
+let pc 0
+
+#eval
+get $p $pc line
+jeq $line $nil eval_done
+
+// eval will consume the line
+cal dup_list $line
+pop $ret bak
+put $p $pc $bak
+pop $ret line
+
+pol $line cmd
+
+ife $cmd 'clr'
+ clr
+fin
+ife $cmd 'prt'
+ pol $line val
+ prt $val
+fin
+ife $cmd 'let'
+ pol $line var
+ pol $line val
+ cal expr $val
+ put $env $var $ret
+fin
+ife $cmd 'add'
+ pol $line var
+ pol $line val1
+ cal expr $val1
+ let val1 $ret
+ pol $line val2
+ cal expr $val2
+ let val2 $ret
+ add res $val1 $val2
+ put $env $var $res
+fin
+ife $cmd 'slp'
+ pol $line val
+ cal expr $val
+ slp $ret
+fin
+ife $cmd 'drw'
+ pol $line x
+ cal expr $x
+ let x0 $ret
+ pol $line y
+ cal expr $y
+ let y0 $ret
+ pol $line c
+ cal expr $c
+ let c0 $ret
+ drw $x0 $y0 $c0
+fin
+ife $cmd 'jne'
+ pol $line val1
+ cal expr $val1
+ let v1 $ret
+ pol $line val2
+ cal expr $val2
+ let v2 $ret
+ pol $line lbl_name
+ jeq $v1 $v2 jne_false
+ get $lbl $lbl_name pc
+ #jne_false
+fin
+add pc $pc 1
+jmp eval
+
+#eval_done
