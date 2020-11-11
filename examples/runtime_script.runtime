@@ -4,11 +4,15 @@
 
 let src []
 psh $src 'clr'
-psh $src 'let x 9'
+psh $src 'let base 9'
+psh $src 'let x $base'
 psh $src '#draw_dot'
 psh $src 'slp 200'
 psh $src 'drw $x 11 1'
 psh $src 'add x $x 2'
+psh $src 'sub y $x $base'
+psh $src 'div y $y 2'
+psh $src 'prt $y'
 psh $src 'jne $x 15 draw_dot'
 psh $src 'prt \'Hello World!\''
 
@@ -135,6 +139,8 @@ ife $cmd 'clr'
 fin
 ife $cmd 'prt'
  pol $line val
+ cal expr $val
+ let val $ret
  prt $val
 fin
 ife $cmd 'let'
@@ -152,6 +158,28 @@ ife $cmd 'add'
  cal expr $val2
  let val2 $ret
  add res $val1 $val2
+ put $env $var $res
+fin
+ife $cmd 'sub'
+ pol $line var
+ pol $line val1
+ cal expr $val1
+ let val1 $ret
+ pol $line val2
+ cal expr $val2
+ let val2 $ret
+ sub res $val1 $val2
+ put $env $var $res
+fin
+ife $cmd 'div'
+ pol $line var
+ pol $line val1
+ cal expr $val1
+ let val1 $ret
+ pol $line val2
+ cal expr $val2
+ let val2 $ret
+ div res $val1 $val2
  put $env $var $res
 fin
 ife $cmd 'slp'
