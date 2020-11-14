@@ -297,11 +297,11 @@ def expire
  fin
  tim _now now
  int _sec $1
- ife $2 $nil    / expire
+ ife $2 0    / expire
+  add _new_expire $_now $_sec
+ els            / pexpire
   mul _milli $_sec 1000
   add _new_expire $_now $_milli
- els            / pexpire
-  add _new_expire $_now $_sec
  fin
  put $_content 'expire' $_new_expire
  ret 1
@@ -322,7 +322,7 @@ def ttl
  fin
  tim _now now
  sub _diff $_expire $_now
- ife $1 $nil     / pttl
+ ife $1 1     / pttl
   div _diff $_diff 1000
  fin
  ret $_diff
@@ -468,7 +468,7 @@ def parse_input
 end
 
 #loop
-prt '>' ''
+prt '> ' ''
 inp input
 jeq $input 'quit' exit
 
@@ -646,7 +646,7 @@ ife $cmd 'expire'
   cal wrong_num_arg 'expire'
   jmp loop
  fin
- cal expire $key $sec
+ cal expire $key $sec 0
  prt $ret
  jmp loop
 fin
@@ -683,7 +683,7 @@ ife $cmd 'ttl'
   cal wrong_num_arg 'ttl'
   jmp loop
  fin
- cal ttl $key
+ cal ttl $key 0
  prt $ret
  jmp loop
 fin
