@@ -45,6 +45,9 @@ https://siwei.dev/doc/runtime
 ## Blog
 [#runtime_script](https://blog.siwei.dev/tags/runtime-script/)
 
+## Runtime Script writtn in Go
+[Runtime Go](https://github.com/yjlo123/runtime-go)
+
 ## Language reference
 ```
 let N V
