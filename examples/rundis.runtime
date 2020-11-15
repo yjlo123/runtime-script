@@ -4,7 +4,8 @@
 
 let data {}
 
-let WRONGTYPE 'WRONGTYPE Operation against a key holding the wrong kind of value'
+let WRONG_TYPE 'WRONG_TYPE Operation against a key holding the wrong kind of value'
+let WRONG_ARG 'ERR value is not an integer or out of range'
 
 def set
  let _content {}
@@ -31,7 +32,7 @@ def get
   add _val $_val '"'
   ret $_val
  els
-  ret $WRONGTYPE
+  ret $WRONG_TYPE
  fin
 end
 
@@ -52,7 +53,7 @@ def push
  ife $_t 'list'
   jmp update_list
  els
-  ret $WRONGTYPE
+  ret $WRONG_TYPE
  fin
  #new_list
   let _content {}
@@ -125,7 +126,7 @@ def pop
  ife $_t 'list'
   jmp pop_list
  els
-  ret $WRONGTYPE
+  ret $WRONG_TYPE
  fin
  #pop_list
  get $_content 'list_l' _list_l
@@ -168,7 +169,7 @@ def len
  ife $_t 'list'
   jmp get_list_len
  els
-  ret $WRONGTYPE
+  ret $WRONG_TYPE
  fin
  #get_list_len
  get $_content 'length' _len
@@ -191,7 +192,7 @@ def range
  ife $_t 'list'
   jmp get_list
  els
-  prt $WRONGTYPE
+  prt $WRONG_TYPE
   ret $nil
  fin
  #get_list
@@ -297,9 +298,12 @@ def expire
  fin
  tim _now now
  int _sec $1
- ife $2 0    / expire
+ ife $_sec $nil
+  ret $WRONG_ARG
+ fin
+ ife $2 1    / pexpire
   add _new_expire $_now $_sec
- els            / pexpire
+ els            / expire
   mul _milli $_sec 1000
   add _new_expire $_now $_milli
  fin
@@ -322,7 +326,7 @@ def ttl
  fin
  tim _now now
  sub _diff $_expire $_now
- ife $1 1     / pttl
+ ife $1 0     / ttl
   div _diff $_diff 1000
  fin
  ret $_diff
@@ -672,7 +676,7 @@ ife $cmd 'setex'
   jmp loop
  fin
  cal set $key $val
- cal expire $key $sec
+ cal expire $key $sec 0
  prt $ret
  jmp loop
 fin

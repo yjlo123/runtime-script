@@ -36,10 +36,12 @@ def parse_line
  
  #parse_string
  let q $c
- let s ''
+ let s '\''
+
  #parse_string_char
  pol $_line c
  ife $c $q
+  psh $s $c
   psh $_tokens $s
   jmp next_token
  els
@@ -50,6 +52,7 @@ def parse_line
  #add_token_char
  add _token $_token $c
  jmp parse_token
+
  #token_done
  ife $_token ''
   jmp next_token
@@ -96,6 +99,10 @@ def expr
  ife $_c1 '$'
   get $env $_expr val
   ret $val
+ fin
+ ife $_c1 '\''
+  pop $_expr _
+  ret $_expr
  fin
  ife $_c1 '['
   ret []
