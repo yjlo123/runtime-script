@@ -73,7 +73,7 @@ jlt V V L
 jgt V V L
 
 # data structure
-psh S V
+psh S V [V..]
 pop S N
 pol S N
 
@@ -94,12 +94,17 @@ rnd N V V
 tim N year|month|date|day|hour|minute|second|milli|now
 prs N V
 
-# advanced
+# if-else
 ife V V
 ifg V V
 els
 fin
 
+# for-loop
+for N V
+nxt
+
+# function
 def F
 ret V*
 end

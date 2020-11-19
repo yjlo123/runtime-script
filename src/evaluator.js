@@ -22,10 +22,45 @@ let runtimeEvaluator = function() {
 			env._pc++;
 		}
 	}
-
+	
 	function _gotoEnd(program, env, keyword) {
 		while (env._pc <= program.length && program[env._pc][0] !== keyword) {
 			env._pc++;
+		}
+	}
+	
+	function _gotoLoopEnd(program, env) {
+		env._pc++; // first 'for'
+		let forStack = 0;
+		while (env._pc <= program.length) {
+			let currentCmd = program[env._pc][0];
+			if (currentCmd === 'for') {
+				forStack++;
+			} else if (currentCmd === 'nxt') {
+				if (forStack === 0) {
+					return;
+				}
+				forStack--;
+			}
+			env._pc++;
+		}
+	}
+
+	function _backToLoopHead(program, env) {
+		let forStack = 0;
+		env._pc--;
+		while (env._pc > 0) {
+			let currentCmd = program[env._pc][0];
+			if (currentCmd === 'for') {
+				if (forStack === 0) {
+					env._pc--;
+					return;
+				}
+				forStack--;
+			} else if (currentCmd === 'nxt') {
+				forStack++;
+			}
+			env._pc--;
 		}
 	}
 
@@ -224,12 +259,14 @@ let runtimeEvaluator = function() {
 		} else if (cmd === 'psh') {
 			let listVarName = ts[1].slice(1); // remove `$`
 			let listVarVal = _getVarVal(env, listVarName);
-			if (typeof listVarVal === 'string') {
-				// string
-				_assignVar(env, listVarName, listVarVal + expr(ts[2]));
-			} else {
-				// array
-				listVarVal.push(expr(ts[2]));
+			for (const val of ts.slice(2)) {
+				if (typeof listVarVal === 'string') {
+					// string
+					_assignVar(env, listVarName, listVarVal + expr(val));
+				} else {
+					// array
+					listVarVal.push(expr(val));
+				}
 			}
 		} else if (cmd === 'pop') {
 			let listVarName = ts[1].slice(1); // remove `$`
@@ -339,6 +376,38 @@ let runtimeEvaluator = function() {
 				env: funcEnv
 			});
 			env._pc = fun[funcName];
+		} else if (cmd === 'for') {
+			let varName = ts[1];
+			let range = expr(ts[2]);
+			if (!(varName in env._loops)) {
+				let rangeList = [];
+				if (Number.isInteger(range)) {
+					rangeList = Array.from(Array(range).keys());
+				} else if (Array.isArray(range)) {
+					rangeList = range;
+				} else if (typeof range === 'string' || range instanceof String) {
+					rangeList = range.split('');
+				} else if (typeof range === 'object' && range !== null) {
+					rangeList = Object.keys(range);
+				}
+				env._loops[varName] = {
+					items: rangeList,
+					index: 0
+				}
+			}
+			
+			let loopState = env._loops[varName];
+			if (loopState.index >= loopState.items.length) {
+				delete env._loops[varName]
+				_gotoLoopEnd(program, env);
+			} else {
+				_assignVar(env, varName, loopState.items[loopState.index]);
+				loopState.index++;
+			}
+		} else if (cmd === 'nxt') {
+			_backToLoopHead(program, env);
+		} else if (cmd === 'lod' || cmd === 'sav') {
+			console.error(`'${cmd}' is not supported in browser. Please run it on the binary version of Runtime Script. (https://github.com/yjlo123/runtime-go)`);
 		} else {
 			console.log('Unknown command:', cmd);
 		}

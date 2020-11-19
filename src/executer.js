@@ -40,6 +40,7 @@ let runtimeExecuter = function() {
 			_random: getRandomInteger,
 			_keys: [],
 			_stack: [], // function call stack {pc, func_name, func_env, func_lbls}
+			_loops: {}, // for loops
 			_controls: _controls,
 			_options: _options,
 			_global: {

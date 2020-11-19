@@ -11,15 +11,7 @@ let num8 '001100010010010010001100010010001100'
 let num9 '001100010000011100010010010010001100'
 
 let nums []
-psh $nums $num9
-psh $nums $num8
-psh $nums $num7
-psh $nums $num6
-psh $nums $num5
-psh $nums $num4
-psh $nums $num3
-psh $nums $num2
-psh $nums $num1
+psh $nums $num9 $num8 $num7 $num6 $num5 $num4 $num3 $num2 $num1
 
 let x1 1
 let y1 2
