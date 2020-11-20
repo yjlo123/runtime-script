@@ -181,6 +181,8 @@ let runtimeEvaluator = function() {
 			_gotoEnd(program, env, 'fin');
 		} else if (cmd === 'fin') {
 			return;
+
+		/* ===== ARITHMATIC ===== */
 		} else if (cmd === 'add') {
 			let varName = ts[1];
 			let val1 = expr(ts[2]);
@@ -214,6 +216,8 @@ let runtimeEvaluator = function() {
 		} else if (cmd === 'div') {
 			let res = Math.floor(expr(ts[2]) / expr(ts[3]));
 			_assignVar(env, ts[1], res);
+
+		/* ===== DATA TYPE ===== */
 		} else if (cmd === 'int') {
 			let res = parseInt(expr(ts[2]));
 			if (Number.isNaN(res)) {
@@ -232,15 +236,13 @@ let runtimeEvaluator = function() {
 				type = 'str';
 			} else if (Array.isArray(val)) {
 				type = 'list';
-			} else if (typeof val === 'object') {
+			} else if (typeof val === 'object' && val !== null) {
 				type = 'map';
+			} else if (val === null) {
+				type = 'nil';
 			}
 			_assignVar(env, ts[1], type);
-		} else if (cmd === 'slp') {
-			env._sleep = expr(ts[1]);
-		} else if (cmd === 'prs') {
-			_assignVar(env, ts[1], JSON.parse(expr(ts[2])));
-		
+
 		/* ===== CANVAS ===== */
 		} else if (cmd === 'drw') {
 			// draw pixel
@@ -354,6 +356,12 @@ let runtimeEvaluator = function() {
 				val = Date.now();
 			}
 			_assignVar(env, ts[1], val);
+		} else if (cmd === 'slp') {
+			env._sleep = expr(ts[1]);
+		} else if (cmd === 'prs') {
+			_assignVar(env, ts[1], JSON.parse(expr(ts[2])));
+
+		/* ===== FUNC ===== */
 		} else if (cmd === 'def') {
 			_gotoEnd(program, env, 'end');
 		} else if (cmd === 'ret' || cmd === 'end') {
@@ -376,6 +384,8 @@ let runtimeEvaluator = function() {
 				env: funcEnv
 			});
 			env._pc = fun[funcName];
+
+		/* ===== FOR LOOP ===== */
 		} else if (cmd === 'for') {
 			let varName = ts[1];
 			let range = expr(ts[2]);
