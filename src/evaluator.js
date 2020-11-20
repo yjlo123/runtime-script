@@ -389,7 +389,7 @@ let runtimeEvaluator = function() {
 		} else if (cmd === 'for') {
 			let varName = ts[1];
 			let range = expr(ts[2]);
-			if (!(varName in env._loops)) {
+			if (!(varName in env._loops) || env._loops[varName].pc !== env._pc) {
 				let rangeList = [];
 				if (Number.isInteger(range)) {
 					rangeList = Array.from(Array(range).keys());
@@ -402,6 +402,7 @@ let runtimeEvaluator = function() {
 				}
 				env._loops[varName] = {
 					items: rangeList,
+					pc: env._pc, // to prevent the same var names
 					index: 0
 				}
 			}
