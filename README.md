@@ -76,11 +76,15 @@ jgt V V L
 psh S V [V..]
 pop S N
 pol S N
+put S I V
+get S I N
 
 put M V V
 get M V N
 key M N
 del M V
+
+len S/M N
 
 # canvas
 clr V*
@@ -93,6 +97,8 @@ slp V
 rnd N V V
 tim N year|month|date|day|hour|minute|second|milli|now
 prs N V
+lod V N
+sav V V
 
 # if-else
 ife V V
@@ -116,6 +122,7 @@ V: variable reference ($VR)
    or value (int|str|[]|{})
 S: list|str $VR
 M: map $VR
+I: int or int $VR
 L: label
 F: function name
 ```
