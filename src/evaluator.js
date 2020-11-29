@@ -438,7 +438,7 @@ let runtimeEvaluator = function() {
 			} else {
 				let fail = _getVarVal(env, 'test_fail');
 				_assignVar(env, 'test_fail', fail+1);
-				_print(env, `Test Failed. Line:${env._pc}, expected:${expect}, got:${val}`)
+				_print(env, ['', `Test Failed. Line:${env._pc+1}, expected:${expect}, got:${val}`])
 			}
 		} else {
 			console.log('Unknown command:', cmd);
