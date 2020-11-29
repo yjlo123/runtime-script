@@ -1,0 +1,74 @@
+test_init
+
+/ push pop
+let lst []
+psh $lst 1
+pop $lst a
+test_assert $a 1
+psh $lst 'h' 'e' 'llo'
+pol $lst c
+test_assert $c 'h'
+pop $lst c
+test_assert $c 'llo'
+pop $lst c
+test_assert $c 'e'
+pop $lst c
+test_assert $c $nil
+
+/ get by index
+let lst []
+psh $lst 'abc'
+get $lst 0 v
+test_assert $v 'abc'
+pop $lst v
+psh $lst 'h' 'e' 'l' 'l' 'o'
+
+len $lst length
+test_assert $length 5
+
+get $lst 2 v
+test_assert $v 'l'
+
+get $lst 4 v
+test_assert $v 'o'
+
+pol $lst x
+get $lst 0 v
+test_assert $v 'e'
+get $lst 3 v
+test_assert $v 'o'
+
+psh $lst 'a' 'b' 'c'
+get $lst 5 v
+test_assert $v 'b'
+pop $lst x
+pop $lst x
+get $lst 4 v
+test_assert $v 'a'
+get $lst 5 v
+test_assert $v $nil
+
+/ set by index
+let lst []
+put $lst 2 'a'
+len $lst ll
+test_assert $ll 3
+get $lst 0 v
+test_assert $v $nil
+get $lst 2 v
+test_assert $v 'a'
+
+put $lst 1 'b'
+pop $lst v
+test_assert $v 'a'
+pop $lst v
+test_assert $v 'b'
+pop $lst v
+test_assert $v $nil
+
+
+/ result
+prt '[pass] ' ''
+prt $test_pass
+prt '[fail] ' ''
+prt $test_fail

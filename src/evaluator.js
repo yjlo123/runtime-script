@@ -308,15 +308,22 @@ let runtimeEvaluator = function() {
 				let varVal = val === undefined ? null : val;
 				_assignVar(env, varName, varVal);
 			}
+		} else if (cmd === 'len') {
+			let listVarName = ts[1].slice(1); // remove `$`
+			let listVarVal = _getVarVal(env, listVarName);
+			let varName = ts[2];
+			_assignVar(env, varName, listVarVal.length);
 
 		/* ===== MAP ===== */
 		} else if (cmd === 'put') {
+			// list or map
 			let mapVarName = ts[1].slice(1); // remove `$`
 			let mapVarVal = _getVarVal(env, mapVarName);
 			let mapKey = expr(ts[2]);
 			let mapVal = expr(ts[3]);
 			mapVarVal[mapKey] = mapVal;
 		} else if (cmd === 'get') {
+			// list or map
 			let mapVarName = ts[1].slice(1); // remove `$`
 			let mapVarVal = _getVarVal(env, mapVarName);
 			let mapKey = expr(ts[2]);
@@ -419,6 +426,20 @@ let runtimeEvaluator = function() {
 			_backToLoopHead(program, env);
 		} else if (cmd === 'lod' || cmd === 'sav') {
 			console.error(`'${cmd}' is not supported in browser. Please run it on the binary version of Runtime Script. (https://github.com/yjlo123/runtime-go)`);
+		} else if (cmd === 'test_init') {
+			_assignVar(env, 'test_pass', 0);
+			_assignVar(env, 'test_fail', 0);
+		} else if (cmd === 'test_assert') {
+			let val = expr(ts[1]);
+			let expect = expr(ts[2]);
+			if (val === expect) {
+				let pass = _getVarVal(env, 'test_pass');
+				_assignVar(env, 'test_pass', pass+1);
+			} else {
+				let fail = _getVarVal(env, 'test_fail');
+				_assignVar(env, 'test_fail', fail+1);
+				_print(env, `Test Failed. Line:${env._pc}, expected:${expect}, got:${val}`)
+			}
 		} else {
 			console.log('Unknown command:', cmd);
 		}
