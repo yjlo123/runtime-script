@@ -2,30 +2,30 @@
 / by Siwei
 / Oct 2020
 
-cal two_sum '[2,7,11,15]' 22
+prs input '[2,7,11,15]'
+cal two_sum $input 22
 prt $ret
 
 def two_sum
- prs input $0
- let target $1
- let result []
- let map {}
- let idx 0
+ let _list $0
+ let _target $1
+ let _result []
+ let _map {}
+ let _idx 0
  
  #loop
- pol $input num
- jeq $num $nil done
- get $map $num v
- ife $v $nil
-  sub _key $target $num
-  put $map $_key $idx
+ pol $_list _num
+ jeq $_num $nil done
+ get $_map $_num _v
+ ife $_v $nil
+  sub _key $_target $_num
+  put $_map $_key $_idx
  els
-  psh $result $v
-  psh $result $idx
-  ret $result
+  psh $_result $_v $_idx
+  ret $_result
  fin
- add idx $idx 1
+ add _idx $_idx 1
  jmp loop
  #done
- ret $result
+ ret $_result
 end

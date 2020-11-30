@@ -41,5 +41,5 @@ def is_valid
  
  #final
  jne $stack '' false
- ret'true'
+ ret 'true'
 end
