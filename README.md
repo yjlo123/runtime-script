@@ -7,6 +7,24 @@
 # Runtime Script
 An assembly-like programming language.
 
+```ruby
+def hello
+ let _names $0
+ #loop
+ pol $_names _name
+ jeq $_name $nil done
+ add _msg 'Hello ' $_name
+ prt $_msg
+ jmp loop
+ #done
+ ret
+end
+
+let names []
+psh $names 'World' 'yjlo'
+cal hello $names
+```
+
 ## Playground
 https://runtime.siwei.dev
 
