@@ -16,8 +16,6 @@ psh $src 'prt $y'
 psh $src 'jne $x 15 draw_dot'
 psh $src 'prt \'Hello World!\''
 
-let env {}
-
 / ====== parsing ======
 def parse_line
  let _line $0
@@ -71,22 +69,18 @@ def parse
  let _p $1  / map ref
  let _lbl $2  / map ref
  let _lc 0
- #parser
- pol $_src _line
- ife $_line $nil
-  ret $_p
- fin
- 
- / check label
- pol $_line _c1
- ife $_c1 '#'
-  put $_lbl $_line $_lc
- fin
- add _line $_c1 $_line
- cal parse_line $_line
- put $_p $_lc $ret
- add _lc $_lc 1
- jmp parser
+ for _line $_src
+  / check label
+  pol $_line _c1
+  ife $_c1 '#'
+   put $_lbl $_line $_lc
+  fin
+  add _line $_c1 $_line
+  cal parse_line $_line
+  put $_p $_lc $ret
+  add _lc $_lc 1
+ nxt
+ ret $_p
 end
 
 / ====== evaluating ======
@@ -121,10 +115,12 @@ def eval_param
 end
 
 / ** main eval **
-def main
+def runtime
+ let _src $0
+ let env {}
  let _p {}
  let _lbl {}
- cal parse $src $_p $_lbl
+ cal parse $_src $_p $_lbl
  let _pc 0
  
  #eval
@@ -199,4 +195,4 @@ def main
  #eval_done
 end
 
-cal main
+cal runtime $src
