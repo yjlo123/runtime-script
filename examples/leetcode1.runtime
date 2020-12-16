@@ -2,7 +2,8 @@
 / by Siwei
 / Oct 2020
 
-prs input '[2,7,11,15]'
+let input []
+psh $input 2 7 11 15
 cal two_sum $input 22
 prt $ret
 

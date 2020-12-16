@@ -2,27 +2,28 @@
 / by Siwei
 / Oct 2020
 
-prs input '[2,4,1,2,1]'
+let input []
+psh $input 2 4 1 2 1
 
 cal single_number $input
 prt $ret
 
 def single_number
- let input $0
- let set {}
+ let _input $0
+ let _set {}
  #loop
- pol $input num
- jeq $num $nil done
- str num $num
- get $set $num v
- ife $v $nil
-  put $set $num 1
+ pol $_input _num
+ jeq $_num $nil done
+ str _num $_num
+ get $_set $_num _v
+ ife $_v $nil
+  put $_set $_num 1
  els
-  del $set $num
+  del $_set $_num
  fin
  jmp loop
  #done
- key $set keys
- pol $keys result
- ret $result
+ key $_set _keys
+ pol $_keys _result
+ ret $_result
 end

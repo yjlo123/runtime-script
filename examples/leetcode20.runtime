@@ -6,33 +6,33 @@ cal is_valid '{[][()]}'
 prt $ret
 
 def is_valid
- let input $0
- let stack ''
+ let _input $0
+ let _stack ''
  
  #loop
- pol $input c
- jeq $c '' final
- jeq $c '(' push
- jeq $c '[' push
- jeq $c '{' push
+ pol $_input _c
+ jeq $_c '' final
+ jeq $_c '(' push
+ jeq $_c '[' push
+ jeq $_c '{' push
  
  jmp check
  
  #push
- psh $stack $c
+ psh $_stack $_c
  jmp loop
  
  #check
- pop $stack top
- jeq $top '' false
- ife $top '('
-  jne $c ')' false
+ pop $_stack _top
+ jeq $_top '' false
+ ife $_top '('
+  jne $_c ')' false
  fin
- ife $top '['
-  jne $c ']' false
+ ife $_top '['
+  jne $_c ']' false
  fin
- ife $top '{'
-  jne $c '}' false
+ ife $_top '{'
+  jne $_c '}' false
  fin
  jmp loop
  
@@ -40,6 +40,6 @@ def is_valid
  ret 'false'
  
  #final
- jne $stack '' false
+ jne $_stack '' false
  ret 'true'
 end

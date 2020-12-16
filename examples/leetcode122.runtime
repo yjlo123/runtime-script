@@ -2,27 +2,28 @@
 / by Siwei
 / Oct 2020
 
-prs prices '[7,1,5,3,6,4]'
+let prices []
+psh $prices 7 1 5 3 6 4
 cal max_profit $prices 
 prt $ret
 
 def max_profit
- let prices $0
- let profit 0
+ let _prices $0
+ let _profit 0
 
- pol $prices prev
- jne $prev $nil loop
+ pol $_prices _prev
+ jne $_prev $nil loop
  ret
  #loop
- pol $prices current
- jeq $current $nil done
- let diff 0
- ifg $current $prev
-  sub diff $current $prev
-  add profit $profit $diff
+ pol $_prices _current
+ jeq $_current $nil done
+ let _diff 0
+ ifg $_current $_prev
+  sub _diff $_current $_prev
+  add _profit $_profit $_diff
  fin
- let prev $current
+ let _prev $_current
  jmp loop
  #done
- ret $profit
+ ret $_profit
 end
