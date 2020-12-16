@@ -23,6 +23,23 @@ let runtimeEvaluator = function() {
 		}
 	}
 	
+	function _gotoIfEnd(program, env) {
+		let ifStack = 0;
+		while (env._pc <= program.length) {
+			let currentCmd = program[env._pc][0];
+			if (currentCmd === 'ife' || currentCmd === 'ifg') {
+				ifStack++;
+			} else if (currentCmd === 'fin') {
+				if (ifStack === 0) {
+					return;
+				} else {
+					ifStack--;
+				}
+			}
+			env._pc++;
+		}
+	}
+
 	function _gotoEnd(program, env, keyword) {
 		while (env._pc <= program.length && program[env._pc][0] !== keyword) {
 			env._pc++;
@@ -178,7 +195,7 @@ let runtimeEvaluator = function() {
 				_gotoIfFalse(program, env);
 			}
 		} else if (cmd === 'els') {
-			_gotoEnd(program, env, 'fin');
+			_gotoIfEnd(program, env);
 		} else if (cmd === 'fin') {
 			return;
 

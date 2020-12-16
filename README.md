@@ -7,6 +7,24 @@
 # Runtime Script
 An assembly-like programming language.
 
+```ruby
+def hello
+ let _names $0
+ #loop
+ pol $_names _name
+ jeq $_name $nil done
+ add _msg 'Hello ' $_name
+ prt $_msg
+ jmp loop
+ #done
+ ret
+end
+
+let names []
+psh $names 'World' 'yjlo'
+cal hello $names
+```
+
 ## Playground
 https://runtime.siwei.dev
 
@@ -37,6 +55,7 @@ https://siwei.dev/doc/runtime
 ## Works
 [倉庫番](https://siwei.dev/app/sokoban/): A sokoban game  
 [Rundis](https://siwei.dev/app/rundis/): A mock Redis CLI  
+[MoonOS](https://siwei.dev/app/moon): A terminal game
 
 ## Editor
 [Online Editor](https://runtime.siwei.dev)  
@@ -45,8 +64,9 @@ https://siwei.dev/doc/runtime
 ## Blog
 [#runtime_script](https://blog.siwei.dev/tags/runtime-script/)
 
-## Runtime Script writtn in Go
-[Runtime Go](https://github.com/yjlo123/runtime-go)
+## Other implementations
+[Runtime Go](https://github.com/yjlo123/runtime-go)  
+[Runtime V](https://github.com/yjlo123/runtime-v)  
 
 ## Language reference
 ```
