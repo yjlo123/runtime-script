@@ -1,0 +1,73 @@
+/ Leetcode 5. Longest Palindromic Substring
+/ by Siwei
+/ Dec 2020
+
+let input 'babad'
+cal longest_palindrome $input
+prt $ret
+
+def longest_palindrome
+ let _s $0
+ ife $_s ''
+  ret ''
+ fin
+ let _start 0
+ let _end 0
+ let _i 0
+ len $_s _s_len
+ #loop
+  jeq $_i $_s_len done
+  cal expand_around_center $_s $_i $_i
+  let _len1 $ret
+  add _i_add_1 $_i 1
+  cal expand_around_center $_s $_i $_i_add_1
+  let _len2 $ret
+  let _len_max -1
+  ifg $_len1 $_len2
+   let _len_max $_len1
+  els
+   let _len_max $_len2
+  fin
+  
+  sub _total_len $_end $_start
+  add _total_len $_total_len 1
+  ifg $_len_max $_total_len
+   sub _mid_left $_len_max 1
+   div _mid_left $_mid_left 2
+   sub _start $_i $_mid_left
+   div _mid_right $_len_max 2
+   add _end $_i $_mid_right
+  fin
+  add _i $_i 1
+ jmp loop
+ #done
+ let _res ''
+ #gen_result
+ get $_s $_start _c
+ psh $_res $_c
+ jeq $_start $_end return
+ add _start $_start 1
+ jmp gen_result
+ #return
+ ret $_res
+end
+
+def expand_around_center
+ let _s $0
+ let _left $1
+ let _right $2
+ len $_s _s_len
+ #loop
+  jlt $_left 0 done
+  jeq $_right $_s_len done
+  get $_s $_left _left_c
+  get $_s $_right _right_c
+  jne $_left_c $_right_c done
+  sub _left $_left 1
+  add _right $_right 1
+ jmp loop
+ #done
+ sub _res $_right $_left
+ sub _res $_res 1
+ ret $_res
+end

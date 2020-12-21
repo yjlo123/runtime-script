@@ -38,6 +38,7 @@ https://siwei.dev/doc/runtime
 [Game: Sokoban](https://runtime.siwei.dev/?src=sokoban)  
 
 [Leetcode 1. Two Sum](https://runtime.siwei.dev/?src=leetcode1)  
+[Leetcode 5. Longest Palindromic Substring](https://runtime.siwei.dev/?src=leetcode5)  
 [Leetcode 20. Valid Parentheses](https://runtime.siwei.dev/?src=leetcode20)  
 [Leetcode 21. Merge Two Sorted Lists](https://runtime.siwei.dev/?src=leetcode21)  
 [Leetcode 122. Best Time to Buy and Sell Stock II](https://runtime.siwei.dev/?src=leetcode122)  
