@@ -56,7 +56,7 @@ https://siwei.dev/doc/runtime
 ## Works
 [倉庫番](https://siwei.dev/app/sokoban/): A sokoban game  
 [Rundis](https://siwei.dev/app/rundis/): A mock Redis CLI  
-[MoonOS](https://siwei.dev/app/moon): A terminal game
+[MoonOS](https://yjlo123.github.io/moon/): A terminal game
 
 ## Editor
 [Online Editor](https://runtime.siwei.dev)  
