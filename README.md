@@ -53,7 +53,7 @@ https://siwei.dev/doc/runtime
 [Brainfuck Interpreter](https://runtime.siwei.dev/?src=brain_fuck)  
 [Runtime Script Interpreter](https://runtime.siwei.dev/?src=runtime_script)  
 
-## Works
+## Games written in Runtime Script
 [倉庫番](https://siwei.dev/app/sokoban/): A sokoban game  
 [Rundis](https://siwei.dev/app/rundis/): A mock Redis CLI  
 [MoonOS](https://yjlo123.github.io/moon/): A terminal game
@@ -67,7 +67,6 @@ https://siwei.dev/doc/runtime
 
 ## Other implementations
 [Runtime Go](https://github.com/yjlo123/runtime-go)  
-[Runtime V](https://github.com/yjlo123/runtime-v)  
 
 ## Language reference
 ```
