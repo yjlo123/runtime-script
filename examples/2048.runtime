@@ -36,10 +36,12 @@ end
 
 def update_score
  let rank $0
+ jeq $rank $nil print_score
  let score_to_add 1
  for x $rank
   mul score_to_add $score_to_add 2
  nxt
+ #print_score
  add score $score $score_to_add
  let text 'Score: '
  add text $text $score
