@@ -1,0 +1,365 @@
+/ 2048
+/ by Siwei
+/ Oct 2021
+
+let rows []
+psh $rows '0000'
+psh $rows '0000'
+psh $rows '0000'
+psh $rows '0000'
+
+let m []
+for a 4
+ let i_row []
+ for b 4
+  pol $rows rs
+  pol $rs cs
+  int ics $cs
+  psh $i_row $ics
+  psh $rows $rs
+ nxt
+ psh $m $i_row
+nxt
+
+let score 0
+
+def refresh
+ clr 4 4
+ for a 4
+  for b 4
+   get $m $a r
+   get $r $b c
+   drw $a $b $c
+  nxt
+ nxt
+end
+
+def update_score
+ let rank $0
+ let score_to_add 1
+ for x $rank
+  mul score_to_add $score_to_add 2
+ nxt
+ add score $score $score_to_add
+ let text 'Score: '
+ add text $text $score
+ prt $text
+end
+
+def check_dead
+ let is_alive 0
+ let has_empty 0
+ for a 4
+  for b 4
+   pxl c $a $b
+   ife $c 0
+    ret 0 /alive
+   fin
+  nxt
+ nxt
+ for a 4
+  for b 3
+   / check any row can combine
+   pxl rn $b $a
+   add c $b 1
+   pxl rn1 $c $a
+   ife $rn $rn1
+    ret 0 /alive
+   fin
+   
+   / check any col can combine
+   pxl cn $a $b
+   add d $b 1
+   pxl cn1 $a $d
+   ife $cn $cn1
+    ret 0 /alive
+   fin
+  nxt
+ nxt
+ ret 1  /dead
+end
+
+def random
+ let empty_cells []
+ for a 4
+  for b 4
+   get $m $a r
+   get $r $b c
+   ife $c 0
+    let cell [] / column: a, row: b
+    psh $cell $a
+    psh $cell $b
+    psh $empty_cells $cell
+   fin
+  nxt
+ nxt
+ len $empty_cells empty_len
+ rnd rnd_idx 0 $empty_len
+ get $empty_cells $rnd_idx rnd_empty
+ 
+ pol $rnd_empty rnd_col
+ pol $rnd_empty rnd_row
+ get $m $rnd_col the_rnd_col 
+ put $the_rnd_col $rnd_row 1
+end
+
+cal random
+cal random
+cal update_score
+
+jmp draw
+
+#begin
+let changed 0
+
+/ -- check key --
+let key $lastkey
+
+ife $key 37
+ / left
+ let round 1
+ #next_left_round
+ / round 1: move, round 2: combine, round 3: move
+ jeq $round 4 left_round_end
+ for i 3 / for column 0~2
+  add ii 1 $i  / from left to right 1~3
+  get $m $ii col
+  for j 4
+   get $col $j current_c / current
+   ifg $current_c 0
+    let prev_i $ii
+    let current_col $col
+    #left_move_loop
+    let moved 0
+    get $current_col $j current_c
+    / move left until cannot
+    sub prev_i $prev_i 1
+    jeq $prev_i -1 end_left_move_loop
+
+    pxl left_c $prev_i $j
+    get $m $prev_i next_col
+    jne $round 2 skip_left_combine
+     ife $left_c $current_c
+      / same color -> combine
+      add new_c $current_c 1
+      put $current_col $j 0
+      put $next_col $j $new_c
+      cal update_score $new_c
+      cal refresh
+      let changed 1
+     fin
+    #skip_left_combine
+    jeq $round 2 skip_left_move
+     ife $left_c 0
+      / empty space -> move
+      put $current_col $j 0
+      put $next_col $j $current_c
+      let moved 1
+      let changed 1
+     fin
+    #skip_left_move
+    ife $moved 1
+     let current_col $next_col
+     cal refresh
+     jmp left_move_loop
+    fin
+    #end_left_move_loop
+   fin
+  nxt
+ nxt
+ add round $round 1
+ jmp next_left_round
+ #left_round_end
+fin
+
+ife $key 38
+ / up
+ let round 1
+ #next_up_round
+ / round 1: move, round 2: combine, round 3: move
+ jeq $round 4 up_round_end
+ for i 4 / for column 0~3
+  for j 3
+   add jj 1 $j  / from top to bottom 1~3
+   get $m $i col
+   get $col $jj current_c / current
+   ifg $current_c 0
+    let prev_j $jj
+    let current_j $jj
+    #up_move_loop
+    let moved 0
+    get $col $current_j current_c
+    / move up until cannot
+    sub prev_j $prev_j 1
+    jeq $prev_j -1 end_up_move_loop
+
+    pxl up_c $i $prev_j
+    jne $round 2 skip_up_combine
+     ife $up_c $current_c
+      / same color -> combine
+      add new_c $current_c 1
+      put $col $current_j 0
+      put $col $prev_j $new_c
+      cal update_score $new_c
+      cal refresh
+      let changed 1
+     fin
+    #skip_up_combine
+    jeq $round 2 skip_up_move
+     ife $up_c 0
+      / empty space -> move
+      put $col $current_j 0
+      put $col $prev_j $current_c
+      let moved 1
+      let changed 1
+     fin
+    #skip_up_move
+    ife $moved 1
+     let current_j $prev_j
+     cal refresh
+     jmp up_move_loop
+    fin
+    #end_up_move_loop
+   fin
+  nxt
+ nxt
+ add round $round 1
+ jmp next_up_round
+ #up_round_end
+fin
+
+ife $key 39
+ / right
+ let round 1
+ #next_right_round
+ / round 1: move, round 2: combine, round 3: move
+ jeq $round 4 right_round_end
+ for i 3 / for column 0~2
+  sub ii 2 $i  / from right to left 2~0
+  get $m $ii col
+  for j 4
+   get $col $j current_c / current
+   ifg $current_c 0
+    let ri $ii
+    let current_col $col
+    #right_move_loop
+    let moved 0
+    get $current_col $j current_c
+    / move right until cannot
+    add ri $ri 1
+    jeq $ri 4 end_right_move_loop
+
+    pxl right_c $ri $j
+    get $m $ri next_col
+    jne $round 2 skip_right_combine
+     ife $right_c $current_c
+      / same color -> combine
+      add new_c $current_c 1
+      put $current_col $j 0
+      put $next_col $j $new_c
+      cal update_score $new_c
+      cal refresh
+      let changed 1
+     fin
+    #skip_right_combine
+    jeq $round 2 skip_right_move
+     ife $right_c 0
+      / empty space -> move
+      put $current_col $j 0
+      put $next_col $j $current_c
+      let moved 1
+      let changed 1
+     fin
+    #skip_right_move
+    ife $moved 1
+     let current_col $next_col
+     cal refresh
+     jmp right_move_loop
+    fin
+    #end_right_move_loop
+   fin
+  nxt
+ nxt
+ add round $round 1
+ jmp next_right_round
+ #right_round_end
+fin
+
+ife $key 40
+ / down
+ let round 1
+ #next_down_round
+ / round 1: move, round 2: combine, round 3: move
+ jeq $round 4 down_round_end
+ for i 4 / for column 0~3
+  for j 3
+   sub jj 2 $j  / from bottom to top 2~0
+   get $m $i col
+   get $col $jj current_c / current
+   ifg $current_c 0
+    let next_j $jj
+    let current_j $jj
+    #down_move_loop
+    let moved 0
+    get $col $current_j current_c
+    / move down until cannot
+    add next_j $next_j 1
+    jeq $next_j 4 end_down_move_loop
+
+    pxl down_c $i $next_j
+    jne $round 2 skip_down_combine
+     ife $down_c $current_c
+      / same color -> combine
+      add new_c $current_c 1
+      put $col $current_j 0
+      put $col $next_j $new_c
+      cal update_score $new_c
+      cal refresh
+      let changed 1
+     fin
+    #skip_down_combine
+    jeq $round 2 skip_down_move
+     ife $down_c 0
+      / empty space -> move
+      put $col $current_j 0
+      put $col $next_j $current_c
+      let moved 1
+      let changed 1
+     fin
+    #skip_down_move
+    ife $moved 1
+     let current_j $next_j
+     cal refresh
+     jmp down_move_loop
+    fin
+    #end_down_move_loop
+   fin
+  nxt
+ nxt
+ add round $round 1
+ jmp next_down_round
+ #down_round_end
+fin
+
+ife $changed 1
+ cal random
+fin
+
+#skip_new
+
+/ -- draw --
+#draw
+cal refresh
+
+cal check_dead
+jeq $ret 1 game_over
+
+slp 20
+jmp begin
+
+#game_over
+let final_msg '===== Game Over! '
+add final_msg $final_msg 'Score: '
+add final_msg $final_msg $score
+add final_msg $final_msg ' ====='
+prt $final_msg
