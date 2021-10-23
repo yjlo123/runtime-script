@@ -22,6 +22,7 @@ for a 4
 nxt
 
 let score 0
+let refresh_interval 20
 
 def refresh
  clr 4 4
@@ -170,6 +171,8 @@ ife $key 37
   nxt
  nxt
  add round $round 1
+ cal refresh
+ slp $refresh_interval
  jmp next_left_round
  #left_round_end
 fin
@@ -226,6 +229,8 @@ ife $key 38
   nxt
  nxt
  add round $round 1
+ cal refresh
+ slp $refresh_interval
  jmp next_up_round
  #up_round_end
 fin
@@ -283,6 +288,8 @@ ife $key 39
   nxt
  nxt
  add round $round 1
+ cal refresh
+ slp $refresh_interval
  jmp next_right_round
  #right_round_end
 fin
@@ -339,6 +346,8 @@ ife $key 40
   nxt
  nxt
  add round $round 1
+ cal refresh
+ slp $refresh_interval
  jmp next_down_round
  #down_round_end
 fin
@@ -356,7 +365,7 @@ cal refresh
 cal check_dead
 jeq $ret 1 game_over
 
-slp 20
+slp $refresh_interval
 jmp begin
 
 #game_over
