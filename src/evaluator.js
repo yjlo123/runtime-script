@@ -467,7 +467,7 @@ let runtimeEvaluator = function() {
 			// value reference
 			let varName = exp.slice(1);
 			if (varName === 'lastkey') {
-				// specila value: lastkey
+				// special value: lastkey
 				result = _env._keys.length > 0 ? _env._keys.shift() : -1;
 			} else if (varName === 'nil'){
 				// special value: nil
