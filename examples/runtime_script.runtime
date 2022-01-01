@@ -4,6 +4,9 @@
 
 let src []
 psh $src 'clr'
+psh $src 'prt \'Year born:\''
+psh $src 'inp abc'
+psh $src 'int abc $abc'
 psh $src 'let base 9'
 psh $src 'let x $base'
 psh $src '#draw_dot'
@@ -15,6 +18,9 @@ psh $src 'div y $y 2'
 psh $src 'prt $y'
 psh $src 'jne $x 15 draw_dot'
 psh $src 'prt \'Hello World!\''
+psh $src 'tim cur_year year'
+psh $src 'sub res $cur_year $abc'
+psh $src 'prt $res'
 
 / ====== parsing ======
 def parse_line
@@ -189,6 +195,26 @@ def runtime
   get $_lbl $_lbl_name _pc
   #jne_false
  fin
+ ife $_cmd 'inp'
+  get $_line 1 _var
+  inp _val
+  put $env $_var $_val
+ fin
+ ife $_cmd 'int'
+  get $_line 1 _var
+  cal eval_param $_line 2
+  int _val $ret
+  put $env $_var $_val
+ fin
+ ife $_cmd 'tim'
+  get $_line 1 _var
+  get $_line 2 _time
+  ife $_time 'year'
+   tim _val year
+  fin
+  put $env $_var $_val
+ fin
+ 
  add _pc $_pc 1
  jmp eval
  
