@@ -141,7 +141,13 @@ def runtime
   get $_line 1 _val
   cal expr $_val
   let _val $ret
-  prt $_val
+  get $_line 2 _val2
+  ife $_val2 $nil
+   prt $_val
+  els
+   cal expr $_val2
+   prt $_val $ret
+  fin
  fin
  ife $_cmd 'let'
   get $_line 1 _var
@@ -185,6 +191,20 @@ def runtime
   cal eval_param $_line 3
   drw $_x $_y $ret
  fin
+ ife $_cmd 'jmp'
+  get $_line 1 _lbl_name
+  get $_lbl $_lbl_name _pc
+ fin
+ ife $_cmd 'jeq'
+  cal eval_param $_line 1
+  let _v1 $ret
+  cal eval_param $_line 2
+  let _v2 $ret
+  get $_line 3 _lbl_name
+  jne $_v1 $_v2 jeq_false
+  get $_lbl $_lbl_name _pc
+  #jeq_false
+ fin
  ife $_cmd 'jne'
   cal eval_param $_line 1
   let _v1 $ret
@@ -213,6 +233,16 @@ def runtime
    tim _val year
   fin
   put $env $_var $_val
+ fin
+ ife $_cmd 'pol'
+  cal eval_param $_line 1
+  let _list $ret
+  get $_line 2 _name
+  pol $_list _first
+  get $_line 1 _list_name
+  pol $_list_name _
+  put $env $_list_name $_list
+  put $env $_name $_first
  fin
  
  add _pc $_pc 1
