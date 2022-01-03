@@ -199,8 +199,10 @@ let runtimeExecuter = function() {
 		break_points = rows;
 	}
 
-	function getEnv() {
-		console.log(env);
+	function getEnv(console_log=true) {
+		if (console_log) {
+			console.log(env);
+		}
 		return {
 			global: env._global,
 			func_stack: env._stack,
