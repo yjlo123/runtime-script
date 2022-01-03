@@ -104,8 +104,8 @@ let runtimeEvaluator = function() {
 		env._console.Write(resultExp + endChar, 'console-default');
 	}
 
-	function _assignVar(env, varName, val, forceScope=false) {
-		if ((forceScope || varName[0] === '_') && env._stack.length > 0) {
+	function _assignVar(env, varName, val) {
+		if ((varName === 'ret' || varName[0] === '_') && env._stack.length > 0) {
 			// function scoped variable
 			env._stack[env._stack.length-1]['env'][varName] = val;
 		} else {
@@ -116,7 +116,7 @@ let runtimeEvaluator = function() {
 
 	function _getVarVal(env, varName) {
 		// for `list` and `map`
-		if (varName[0] === '_' && env._stack.length > 0) {
+		if ((varName === 'ret' || varName[0] === '_') && env._stack.length > 0) {
 			// function scoped variable
 			return env._stack[env._stack.length-1]['env'][varName];
 		} else {
@@ -392,7 +392,7 @@ let runtimeEvaluator = function() {
 			let val = ts[1] && expr(ts[1]); // must eval before pop
 			let stackObj = env._stack.pop();
 			if (val !== undefined && cmd === 'ret') {
-				_assignVar(env, 'ret', val, forceScope=true);
+				_assignVar(env, 'ret', val);
 			}
 			env._pc = stackObj.pc;
 		} else if (cmd === 'cal') {
