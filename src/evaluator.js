@@ -362,7 +362,7 @@ let runtimeEvaluator = function() {
 			let val = env._random(expr(ts[2]), expr(ts[3]));
 			_assignVar(env, ts[1], val);
 		} else if (cmd === 'tim') {
-			let timeType = ts[2];
+			let timeType = expr(ts[2]);
 			let dateFuncMap = {
 				'year': Date.prototype.getFullYear,
 				'month': Date.prototype.getMonth,
