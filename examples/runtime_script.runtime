@@ -232,6 +232,15 @@ def runtime
   ife $_time 'year'
    tim _val year
   fin
+  ife $_time 'month'
+   tim _val month
+  fin
+  ife $_time 'day'
+   tim _val day
+  fin
+  ife $_time 'date'
+   tim _val date
+  fin
   put $env $_var $_val
  fin
  ife $_cmd 'pol'
@@ -240,9 +249,31 @@ def runtime
   get $_line 2 _name
   pol $_list _first
   get $_line 1 _list_name
-  pol $_list_name _
+  pol $_list_name x
   put $env $_list_name $_list
   put $env $_name $_first
+ fin
+ ife $_cmd 'psh'
+  cal eval_param $_line 1
+  let _list $ret
+  len $_line _line_len
+  sub _line_len $_line_len 2
+  for i $_line_len
+    add j $i 2
+    cal eval_param $_line $j
+    let _val $ret
+    psh $_list $_val
+  nxt
+ fin
+ ife $_cmd 'get'
+  cal eval_param $_line 1
+  let _list $ret
+  cal eval_param $_line 2
+  let _key $ret
+  cal eval_param $_line 3
+  let _var $ret
+  get $_list $_key _val
+  put $env $_var $_val
  fin
  
  add _pc $_pc 1
