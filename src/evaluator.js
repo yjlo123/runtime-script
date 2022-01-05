@@ -485,7 +485,7 @@ let runtimeEvaluator = function() {
 					value = _env._global[varName];
 				}
 				if (value === undefined) {
-					console.log(`Variable ${varName} undefined`);
+					console.log(`Line:${_env._pc+1} Variable ${varName} undefined`);
 					result = null;
 				} else if (value && value.length > 1 && value[0] === '\'' && value[value.length-1] === '\'') {
 					result = value.slice(1, -1);
