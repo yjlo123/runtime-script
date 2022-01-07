@@ -97,6 +97,12 @@ def expr
  jeq $_i $nil continue
  ret $_i
  #continue
+ ife $_expr '[]'
+  ret []
+ fin
+ ife $_expr '{}'
+  ret {}
+ fin
  pol $_expr _c1
  ife $_c1 '$'
   get $env $_expr _val
@@ -105,9 +111,6 @@ def expr
  ife $_c1 '\''
   pop $_expr _
   ret $_expr
- fin
- ife $_c1 '['
-  ret []
  fin
  ret $_original
 end
@@ -253,6 +256,15 @@ def runtime
     let _val $ret
     psh $_list $_val
   nxt
+ fin
+ ife $_cmd 'put'
+  cal eval_param $_line 1
+  let _map $ret
+  cal eval_param $_line 2
+  let _key $ret
+  cal eval_param $_line 3
+  let _val $ret
+  put $_map $_key $_val
  fin
  ife $_cmd 'get'
   cal eval_param $_line 1
