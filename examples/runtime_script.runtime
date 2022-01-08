@@ -235,6 +235,13 @@ def runtime
   tim _val $_time
   put $env $_var $_val
  fin
+ ife $_cmd 'len'
+  cal eval_param $_line 1
+  let _list $ret
+  get $_line 2 _name
+  len $_list _len
+  put $env $_name $_len
+ fin
  ife $_cmd 'pol'
   cal eval_param $_line 1
   let _list $ret
@@ -244,6 +251,16 @@ def runtime
   pol $_list_name x
   put $env $_list_name $_list
   put $env $_name $_first
+ fin
+ ife $_cmd 'pop'
+  cal eval_param $_line 1
+  let _list $ret
+  get $_line 2 _name
+  pop $_list _last
+  get $_line 1 _list_name
+  pol $_list_name x
+  put $env $_list_name $_list
+  put $env $_name $_last
  fin
  ife $_cmd 'psh'
   cal eval_param $_line 1
@@ -256,6 +273,9 @@ def runtime
     let _val $ret
     psh $_list $_val
   nxt
+  get $_line 1 _list_name
+  pol $_list_name x
+  put $env $_list_name $_list
  fin
  ife $_cmd 'put'
   cal eval_param $_line 1
