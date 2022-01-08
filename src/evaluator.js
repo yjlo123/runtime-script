@@ -236,9 +236,12 @@ let runtimeEvaluator = function() {
 
 		/* ===== DATA TYPE ===== */
 		} else if (cmd === 'int') {
-			let res = parseInt(expr(ts[2]));
-			if (Number.isNaN(res)) {
+			let param = expr(ts[2])
+			let isNumeric = !isNaN(param) && !isNaN(parseFloat(param));
+			if (!isNumeric) {
 				res = null;
+			} else {
+				res = parseInt(param);
 			}
 			_assignVar(env, ts[1], res);
 		} else if (cmd === 'str') {
