@@ -174,7 +174,7 @@ let runtimeExecuter = function() {
 			env._resume = executeStep;
 			return;
 		}
-		_editor.gotoLine(env._pc+1, 0);
+		_editor && _editor.gotoLine(env._pc+1, 0);
 		if (env._pc < program.length) {
 			_evaluater.evaluate(program[env._pc], env, lbl, fun, program);
 			env._pc++;
