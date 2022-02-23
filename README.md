@@ -37,6 +37,7 @@ https://siwei.dev/doc/runtime
 [Game: Sliding Puzzle](https://runtime.siwei.dev/?src=puzzle)  
 [Game: Sokoban](https://runtime.siwei.dev/?src=sokoban)  
 [Game: 2048](https://runtime.siwei.dev/?src=2048)
+[Game: Wordle](https://github.com/yjlo123/wordle)
 
 [Leetcode 1. Two Sum](https://runtime.siwei.dev/?src=leetcode1)  
 [Leetcode 5. Longest Palindromic Substring](https://runtime.siwei.dev/?src=leetcode5)  
