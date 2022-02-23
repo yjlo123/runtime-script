@@ -36,7 +36,7 @@ https://siwei.dev/doc/runtime
 [Game: Flappy Bird](https://runtime.siwei.dev/?src=bird)  
 [Game: Sliding Puzzle](https://runtime.siwei.dev/?src=puzzle)  
 [Game: Sokoban](https://runtime.siwei.dev/?src=sokoban)  
-[Game: 2048](https://runtime.siwei.dev/?src=2048)
+[Game: 2048](https://runtime.siwei.dev/?src=2048)  
 [Game: Wordle](https://github.com/yjlo123/wordle)
 
 [Leetcode 1. Two Sum](https://runtime.siwei.dev/?src=leetcode1)  
