@@ -59,7 +59,7 @@ https://siwei.dev/doc/runtime
 [2048](https://siwei.dev/app/2048/): A 2048 game  
 [Rundis](https://siwei.dev/app/rundis/): A mock Redis CLI  
 [MoonOS](https://yjlo123.github.io/moon/): A terminal game  
-[Wordle]((https://yjlo123.github.io/wordle/)): A word game
+[Wordle](https://yjlo123.github.io/wordle/): A word game
 
 ## Editor
 [Online Editor](https://runtime.siwei.dev)  
