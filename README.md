@@ -37,7 +37,6 @@ https://siwei.dev/doc/runtime
 [Game: Sliding Puzzle](https://runtime.siwei.dev/?src=puzzle)  
 [Game: Sokoban](https://runtime.siwei.dev/?src=sokoban)  
 [Game: 2048](https://runtime.siwei.dev/?src=2048)  
-[Game: Wordle](https://github.com/yjlo123/wordle)
 
 [Leetcode 1. Two Sum](https://runtime.siwei.dev/?src=leetcode1)  
 [Leetcode 5. Longest Palindromic Substring](https://runtime.siwei.dev/?src=leetcode5)  
@@ -59,7 +58,8 @@ https://siwei.dev/doc/runtime
 [倉庫番](https://siwei.dev/app/sokoban/): A sokoban game  
 [2048](https://siwei.dev/app/2048/): A 2048 game  
 [Rundis](https://siwei.dev/app/rundis/): A mock Redis CLI  
-[MoonOS](https://yjlo123.github.io/moon/): A terminal game
+[MoonOS](https://yjlo123.github.io/moon/): A terminal game  
+[Wordle]((https://yjlo123.github.io/wordle/)): A word game
 
 ## Editor
 [Online Editor](https://runtime.siwei.dev)  
