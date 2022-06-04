@@ -26,7 +26,7 @@ let runtimeParser = function() {
 				}
 			}
 			if (l.startsWith('def ')) {
-				let funcName = l.slice(3).trim();
+				let funcName = l.slice(3).trim().split(' ')[0];
 				funcs[funcName] = ln;
 				labels[funcName] = {};
 				_current_func = funcName;
