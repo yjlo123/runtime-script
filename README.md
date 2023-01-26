@@ -55,9 +55,9 @@ https://siwei.dev/doc/runtime
 [Runtime Script Interpreter](https://runtime.siwei.dev/?src=runtime_script)  
 
 ## Games written in Runtime Script
-[倉庫番](https://siwei.dev/app/sokoban/): A sokoban game  
-[2048](https://siwei.dev/app/2048/): A 2048 game  
-[Rundis](https://siwei.dev/app/rundis/): A mock Redis CLI  
+[倉庫番](https://yjlo123.github.io/sokoban/): A sokoban game  
+[2048](https://yjlo123.github.io/2048/): A 2048 game  
+[Rundis](https://yjlo123.github.io/rundis/): A mock Redis CLI  
 [MoonOS](https://yjlo123.github.io/moon/): A terminal game  
 [Wordle](https://yjlo123.github.io/wordle/): A word game
 
