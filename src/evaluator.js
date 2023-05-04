@@ -1,5 +1,6 @@
 let runtimeEvaluator = function() {
 	let _env = null;
+	let _extended = {} /* extended commands and handlers */
 
 	function _gotoIfFalse(program, env) {
 		env._pc++; // first 'ife'
@@ -138,6 +139,10 @@ let runtimeEvaluator = function() {
 		} else {
 			console.log('Invalid label in scope:', name);
 		}
+	}
+
+	function extend(cmd, handler) {
+		_extended[cmd] = handler;
 	}
 
 	function evaluate(ts, env, lbl, fun, program) {
@@ -460,6 +465,8 @@ let runtimeEvaluator = function() {
 				_assignVar(env, 'test_fail', fail+1);
 				_print(env, ['', `Test Failed. Line:${env._pc+1}, expected:${expect}, got:${val}`])
 			}
+		} else if (cmd in _extended) {
+			_extended[cmd](_env, ts.slice(1));
 		} else {
 			console.log('Unknown command:', cmd);
 		}
@@ -519,6 +526,7 @@ let runtimeEvaluator = function() {
 	}
 
 	return {
+		extend,
 		evaluate
 	};
 };

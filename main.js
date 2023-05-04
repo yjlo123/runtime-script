@@ -39,6 +39,18 @@ let controls = {
 	statusIndicator: statusIndicator
 };
 
+evaluator.extend("net", function(env, args) {
+	let env_paused_status = env._pause;
+	env._pause = true; /* pause execution for waiting for ajax result */
+	let url = args[0];
+	$.ajax(url)
+	.done(function(data) {
+		env._global[args[1]] = data;
+		// restore the orignal env pause value
+		env._pause = env_paused_status;
+	})
+});
+
 runtime.config(parser, evaluator, editor, jqconsole, canvas, controls);
 
 /* Breakpoints */
