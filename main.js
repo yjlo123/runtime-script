@@ -46,8 +46,9 @@ evaluator.extend("net", function(env, args) {
 	$.ajax(url)
 	.done(function(data) {
 		env._global[args[1]] = data;
-		// restore the orignal env pause value
+		// resume execution
 		env._pause = env_paused_status;
+		runtime.executeAll();
 	})
 });
 
