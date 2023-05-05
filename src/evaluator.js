@@ -526,7 +526,8 @@ let runtimeEvaluator = function() {
 	}
 
 	return {
-		extend,
-		evaluate
+		evaluate,
+		expr,
+		extend
 	};
 };
