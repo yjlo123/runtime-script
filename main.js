@@ -48,7 +48,7 @@ evaluator.extend("net", function(env, args) {
 		env._global[args[1]] = data;
 		// resume execution
 		env._pause = env_paused_status;
-		runtime.executeAll();
+		env._resume.call();
 	})
 });
 
