@@ -1,5 +1,9 @@
 / Get a random quote
-net 'https://api.quotable.io/quotes/random' data
+let url 'https://api.quotable.io/quotes/random'
+net $url data
 get $data 0 first
 get $first 'content' quote
 prt $quote
+prt ' - ' ''
+get $first 'author' author
+prt $author
