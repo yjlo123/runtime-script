@@ -1,0 +1,5 @@
+/ Get a random quote
+net 'https://api.quotable.io/quotes/random' data
+get $data 0 first
+get $first 'content' quote
+prt $quote
