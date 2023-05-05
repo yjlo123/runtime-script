@@ -42,7 +42,7 @@ let controls = {
 evaluator.extend("net", function(env, args) {
 	let env_paused_status = env._pause;
 	env._pause = true; /* pause execution for waiting for ajax result */
-	let url = args[0];
+	let url = args[0].substring(1, args[0].length-1);
 	$.ajax(url)
 	.done(function(data) {
 		env._global[args[1]] = data;
