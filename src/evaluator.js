@@ -250,7 +250,13 @@ let runtimeEvaluator = function() {
 			}
 			_assignVar(env, ts[1], res);
 		} else if (cmd === 'str') {
-			let res = expr(ts[2]).toString();
+			let val = expr(ts[2]);
+			let res = '';
+			if (typeof val === 'object') {
+				res = JSON.stringify(val);
+			} else {
+				res = val.toString();
+			}
 			_assignVar(env, ts[1], res);
 		} else if (cmd === 'typ') {
 			let val = expr(ts[2]);
