@@ -232,7 +232,6 @@ let runtimeExecuter = function() {
 		}
 		env._pc = backupPc;
 		env._pause = backupPaused;
-		console.log(env._global);
 	}
 
 	return {
