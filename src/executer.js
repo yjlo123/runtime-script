@@ -185,10 +185,11 @@ let runtimeExecuter = function() {
 
 	function parseSrc(src, args) {
 		initEnv(args);
-		parsed = _parser.parse(src);
+		let parsed = _parser.parse(src);
 		program = parsed.program;
 		lbl = parsed.labels;
 		fun = parsed.funcs;
+		return parsed
 	}
 
 	function getRandomInteger(min, max) {
@@ -212,8 +213,26 @@ let runtimeExecuter = function() {
 	}
 
 	function getFuncList() {
-		parseSrc(_editor.session.getValue());
+		let parsed = parseSrc(_editor.session.getValue());
 		return parsed.funcs;
+	}
+
+	function executeFuncCall(funcName, args=[]) {
+		let extendedProgram = program.concat([['let', '_', '0']])
+		let backupPc = env._pc;
+		let backupPaused = env._pause;
+		env._pc = extendedProgram.length-1;
+		env._pause = false;
+
+		_evaluater.evaluate(["cal", funcName].concat(args), env, lbl, fun, extendedProgram);
+		env._pc++;
+		while (env._pc < program.length){
+			_evaluater.evaluate(program[env._pc], env, lbl, fun, extendedProgram);
+			env._pc++;
+		}
+		env._pc = backupPc;
+		env._pause = backupPaused;
+		console.log(env._global);
 	}
 
 	return {
@@ -224,6 +243,7 @@ let runtimeExecuter = function() {
 		restart,
 		setBreakpoints,
 		getEnv,
-		getFuncList
+		getFuncList,
+		executeFuncCall
 	};
 };
