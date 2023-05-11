@@ -348,14 +348,21 @@ let runtimeEvaluator = function() {
 
 		/* ===== MAP ===== */
 		} else if (cmd === 'put') {
-			// list or map
 			let mapVarName = ts[1].slice(1); // remove `$`
 			let mapVarVal = _getVarVal(env, mapVarName);
+			let valType = typeof mapVarVal;
 			let mapKey = expr(ts[2]);
 			let mapVal = expr(ts[3]);
-			mapVarVal[mapKey] = mapVal;
+			if (valType === 'string') {
+				// str
+				mapVarVal = mapVarVal.substring(0, mapKey) + mapVal + mapVarVal.substring(mapKey + 1);
+				_assignVar(env, mapVarName, mapVarVal);
+			} else {
+				// list / map
+				mapVarVal[mapKey] = mapVal;
+			}
 		} else if (cmd === 'get') {
-			// list or map
+			// list / map / str
 			let mapVarName = ts[1].slice(1); // remove `$`
 			let mapVarVal = _getVarVal(env, mapVarName);
 			let mapKey = expr(ts[2]);
