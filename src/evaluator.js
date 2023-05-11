@@ -296,6 +296,7 @@ let runtimeEvaluator = function() {
 				if (typeof listVarVal === 'string') {
 					// string
 					_assignVar(env, listVarName, listVarVal + expr(val));
+					listVarVal = _getVarVal(env, listVarName);  // update string value for next iteration
 				} else {
 					// array
 					listVarVal.push(expr(val));
