@@ -384,6 +384,10 @@ let runtimeEvaluator = function() {
 			let mapKey = expr(ts[2]);
 			let mapValByKey = mapVarVal[mapKey]
 			let varVal =  mapValByKey === undefined ? null : mapValByKey;
+			if (typeof mapVarVal === "string" && varVal === null) {
+				// get invalid index of a string, return empty string
+				varVal = "";
+			}
 			_assignVar(env, ts[3], varVal);
 		} else if (cmd === 'key') {
 			let mapVarName = ts[1].slice(1); // remove `$`
