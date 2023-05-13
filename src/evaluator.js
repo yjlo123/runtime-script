@@ -1,6 +1,7 @@
 let runtimeEvaluator = function() {
 	let _env = null;
-	let _extended = {} /* extended commands and handlers */
+	let _extended = {}; /* extended commands and handlers */
+	let _log_undefined_vars = false;
 
 	function _gotoIfFalse(program, env) {
 		env._pc++; // first 'ife'
@@ -141,6 +142,18 @@ let runtimeEvaluator = function() {
 		}
 	}
 
+	function _compare(val1, val2) {
+		if (Array.isArray(val1) && Array.isArray(val2)) {
+			for (let i = 0; i < val1.length; i++) {
+				if (!(_compare(val1[i], val2[i]))) {
+					return false;
+				}
+			}
+			return true;
+		}
+		return val1 === val2;
+	}
+
 	function extend(cmd, handler) {
 		_extended[cmd] = handler;
 	}
@@ -170,12 +183,12 @@ let runtimeEvaluator = function() {
 			_gotoLabelPc(env, lbl, ts[1]);
 		} else if (cmd === 'jeq') {
 			// equal
-			if (expr(ts[1]) == expr(ts[2])) {
+			if (_compare(expr(ts[1]), expr(ts[2]))) {
 				_gotoLabelPc(env, lbl, ts[3]);
 			}
 		} else if (cmd === 'jne') {
 			// not equal
-			if (expr(ts[1]) != expr(ts[2])) {
+			if (!_compare(expr(ts[1]), expr(ts[2]))) {
 				_gotoLabelPc(env, lbl, ts[3]);
 			}
 		} else if (cmd === 'jlt') {
@@ -188,10 +201,9 @@ let runtimeEvaluator = function() {
 			if (expr(ts[1]) > expr(ts[2])) {
 				_gotoLabelPc(env, lbl, ts[3]);
 			}
-
 		} else if (cmd === 'ife') {
 			// if equal
-			if (expr(ts[1]) !== expr(ts[2])) {
+			if (!_compare(expr(ts[1]), expr(ts[2]))) {
 				_gotoIfFalse(program, env);
 			}
 		} else if (cmd === 'ifg') {
@@ -513,7 +525,9 @@ let runtimeEvaluator = function() {
 					value = _env._global[varName];
 				}
 				if (value === undefined) {
-					console.log(`Line:${_env._pc+1} Variable ${varName} undefined`);
+					if (_log_undefined_vars) {
+						console.log(`Line:${_env._pc+1} Variable ${varName} undefined`);
+					}
 					result = null;
 				} else if (value && value.length > 1 && value[0] === '\'' && value[value.length-1] === '\'') {
 					result = value.slice(1, -1);
