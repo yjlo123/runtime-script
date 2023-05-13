@@ -344,7 +344,11 @@ let runtimeEvaluator = function() {
 			let listVarName = ts[1].slice(1); // remove `$`
 			let listVarVal = _getVarVal(env, listVarName);
 			let varName = ts[2];
-			_assignVar(env, varName, listVarVal.length);
+			if (typeof listVarVal == 'object') {
+				_assignVar(env, varName, Object.keys(listVarVal).length);
+			} else {
+				_assignVar(env, varName, listVarVal.length);
+			}
 
 		/* ===== MAP ===== */
 		} else if (cmd === 'put') {
