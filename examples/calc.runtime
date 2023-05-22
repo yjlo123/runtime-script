@@ -1,0 +1,540 @@
+/calculator
+/ by Siwei
+/ Jun 2022
+
+/ precision
+let p 1000
+let precedence {}
+put $precedence '=' 0
+put $precedence '+' 1
+put $precedence '-' 1
+put $precedence '_-' 1  / negative sign
+put $precedence '_+' 1  / positive sign
+put $precedence '*' 2
+put $precedence '/' 2
+put $precedence '%' 2
+put $precedence '^' 4
+
+let num_char {}
+let num_char_list []
+psh $num_char_list '0' '1' '2' '3' '4' '5'
+psh $num_char_list '6' '7' '8' '9' '.'
+
+#num_char_loop
+pol $num_char_list nc
+jeq $nc $nil num_char_done
+put $num_char $nc 0
+jmp num_char_loop
+#num_char_done
+
+let env {}
+let temp_var_count 0
+
+def is_op
+ let _t $0
+ get $precedence $_t _prec
+ jeq $_prec $nil not_op
+ ret 1
+ #not_op
+ ret 0
+end
+
+/ pre-processing a number
+/ convert list|int -> int * p
+def pre
+ let _val $0
+ typ _typ $_val
+ jne $_typ 'list' normal_value
+ get $_val 0 _sign
+ get $_val 1 _int
+ get $_val 2 _dec
+ mul _int $_int $p
+ add _res $_int $_dec
+ mul _res $_res $_sign
+ ret $_res
+ #normal_value
+ mul _val $_val $p
+ ret $_val
+end
+
+def is_var_name
+ / str => 0|1
+ let _val $0
+ typ _typ $_val
+ jeq $_typ 'str' continue
+ ret 0
+ #continue
+ let _i 0
+ #loop
+ get $_val $_i _c
+ jeq $_c '' false
+ get $num_char $_c _v
+ jeq $_v $nil true
+ add _i $_i 1
+ jmp loop
+ #false
+ ret 0
+ #true
+ ret 1
+end
+
+def parse_num
+ / string => 
+ / [sign(int),int(int),dec(int)]
+ let _s $0
+ typ _typ $_s
+ jne $_typ 'list' continue_parse
+ / already parsed
+ ret $_s
+ #continue_parse
+ cal is_var_name $_s
+ jeq $ret 0 literal_value
+ get $env $_s _val
+ ret $_val
+ #literal_value
+ let _has_dec 0
+ let _i 0
+ let _int_part '0'
+ let _dec_part ''
+ len $_s _l
+ #loop
+ jeq $_i $_l check_done
+ get $_s $_i _c
+ add _i $_i 1
+ jne $_c '.' parse_digit
+ / .
+ let _has_dec 1
+ jmp loop
+ #parse_digit
+ jeq $_has_dec 1 parse_dec
+ / int
+ psh $_int_part $_c
+ jmp loop
+ /dec
+ #parse_dec
+ psh $_dec_part $_c
+ jmp loop
+ #check_done
+ jeq $_has_dec 0 integer
+ let _dec_val_str ''
+ let _p $p
+ #dec_loop
+ pol $_dec_part _d
+ div _p $_p 10
+ jeq $_p 0 dec_loop_done
+ jeq $_d '' append_zero
+ psh $_dec_val_str $_d
+ jmp dec_loop
+ #append_zero
+ psh $_dec_val_str '0'
+ jmp dec_loop
+ #dec_loop_done
+ let _res []
+ let _sign 1
+ int _int $_int_part
+ jgt $_int -1 sign_done
+ let _sign -1
+ #sign_done
+ psh $_res $_sign
+ int _dec $_dec_val_str
+ psh $_res $_int
+ psh $_res $_dec
+ ret $_res
+ #integer
+ let _res []
+ psh $_res 1
+ int _int $_int_part
+ psh $_res $_int
+ psh $_res 0
+ ret $_res
+end
+
+def div
+ cal pre $0
+ let _a $ret
+ cal pre $1
+ let _b $ret
+ let _sign_a 1
+ let _sign_b 1
+ jgt $_a -1 sign_a_done
+ let _sign_a -1
+ mul _a $_a -1
+ #sign_a_done
+ jgt $_b -1 sign_b_done
+ let _sign_b -1
+ mul _b $_b -1
+ #sign_b_done
+ mul _sign $_sign_a $_sign_b
+ jeq $_b 0 error
+ let _res []
+ psh $_res $_sign
+ mul _a $_a $p
+ div _full $_a $_b
+ div _int $_full $p
+ psh $_res $_int
+ mul _int_m $_int $p
+ sub _dec $_full $_int_m
+ psh $_res $_dec
+ ret $_res
+ #error
+ ret $nil
+end
+
+def mul
+ cal pre $0
+ let _a $ret
+ cal pre $1
+ let _b $ret
+ mul _res $_a $_b
+ cal div $_res $p
+ cal div $ret $p
+ ret $ret
+end
+
+def mod
+ cal pre $0
+ let _a $ret
+ cal pre $1
+ let _b $ret
+ mod _res $_a $_b
+ cal div $_res $p
+ ret $ret
+end
+
+def add
+ cal pre $0
+ let _a $ret
+ cal pre $1
+ let _b $ret
+ add _res $_a $_b
+ cal div $_res $p
+ ret $ret
+end
+
+def sub
+ cal pre $0
+ let _a $ret
+ cal pre $1
+ let _b $ret
+ sub _res $_a $_b
+ cal div $_res $p
+ ret $ret
+end
+
+def pow
+ cal pre $0
+ let _a $ret
+ let _power $1
+ typ _power_typ $_power
+ jeq $_power_typ 'int' continue
+ get $_power 2 _dec
+ jgt $_dec 0 error
+ get $_power 0 _power_sign
+ get $_power 1 _power
+ #continue
+ let _res 1
+ let _j 0
+ #loop
+ jeq $_j $_power done
+ cal mul $_res $_a
+ cal div $ret $p
+ let _res $ret
+ let _res $ret
+ add _j $_j 1
+ jmp loop
+ #done
+ jeq $_power_sign 1 return_result
+ cal div 1 $_res
+ ret $ret
+ #return_result
+ ret $_res
+ #error
+ ret $nil
+end
+
+def print
+ let _val $0
+ typ _typ $_val
+ jeq $_val $nil error
+ jne $_typ 'list' normal_value
+ get $_val 0 _sign
+ get $_val 1 _int
+ get $_val 2 _dec
+ let _has_dot 0
+ let _res ''
+ jeq $_sign 1 positive
+ add _res $_res '-'
+ #positive
+ add _res $_res $_int
+ jeq $_dec 0 print_result
+ add _res $_res '.'
+ let _has_dot 1
+ div _p $p 10
+ #zero_loop
+ jlt $_p $_dec zero_done
+ jeq $_p $_dec zero_done
+ add _res $_res '0'
+ div _p $_p 10
+ jmp zero_loop
+ #zero_done
+ add _res $_res $_dec
+ jmp print_result
+ #normal_value
+ prt $_val
+ ret
+ #print_result
+ jeq $_has_dot 0 print_result_direct
+ #removing_zero_loop
+ pop $_res _c
+ / clean trailing zero/dot
+ jeq $_c '0' removing_zero_loop
+ jeq $_c '.' removing_zero_loop
+ jeq $_c '' print_zero
+ psh $_res $_c
+ #print_result_direct
+ prt $_res
+ ret
+ #print_zero
+ prt 0
+ ret
+ #error
+ prt 'err'
+end
+
+def tokenize
+ let _s $0
+ let _tokens []
+ let _t '' / current token
+ let _prev_is_open_paren 1
+ #loop
+ pol $_s _c
+ jeq $_c '' parse_done
+ jeq $_c ' ' loop
+ jeq $_c '(' operator
+ jeq $_c ')' operator
+ cal is_op $_c
+ jeq $ret 1 operator
+ / operand
+ psh $_t $_c
+ let _prev_is_open_paren 0
+ jmp loop
+ #done_token
+ jeq $_t '' loop
+ psh $_tokens $_t
+ let _t ''
+ jmp loop
+ #operator
+ jeq $_t '' push_operator
+ psh $_tokens $_t
+ let _t ''
+ #push_operator
+ jeq $_prev_is_open_paren 0 normal_push_operator
+ / check negative sign
+ jne $_c '-' check_positive_sign
+ psh $_tokens '_-'
+ jmp loop
+ #check_positive_sign
+ jne $_c '+' normal_push_operator
+ / ignore the positive sign
+ jmp loop
+ #normal_push_operator
+ psh $_tokens $_c
+ jne $_c '(' skip_prev_paren
+ let _prev_is_open_paren 1
+ #skip_prev_paren
+ jmp loop
+ #parse_done
+ jeq $_t '' tokens_finished
+ psh $_tokens $_t
+ #tokens_finished
+ ret $_tokens
+end
+
+def infix_to_postfix
+ let _ts $0
+ let _stack []
+ let _res []
+ #loop
+ pol $_ts _t
+ jeq $_t $nil done
+ jne $_t '(' not_open
+  / == (
+  psh $_stack $_t
+  jmp loop
+ #not_open
+ jne $_t ')' not_close
+  / == )
+  #parenthesis_loop
+   pop $_stack _top
+   jeq $_top $nil loop
+   jeq $_top '(' loop
+   psh $_res $_top
+  jmp parenthesis_loop
+ jmp loop
+ #not_close
+ get $precedence $_t _prece
+ jeq $_prece $nil not_operator
+  / == operator
+  #operator_loop
+  len $_stack _ss
+  jeq $_ss 0 operator_done
+  sub _last_idx $_ss 1
+  get $_stack $_last_idx _last
+  jeq $_last '(' operator_done
+  get $precedence $_last _last_prece
+  get $precedence $_t _this_prece
+  jlt $_last_prece $_this_prece operator_done
+  / a^b^c => abc^^ instead of ab^c^
+  jne $_t '^' not_pow_op
+  jeq $_last '^' operator_done
+  #not_pow_op
+  pop $_stack _top
+  psh $_res $_top
+  jmp operator_loop
+  #operator_done
+  psh $_stack $_t
+ jmp loop
+ #not_operator
+  / == operand
+  psh $_res $_t
+ jmp loop
+ #done
+ / pop stack
+ #pop_stack_loop
+ pop $_stack _op
+ jeq $_op $nil finished
+ psh $_res $_op
+ jmp pop_stack_loop
+ #finished
+ ret $_res
+end
+
+def eval
+ let _tokens $0
+ let _stack []
+ #loop
+ pol $_tokens _t
+ jeq $_t $nil done
+ get $precedence $_t _prec
+ jne $_prec $nil operator
+ / operand
+ psh $_stack $_t
+ jmp loop
+ #operator
+ pop $_stack _op2
+ pop $_stack _op1
+ jeq $_op2 $nil error
+ cal parse_num $_op2
+ let _op2 $ret
+ jeq $_op2 $nil error
+ 
+ / unary ops
+ jne $_t '_-' not_neg
+  jeq $_op1 $nil skip_push_back
+  psh $_stack $_op1
+  #skip_push_back
+  cal mul $_op2 -1
+  psh $_stack $ret
+  jmp loop
+ #not_neg
+ 
+ / binary ops
+ jeq $_op1 $nil error
+ 
+ jne $_t '=' not_assign
+  cal is_var_name $_op1
+  jeq $ret 0 error
+  put $env $_op1 $_op2
+  jmp loop
+ #not_assign
+ 
+ cal parse_num $_op1
+ let _op1 $ret
+ jeq $_op1 $nil error
+ 
+ jne $_t '-' not_sub
+  cal sub $_op1 $_op2
+  jeq $ret $nil error
+  psh $_stack $ret
+  jmp loop
+ #not_sub
+ jne $_t '+' not_add
+  cal add $_op1 $_op2
+  jeq $ret $nil error
+  psh $_stack $ret
+  jmp loop
+ #not_add
+ jne $_t '*' not_mul
+  cal mul $_op1 $_op2
+  jeq $ret $nil error
+  psh $_stack $ret
+  jmp loop
+ #not_mul
+ jne $_t '/' not_div
+  cal div $_op1 $_op2
+  jeq $ret $nil error
+  psh $_stack $ret
+  jmp loop
+ #not_div
+ jne $_t '%' not_mod
+  cal mod $_op1 $_op2
+  jeq $ret $nil error
+  psh $_stack $ret
+  jmp loop
+ #not_mod
+ jne $_t '^' not_pow
+  cal pow $_op1 $_op2
+  jeq $ret $nil error
+  psh $_stack $ret
+  jmp loop
+ #not_pow
+ jmp loop
+ #done
+ len $_stack _ss
+ jgt $_ss 1 error
+ get $_stack 0 _res
+ cal is_var_name $_res
+ jeq $ret 0 return_value
+ / find var in env
+ get $env $_res _res
+ #return_value
+ ret $_res
+ #error
+ ret 'err'
+end
+
+def run
+ cal tokenize $0
+ len $ret _ts
+ jeq $_ts 0 done
+ / prt $ret
+ cal infix_to_postfix $ret
+ / prt $ret
+ cal eval $ret
+ jeq $ret $nil print_nil
+ jeq $ret 'err' print_err
+ add temp_var_count $temp_var_count 1
+ add _temp_var 'r' $temp_var_count
+ put $env $_temp_var $ret
+ prt $_temp_var ' := '
+ cal print $ret
+ ret
+ #print_nil
+ prt $nil
+ ret
+ #print_err
+ prt 'err'
+ #done
+end
+
+prt 'Calc v1.0'
+prt 'Precision: ' ''
+prt $p
+#repl
+prt '> ' ''
+inp expr
+jeq $expr '' repl
+jeq $expr 'exit' exit
+cal run $expr
+jmp repl
+#exit

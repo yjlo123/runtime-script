@@ -28,6 +28,11 @@ cal hello $names
 ## Playground
 https://runtime.siwei.dev
 
+## Run using Node.js
+```
+node run.js <runtime_file>
+```
+
 ## Tutorial
 https://siwei.dev/doc/runtime
 

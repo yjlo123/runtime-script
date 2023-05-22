@@ -1,0 +1,255 @@
+let total 0
+let fail 0
+
+def assert_eq
+ let _val $0
+ let _exp $1
+ typ _val_t $0
+ typ _exp_t $1
+ jne $_val_t $_exp_t false
+ ife $_val_t 'list'
+  len $_val _l1
+  len $_exp _l2
+  jne $_l1 $_l2 false
+  let _i 0
+  #list_loop
+  jeq $_i $_l1 true
+  get $_val $_i _v1
+  get $_exp $_i _v2
+  jne $_v1 $_v2 false
+  add _i $_i 1
+  jmp list_loop
+ fin
+ jne $_val $_exp false
+ #true
+ ret 1
+ #false
+ ret 0
+end
+
+def assert_ne
+ let _val $0
+ let _exp $1
+ cal assert_eq $_val $_exp
+ ife $ret 1
+  ret 0
+ fin
+ ret 1
+end
+
+def count_result
+ let _name $0
+ let _res $1
+ add total $total 1
+ ife $_res 1
+  prt '[pass]' ' '
+ els
+  add fail $fail 1
+  prt '[fail]' ' '
+ fin
+ prt $_name
+end
+
+/ == Int
+cal assert_eq 1 1
+cal count_result 'Int eq' $ret
+cal assert_ne 1 3
+cal count_result 'Int not eq' $ret
+
+/ == Arithmetic operations
+let a 12
+let b 9
+add c $a $b
+cal assert_eq $c 21
+cal count_result 'Arith add' $ret
+sub c $a $b
+cal assert_eq $c 3
+cal count_result 'Arith sub' $ret
+mul c $a $b
+cal assert_eq $c 108
+cal count_result 'Arith mul' $ret
+div c $a $b
+cal assert_eq $c 1
+cal count_result 'Arith div' $ret
+mod c $a $b
+cal assert_eq $c 3
+cal count_result 'Arith mod' $ret
+
+/ == Type
+let a 34
+typ t1 $a
+cal assert_eq $t1 'int'
+cal count_result 'Type int' $ret
+let b '34'
+typ t $b
+cal assert_eq $t 'str'
+cal count_result 'Type str' $ret
+let c []
+typ t $c
+cal assert_eq $t 'list'
+cal count_result 'Type list' $ret
+let d {}
+typ t $d
+cal assert_eq $t 'map'
+cal count_result 'Type map' $ret
+
+/ == List
+let list_1 []
+cal assert_eq $list_1 []
+cal count_result 'List empty' $ret
+
+psh $list_1 23
+cal assert_ne $list_1 []
+cal count_result 'List not empty' $ret
+
+psh $list_1 45
+psh $list_1 56
+let list_2 []
+psh $list_2 23 45 56
+cal assert_eq $list_1 $list_2
+cal count_result 'List push' $ret
+
+len $list_1 lenght
+cal assert_eq $lenght 3
+cal count_result 'List length' $ret
+
+get $list_1 1 val
+cal assert_eq $val 45
+cal count_result 'List get' $ret
+put $list_1 2 70
+let list_2 []
+psh $list_2 23 45 70
+cal assert_eq $list_1 $list_2
+cal count_result 'List put' $ret
+
+pol $list_1 val
+cal assert_eq $val 23
+cal count_result 'List pol 1' $ret
+let empty_list []
+pol $empty_list val
+cal assert_eq $val $nil
+cal count_result 'List pol 2' $ret
+pop $list_1 val
+cal assert_eq $val 70
+cal count_result 'List pop 1' $ret
+pop $list_1 val
+cal assert_eq $val 45
+cal count_result 'List pop 2' $ret
+pop $list_1 val
+cal assert_eq $val $nil
+cal count_result 'List pop 3' $ret
+
+/ == String
+let s1 'abcde'
+psh $s1 'f'
+cal assert_eq $s1 'abcdef'
+cal count_result 'String push 1' $ret
+psh $s1 'g' 'h' 'i' 
+cal assert_eq $s1 'abcdefghi'
+cal count_result 'String push 2' $ret
+psh $s1 'jkl'
+cal assert_eq $s1 'abcdefghijkl'
+cal count_result 'String push 3' $ret
+pop $s1 c
+pop $s1 c
+pop $s1 c
+cal assert_eq $c 'j'
+cal count_result 'String pop' $ret
+len $s1 length
+cal assert_eq $length 9
+cal count_result 'String len' $ret
+get $s1 6 c
+cal assert_eq $c 'g'
+cal count_result 'String get' $ret
+get $s1 99 c
+cal assert_eq $c ''
+cal count_result 'String get invalid' $ret
+put $s1 2 'X'
+cal assert_eq $s1 'abXdefghi'
+cal count_result 'String put' $ret
+let s2 '123'
+let s3 'run'
+add s4 $s2 $s3
+cal assert_eq $s4 '123run'
+cal count_result 'String add' $ret
+pol $s4 c
+pol $s4 c
+cal assert_eq $c '2'
+cal count_result 'String poll 1' $ret
+cal assert_eq $s4 '3run'
+cal count_result 'String poll 2' $ret
+let empty_str ''
+pol $empty_str c
+cal assert_eq $c ''
+cal count_result 'String poll 3' $ret
+
+/ == Map
+let m {}
+put $m 'a' 12
+put $m 'b' '23'
+get $m 'a' val
+cal assert_eq $val 12
+cal count_result 'Map get 1' $ret
+get $m 'b' val
+cal assert_eq $val '23'
+cal count_result 'Map get 2' $ret
+get $m 'c' val
+cal assert_eq $val $nil
+cal count_result 'Map get nil' $ret
+put $m 'a' 'aa'
+get $m 'a' val
+cal assert_eq $val 'aa'
+cal count_result 'Map get replaced' $ret
+len $m length
+cal assert_eq $length 2
+cal count_result 'Map length' $ret
+key $m keys
+let lst []
+psh $lst 'a' 'b'
+cal assert_eq $keys $lst
+cal count_result 'Map keys' $ret
+del $m 'b'
+get $m 'b' val
+cal assert_eq $val $nil
+cal count_result 'Map get deleted' $ret
+
+/ == Parse JSON
+prs j1 '{"k1": 123, "k2": "abc", "k3": null}'
+get $j1 'k1' val
+cal assert_eq $val 123
+cal count_result 'Parse JSON get int' $ret
+get $j1 'k2' val
+cal assert_eq $val 'abc'
+cal count_result 'Parse JSON get string' $ret
+get $j1 'k3' val
+cal assert_eq $val $nil
+cal count_result 'Parse JSON get nil' $ret
+prs j2 '{"list": [1,2,"ab"]}'
+get $j2 'list' lst1
+let lst2 []
+psh $lst2 1 2 'ab'
+cal assert_eq $lst1 $lst2
+cal count_result 'Parse JSON get list' $ret
+prs j3 '{"list":[1,2,[[],null,"aa"]]}'
+get $j3 'list' lst
+get $lst 2 inner_lst
+let lst2 []
+psh $lst2 [] $nil 'aa'
+cal assert_eq $inner_lst $lst2
+cal count_result 'Parse JSON inner list' $ret
+prs j4 '{"aa":{"bb":[{"cc":123}]}}'
+get $j4 'aa' im1
+get $im1 'bb' il1
+get $il1 0 im2
+get $im2 'cc' val
+cal assert_eq $val 123
+cal count_result 'Parse JSON inner map' $ret
+
+
+prt '============'
+prt 'Total ' ''
+sub pass $total $fail
+prt $pass '/'
+prt $total
+prt 'Failed ' ''
+prt $fail

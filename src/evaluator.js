@@ -159,6 +159,9 @@ let runtimeEvaluator = function() {
 	}
 
 	function evaluate(ts, env, lbl, fun, program) {
+		if (typeof ts === "undefined") {
+			return;
+		}
 		_env = env; // for expr
 		if (ts.length === 0) {
 			return;
@@ -507,6 +510,7 @@ let runtimeEvaluator = function() {
 	}
 
 	function expr(exp) {
+		let result = null;
 		if (exp[0] === '$') {
 			// value reference
 			let varName = exp.slice(1);
@@ -567,3 +571,9 @@ let runtimeEvaluator = function() {
 		extend
 	};
 };
+
+if (typeof module === 'object') {
+	module.exports = {
+		runtimeEvaluator
+	};
+}

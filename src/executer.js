@@ -5,7 +5,7 @@ let runtimeExecuter = function() {
 	let _console = null;
 	let _canvas = null;
 	let _controls = {};
-	let _options = {};
+	let _options = {inBrowser: true};
 
 	let env = {};
 	let lbl = {};
@@ -25,7 +25,7 @@ let runtimeExecuter = function() {
 		_console = consl;
 		_canvas = canvas;
 		_controls = controls;
-		_options = options;
+		_options = {..._options, ...options};
 	}
 
 	function initEnv(args) {
@@ -71,23 +71,28 @@ let runtimeExecuter = function() {
 		_console.AbortInput();
 	}
 
-	function finishedExecution() {
-		$(document).off("keydown");
+	function finishedExecution(callback) {
 		finished = true;
 		running = false;
 		paused = false;
+
+		if (_options.inBrowser) {
+			$(document).off("keydown");
+		}
 		
 		_controls.stepBtn && _controls.stepBtn.addClass("disabled");
 		_controls.run && _controls.run.removeClass("running");
 		_controls.statusIndicator && _controls.statusIndicator.removeClass("status-run");
 		_controls.statusIndicator && _controls.statusIndicator.removeClass("status-break");
+
+		callback && callback();
 	}
 
 	/* execute program */
-	function loop() {
+	function loop(callback) {
 		while (true) {
 			if (env._pause) {
-				env._resume = loop;
+				env._resume = () => {loop(callback)};
 				return;
 			}
 			if (break_points.includes(env._pc)) {
@@ -105,20 +110,23 @@ let runtimeExecuter = function() {
 					env._sleep = 0;
 					// program is null when stopped
 					if (program && env._pc < program.length) {
-						return loop();
+						return loop(callback);
 					}
 				}, env._sleep);
 			}
 
-			window.clearTimeout();
+			if (_options.inBrowser) {
+				window.clearTimeout();
+			}
+			
 			if (env._pc >= program.length) {
 				break;
 			}
 		}
-		finishedExecution();
+		finishedExecution(callback);
 	}
 
-	function executeAll(args, src_text) {
+	function executeAll(args, src_text, callback) {
 		if (running && !paused) {
 			return;
 		}
@@ -126,12 +134,13 @@ let runtimeExecuter = function() {
 		_controls.run && _controls.run.addClass("running");
 		_controls.statusIndicator && _controls.statusIndicator.addClass("status-run");
 
-		$(document).off("keydown"); // clear previous listener (if any)
-		$(document).on("keydown", function (e) {
-			env._keys.push(e.which);
-			env._keys.splice(0, env._keys.length - 10);
-		});
-
+		if (_options.inBrowser) {
+			$(document).off("keydown"); // clear previous listener (if any)
+			$(document).on("keydown", function (e) {
+				env._keys.push(e.which);
+				env._keys.splice(0, env._keys.length - 10);
+			});
+		}
 
 		if (!paused) {
 			parseSrc(src_text || _editor.session.getValue(), args);
@@ -144,7 +153,7 @@ let runtimeExecuter = function() {
 					paused = false;
 					executeStep();
 				}
-				loop();
+				loop(callback);
 			}
 		}
 	}
@@ -246,3 +255,9 @@ let runtimeExecuter = function() {
 		executeFuncCall
 	};
 };
+
+if (typeof module === 'object') {
+	module.exports = {
+		runtimeExecuter
+	};
+}

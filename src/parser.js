@@ -108,3 +108,9 @@ let runtimeParser = function() {
 		parse: parseProgram
 	};
 };
+
+if (typeof module === 'object') {
+	module.exports = {
+		runtimeParser
+	};
+}
