@@ -123,8 +123,8 @@ def check_move
  #check_push
  get $m $mmt mmr
  get $mmr $mml ccc
- jeq $ccc 2 can_push
- jeq $ccc 4 can_push
+ jeq $ccc '2' can_push
+ jeq $ccc '4' can_push
  let can_move 0
  ret
  #can_push
