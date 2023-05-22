@@ -37,6 +37,10 @@ if (process.argv.length < 3) {
 let fileName = process.argv[2];
 let src = fs.readFileSync(path.resolve(__dirname, fileName), 'utf8')
 
-runtime.executeAll({}, src, ()=>{
-    readline.close();
-});
+runtime.executeAll(
+    {"os_host": "node (js)"},
+    src,
+    ()=>{
+        readline.close();
+    }
+);
