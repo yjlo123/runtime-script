@@ -3,7 +3,7 @@ let runtimeParser = function() {
 		let program = [];
 		let labels = {
 			global: {},
-			function: {}
+			function: {} // ISSUE: not used
 		};
 		let funcs = {};
 

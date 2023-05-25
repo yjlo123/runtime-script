@@ -37,6 +37,55 @@ def assert_ne
  ret 1
 end
 
+def is_in_list
+ let _val $0
+ let _lst $1
+ len $_lst _ll
+ let _i 0
+ #loop
+ jeq $_i $_ll false
+ get $_lst $_i _cur
+ jeq $_cur $_val true
+ add _i $_i 1
+ jmp loop
+ #true
+ ret 1
+ #false
+ ret 0
+end
+
+def new_set
+ let _lst $0
+ let _res []
+ for _a $_lst
+  cal is_in_list $_a $_res
+  ife $ret 0
+   psh $_res $_a
+  fin
+ nxt
+ ret $_res
+end
+
+def set_equal
+ let _s1 $0
+ let _s2 $1
+ len $_s1 _len1
+ len $_s2 _len2
+ jne $_len1 $_len2 false
+ let _i 0
+ #loop
+ jeq $_i $_len1 true
+ get $_s1 $_i _cur
+ cal is_in_list $_cur $_s2
+ jeq $ret 0 false
+ add _i $_i 1
+ jmp loop
+ #true
+ ret 1
+ #false
+ ret 0
+end
+
 def count_result
  let _name $0
  let _res $1
@@ -45,10 +94,11 @@ def count_result
   prt '[pass]' ' '
  els
   add fail $fail 1
-  prt '[fail]' ' '
+  prt '[*fail]' ' '
  fin
  prt $_name
 end
+
 
 / == Int
 cal assert_eq 1 1
@@ -56,24 +106,44 @@ cal count_result 'Int eq' $ret
 cal assert_ne 1 3
 cal count_result 'Int not eq' $ret
 
+
 / == Arithmetic operations
 let a 12
 let b 9
 add c $a $b
 cal assert_eq $c 21
-cal count_result 'Arith add' $ret
+cal count_result 'Arith add int & int' $ret
+add r 'ab' 'cd'
+cal assert_eq $r 'abcd'
+cal count_result 'Arith add str & str' $ret
+add r 5 'cd'
+cal assert_eq $r '5cd'
+cal count_result 'Arith add int & str' $ret
+add r '12' 4
+cal assert_eq $r '124'
+cal count_result 'Arith add str & int' $ret
+add r $nil 65
+cal assert_eq $r 'A'
+cal count_result 'Arith add itoa' $ret
 sub c $a $b
 cal assert_eq $c 3
 cal count_result 'Arith sub' $ret
+sub r 'b' $nil
+cal assert_eq $r 98
+cal count_result 'Arith sub atoi' $ret
 mul c $a $b
 cal assert_eq $c 108
 cal count_result 'Arith mul' $ret
+mul r 'ab' 3
+cal assert_eq $r 'ababab'
+cal count_result 'Arith mul str' $ret
 div c $a $b
 cal assert_eq $c 1
 cal count_result 'Arith div' $ret
 mod c $a $b
 cal assert_eq $c 3
 cal count_result 'Arith mod' $ret
+
 
 / == Type
 let a 34
@@ -92,6 +162,9 @@ let d {}
 typ t $d
 cal assert_eq $t 'map'
 cal count_result 'Type map' $ret
+cal assert_ne 123 '123'
+cal count_result 'Type compare int & str' $ret
+
 
 / == List
 let list_1 []
@@ -139,6 +212,7 @@ pop $list_1 val
 cal assert_eq $val $nil
 cal count_result 'List pop 3' $ret
 
+
 / == String
 let s1 'abcde'
 psh $s1 'f'
@@ -183,6 +257,7 @@ pol $empty_str c
 cal assert_eq $c ''
 cal count_result 'String poll 3' $ret
 
+
 / == Map
 let m {}
 put $m 'a' 12
@@ -212,6 +287,7 @@ del $m 'b'
 get $m 'b' val
 cal assert_eq $val $nil
 cal count_result 'Map get deleted' $ret
+
 
 / == Parse JSON
 prs j1 '{"k1": 123, "k2": "abc", "k3": null}'
@@ -244,6 +320,82 @@ get $il1 0 im2
 get $im2 'cc' val
 cal assert_eq $val 123
 cal count_result 'Parse JSON inner map' $ret
+
+
+// == If-else
+let a 5
+let b 8
+let c 5
+let v 0
+
+ife $a $b
+ let v 1
+fin
+cal assert_eq $v 0
+cal count_result 'If equal false' $ret
+
+ife $c $a
+ let v 5
+fin
+cal assert_eq $v 5
+cal count_result 'If equal true' $ret
+
+ife $b $a
+ let v 6
+els
+ let v 7
+fin
+cal assert_eq $v 7
+cal count_result 'If equal else' $ret
+
+ifg $a $c
+ let v 10
+els
+ let v 11
+fin
+cal assert_eq $v 11
+cal count_result 'If greater else' $ret
+
+ifg $b $c
+ let v 12
+els
+ let v 13
+fin
+cal assert_eq $v 12
+cal count_result 'If greater true' $ret
+
+
+/ == FOR LOOP
+let lst []
+psh $lst 12 'ss' $nil 'ab'
+let res []
+for item $lst
+ psh $res $item
+nxt
+cal assert_eq $lst $res
+cal count_result 'For loop list' $ret
+
+let res []
+for v 3
+ psh $res $v
+nxt
+let exp []
+psh $exp 0 1 2
+cal assert_eq $res $exp
+cal count_result 'For loop int range' $ret
+
+let m {}
+put $m 'a' 4
+put $m 'k' 9
+let res []
+for v $m
+ psh $res $v
+nxt
+let exp []
+psh $exp 'a' 'k'
+cal set_equal $res $exp
+cal assert_eq $ret 1
+cal count_result 'For loop map' $ret
 
 
 prt '============'

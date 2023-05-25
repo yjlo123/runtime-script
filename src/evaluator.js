@@ -144,6 +144,9 @@ let runtimeEvaluator = function() {
 
 	function _compare(val1, val2) {
 		if (Array.isArray(val1) && Array.isArray(val2)) {
+			if (val1.length !== val2.length) {
+				return false;
+			}
 			for (let i = 0; i < val1.length; i++) {
 				if (!(_compare(val1[i], val2[i]))) {
 					return false;
@@ -234,7 +237,7 @@ let runtimeEvaluator = function() {
 			let val1 = expr(ts[2]);
 			let val2 = expr(ts[3]);
 			if (typeof val1 === 'string' && val1.length === 1 && val2 === null) {
-				_assignVar(env, varName, val1.charCodeAt(0) - val2);
+				_assignVar(env, varName, val1.charCodeAt(0));
 			} else {
 				_assignVar(env, varName, val1 - val2);
 			}
@@ -258,9 +261,8 @@ let runtimeEvaluator = function() {
 		} else if (cmd === 'int') {
 			let param = expr(ts[2])
 			let isNumeric = !isNaN(param) && !isNaN(parseFloat(param));
-			if (!isNumeric) {
-				res = null;
-			} else {
+			let res = null;
+			if (isNumeric) {
 				res = parseInt(param);
 			}
 			_assignVar(env, ts[1], res);
@@ -486,8 +488,10 @@ let runtimeEvaluator = function() {
 			}
 		} else if (cmd === 'nxt') {
 			_backToLoopHead(program, env);
+		
 		} else if (cmd === 'lod' || cmd === 'sav') {
 			console.error(`'${cmd}' is not supported in browser. Please run it on the binary version of Runtime Script. (https://github.com/yjlo123/runtime-go)`);
+		
 		} else if (cmd === 'test_init') {
 			_assignVar(env, 'test_pass', 0);
 			_assignVar(env, 'test_fail', 0);
