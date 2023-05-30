@@ -243,6 +243,15 @@ let runtimeExecuter = function() {
 		env._pause = backupPaused;
 	}
 
+	function pause() {
+		env._pause = true;
+	}
+
+	function resume() {
+		env._pause = false;
+		env._resume.call();
+	}
+
 	return {
 		config,
 		executeAll,
@@ -252,7 +261,9 @@ let runtimeExecuter = function() {
 		setBreakpoints,
 		getEnv,
 		getFuncList,
-		executeFuncCall
+		executeFuncCall,
+		pause,
+		resume
 	};
 };
 
