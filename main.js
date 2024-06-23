@@ -4,16 +4,18 @@ editor.session.setMode("ace/mode/runtime");
 editor.session.setTabSize(1);
 editor.setFontSize(15);
 
+let LANGUAGE_VERSION = 1.5;
 
 /* Console */
 let jqconsole = $('#console').jqconsole();
 jqconsole.Write('Runtime Script\n', 'console-gray');
+jqconsole.Write(`ver: ${LANGUAGE_VERSION}\n`, 'console-gray');
 jqconsole.SetPromptLabel('  ');
 
 let runtime = runtimeExecuter();
 let canvas = runtimeCanvas();
 canvas.init($('#canvas')[0]);
-let evaluator = runtimeEvaluator();
+let evaluator = runtimeEvaluator(ver=LANGUAGE_VERSION);
 let parser = runtimeParser();
 
 

@@ -1,4 +1,4 @@
-let runtimeEvaluator = function() {
+let runtimeEvaluator = function(ver=1) {
 	let _env = null;
 	let _extended = {}; /* extended commands and handlers */
 	let _log_undefined_vars = false;
@@ -254,7 +254,14 @@ let runtimeEvaluator = function() {
 			let res = expr(ts[2]) % expr(ts[3]);
 			_assignVar(env, ts[1], res);
 		} else if (cmd === 'div') {
-			let res = Math.floor(expr(ts[2]) / expr(ts[3]));
+			let left = expr(ts[2]);
+			let right = expr(ts[3]);
+			let res = null;
+			if (Number.isInteger(left) && Number.isInteger(right)) {
+				res = Math.floor(left / right);
+			} else {
+				res = left / right;
+			}
 			_assignVar(env, ts[1], res);
 
 		/* ===== DATA TYPE ===== */
@@ -264,6 +271,14 @@ let runtimeEvaluator = function() {
 			let res = null;
 			if (isNumeric) {
 				res = parseInt(param);
+			}
+			_assignVar(env, ts[1], res);
+		} else if (cmd === 'num') {
+			let param = expr(ts[2])
+			let isNumeric = !isNaN(param) && !isNaN(parseFloat(param));
+			let res = null;
+			if (isNumeric) {
+				res = parseFloat(param);
 			}
 			_assignVar(env, ts[1], res);
 		} else if (cmd === 'str') {
@@ -532,8 +547,10 @@ let runtimeEvaluator = function() {
 					// function scoped variable
 					value = funcStackObj.env[varName];
 				} else if (!isNaN(varName) && Number.isInteger(parseInt(varName))) {
+					// function argument
 					value = funcStackObj.env[varName];
 				} else {
+					// global variable
 					value = _env._global[varName];
 				}
 				if (value === undefined) {
@@ -556,6 +573,9 @@ let runtimeEvaluator = function() {
 		} else if (exp.length > 1 && exp[0] === '\'' && exp[exp.length-1] === '\'') {
 			// string
 			result = exp.slice(1, -1);
+		} else if (ver===1.5 && exp.indexOf('.') !== -1 && !isNaN(parseFloat(exp)) && exp <= Number.MAX_VALUE) {
+			// float
+			result = parseFloat(exp);
 		} else if (!isNaN(parseInt(exp)) && exp <= Number.MAX_SAFE_INTEGER) {
 			// integer
 			result = parseInt(exp);
