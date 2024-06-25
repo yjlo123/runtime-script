@@ -4,7 +4,7 @@ editor.session.setMode("ace/mode/runtime");
 editor.session.setTabSize(1);
 editor.setFontSize(15);
 
-let LANGUAGE_VERSION = 1.5;
+let LANGUAGE_VERSION = '1.5a';
 
 /* Console */
 let jqconsole = $('#console').jqconsole();

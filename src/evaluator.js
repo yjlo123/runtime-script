@@ -186,26 +186,26 @@ let runtimeEvaluator = function(ver=1) {
 
 		/* ===== JUMP ===== */
 		} else if (cmd === 'jmp') {
-			_gotoLabelPc(env, lbl, ts[1]);
+			_gotoLabelPc(env, lbl, expr(ts[1]));
 		} else if (cmd === 'jeq') {
 			// equal
 			if (_compare(expr(ts[1]), expr(ts[2]))) {
-				_gotoLabelPc(env, lbl, ts[3]);
+				_gotoLabelPc(env, lbl, expr(ts[3]));
 			}
 		} else if (cmd === 'jne') {
 			// not equal
 			if (!_compare(expr(ts[1]), expr(ts[2]))) {
-				_gotoLabelPc(env, lbl, ts[3]);
+				_gotoLabelPc(env, lbl, expr(ts[3]));
 			}
 		} else if (cmd === 'jlt') {
 			// less than
 			if (expr(ts[1]) < expr(ts[2])) {
-				_gotoLabelPc(env, lbl, ts[3]);
+				_gotoLabelPc(env, lbl, expr(ts[3]));
 			}
 		} else if (cmd === 'jgt') {
 			// greater than
 			if (expr(ts[1]) > expr(ts[2])) {
-				_gotoLabelPc(env, lbl, ts[3]);
+				_gotoLabelPc(env, lbl, expr(ts[3]));
 			}
 		} else if (cmd === 'ife') {
 			// if equal
