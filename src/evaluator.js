@@ -458,7 +458,7 @@ let runtimeEvaluator = function(ver=1) {
 			}
 			env._pc = stackObj.pc;
 		} else if (cmd === 'cal') {
-			let funcName = ts[1];
+			let funcName = expr(ts[1]);
 			let args = ts.slice(2);
 			let funcEnv = {}
 			args.forEach((v, i) => {
