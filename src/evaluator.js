@@ -461,6 +461,9 @@ let runtimeEvaluator = function(ver=1) {
 			let funcName = expr(ts[1]);
 			let args = ts.slice(2);
 			let funcEnv = {}
+			// $# arg count
+			funcEnv['#'] = args.length;
+			// $0, $1, ...
 			args.forEach((v, i) => {
 				funcEnv[i] = expr(v);
 			});
